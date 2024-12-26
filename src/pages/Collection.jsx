@@ -72,6 +72,7 @@ function Collection() {
     ],
   };
 
+  
 
   const toogleCategory = (e) => {
     if (category.includes(e.target.value)) {
@@ -86,6 +87,8 @@ function Collection() {
       setSubCategory((prev) => [...prev,...Collections[e.target.value].map((subCat)=>subCat.name)])
     }
 
+    // filter products
+    
   }
 
 
@@ -95,6 +98,8 @@ function Collection() {
     } else {
       setSubCategory(prev => [...prev, e.target.value])
     }
+
+    // 
   }
 
 
@@ -168,7 +173,7 @@ function Collection() {
             {
               subCategory.map((subCat, index) => (
                 <p className='flex gap-2' key={index}>
-                <input type="checkbox" value={subCat} onChange={toogleCategory} /> {subCat}
+                <input type="checkbox" value={subCat} onChange={toggleSubCategory} /> {subCat}
               </p>
               ))
             }

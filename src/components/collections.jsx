@@ -62,13 +62,12 @@ function Collections() {
         <div className='my-2 sm:my-8 lg:my-10 '>
             {
                 Object.keys(Collections).map((Collection, index) => (
-
                     <div key={index} className='text-center py-8 text-3xl'>
                         <Title text1={Collection.split(" ")[0]} text2={` ${Collection.split(" ")[1]}`} />
-                        <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
+                        <p className='w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600'>
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis perspiciatis eligendi quis ipsa accusantium aliquam aut ducimus! Excepturi eligendi, sunt dolore architecto adipisci perspiciatis maxime ut ad, vitae nostrum nesciunt?</p>
                         {/* Image Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 justify-center mt-6 mx-10">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
                             {Collections[Collection].map((subCategory, CIndex) => (
                                 <CollectionCategoryItem key={CIndex} title={subCategory.name} img = {subCategory.image}/>
                             ))}

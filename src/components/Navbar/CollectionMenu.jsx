@@ -65,7 +65,7 @@ function CollectionMenu({CollectionsData,isLoading}) {
   };
 
   return (
-    <div className={` relative`}
+    <div 
       onMouseEnter={() => setIsMenuOpen(true)} // Show menu on hover
       onMouseLeave={() => setIsMenuOpen(false)} // Hide menu when not hovered
     >
@@ -74,14 +74,14 @@ function CollectionMenu({CollectionsData,isLoading}) {
       </div>
 
 
-      <div className={`absolute z-10 w-96 bg-white rounded-lg shadow-lg transform transition-all duration-300 ease-in-out ${isMenuOpen
+      <div className={`absolute z-10 w-1/2 max-h-[50vh] border  bg-white rounded-lg shadow-lg transform transition-all duration-300 ease-in-out ${isMenuOpen
           ? "opacity-100 scale-100"
           : "opacity-0 scale-95 pointer-events-none"
         }`}>
           
-        <div className="flex">
+        <div className="flex max-h-[inherit] h-full pt-2">
           {/* Left Sidebar */}
-          <div className="border-r border-gray-200 w-1/2 ">
+          <div className="border-r border-gray-200 w-1/2">
             <ul className="space-y-4">
               {
                 !isLoading?Object.keys(CollectionsData).map((collection) => (
@@ -100,16 +100,16 @@ function CollectionMenu({CollectionsData,isLoading}) {
             </ul>
           </div>
           {/* Right Content */}
-          <div className="px-5 w-full pb-5 ">
+          <div className="px-5 w-full pb-5  overflow-y-auto">
             <h1 className="text-xl font-semibold mb-4 mt-2">{selectedCollection}</h1>
-            <div className="grid grid-cols-2 gap-4 text-gray-500  items-center">
+            <div className="grid grid-cols-2 gap-8 text-gray-500 items-center">
 
               {
               !isLoading?CollectionsData[selectedCollection].map((subcategory, index) => (
                 <Link to='/collection' key={index}>
                 <div className=' hover:bg-gray-100 bg-gray-50 rounded-lg'>
                   <img src={subcategory.thumbnail??"https://www.shutterstock.com/image-photo/young-man-wearing-winter-clothes-260nw-1022031901.jpg"} alt="error" className='rounded-lg ' />
-                <p className='text-gray-600 hover:text-black'>{subcategory.name}</p>
+                <p className='text-gray-600 hover:text-black line-clamp-2 text-xs'>{subcategory.name}</p>
                 </div>
                 </Link>
                 
