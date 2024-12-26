@@ -5,17 +5,8 @@ import { Link } from 'react-router-dom';
 function CollectionMenu({CollectionsData,isLoading}) {
 
 
-  const [selectedCollection, setSelectedCollection] = useState("Kid's Clothing");
+  const [selectedCollection, setSelectedCollection] = useState("Men's Clothing");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-
-
-
-
-
-
-
-
 
   const Collections = {
     "Men’s Clothing": [
@@ -72,7 +63,6 @@ function CollectionMenu({CollectionsData,isLoading}) {
       }
     ],
   };
-if(isLoading) return <h1>Loading...</h1>
 
   return (
     <div className={` relative`}
@@ -82,33 +72,40 @@ if(isLoading) return <h1>Loading...</h1>
       <div className='flex flex-col items-center gap-1 cursor-pointer '>
         <MenuItem name={"COLLECTIONS"} />
       </div>
+
+
       <div className={`absolute z-10 w-96 bg-white rounded-lg shadow-lg transform transition-all duration-300 ease-in-out ${isMenuOpen
           ? "opacity-100 scale-100"
           : "opacity-0 scale-95 pointer-events-none"
         }`}>
+          
         <div className="flex">
           {/* Left Sidebar */}
           <div className="border-r border-gray-200 w-1/2 ">
             <ul className="space-y-4">
-              {Object.keys(CollectionsData).map((collection) => (
-                <li
-                  key={collection}
-                  onClick={() => setSelectedCollection(collection)}
-                  className={`font-medium hover:text-black px-5 py-2 ${selectedCollection === collection
-                    ? "text-black bg-orange-200 "
-                    : "text-gray-500"
-                    } cursor-pointer`}
-                >
-                  {collection}
-                </li>
-              ))}
+              {
+                !isLoading?Object.keys(CollectionsData).map((collection) => (
+                  <li
+                    key={collection}
+                    onClick={() => setSelectedCollection(collection)}
+                    className={`font-medium hover:text-black px-5 py-2 ${selectedCollection === collection
+                      ? "text-black bg-orange-200 "
+                      : "text-gray-500"
+                      } cursor-pointer`}
+                  >
+                    {collection}
+                  </li>
+                )):<h1>Loading...</h1>
+             }
             </ul>
           </div>
           {/* Right Content */}
           <div className="px-5 w-full pb-5 ">
             <h1 className="text-xl font-semibold mb-4 mt-2">{selectedCollection}</h1>
             <div className="grid grid-cols-2 gap-4 text-gray-500  items-center">
-              {CollectionsData[selectedCollection].map((subcategory, index) => (
+
+              {
+              !isLoading?CollectionsData[selectedCollection].map((subcategory, index) => (
                 <Link to='/collection' key={index}>
                 <div className=' hover:bg-gray-100 bg-gray-50 rounded-lg'>
                   <img src={subcategory.thumbnail??"https://www.shutterstock.com/image-photo/young-man-wearing-winter-clothes-260nw-1022031901.jpg"} alt="error" className='rounded-lg ' />
@@ -116,7 +113,8 @@ if(isLoading) return <h1>Loading...</h1>
                 </div>
                 </Link>
                 
-              ))}
+              )):<h1>Loading...</h1>
+              }
             </div>
           </div>
         </div>
