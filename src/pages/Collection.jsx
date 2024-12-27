@@ -1,10 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { assets, products } from "../assets/assets";
 import { Title } from "../components/Title";
+import { useParams } from "react-router-dom";
 import { ProductItem } from "../components/ProductItem";
+import { useCollections } from "../context/CollectionsContext";
 
 function Collection() {
   // const { products } = useContext(ShopContext);
+
+  const { CollectionsData } = useCollections();
+  const { categoryName, subcategoryName } = useParams();
+
+  const [products, setProducts] = useState([]);
 
   const [showFilter, setShowFilter] = useState(false);
 
@@ -12,6 +19,9 @@ function Collection() {
 
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
+
+  const [selectedCategory,setSelectedCategory] = useState("");
+  const [selectedSubCategory,setSelectedSubCategory] = useState("");
 
   const [sortType, setSortType] = useState("relvent");
 
@@ -84,20 +94,28 @@ function Collection() {
     ],
   };
 
+  useEffect(() => {
+    setSelectedCategory(categoryName);
+    setSelectedSubCategory(subcategoryName);
+
+    
+  }, [])
+
+  // console.log("Selected Category:", categoryName,"--",selectedCategory);
   const toogleCategory = (e) => {
     if (category.includes(e.target.value)) {
-      setCategory((prev) => prev.filter((item) => item !== e.target.value));
+      // setCategory((prev) => prev.filter((item) => item !== e.target.value));
       setSubCategory((prev) => {
         return prev.filter(
           (item) =>
-            !Collections[e.target.value].some((subCat) => subCat.name === item)
+            !CollectionsData[e.target.value].some((subCat) => subCat.name === item)
         );
       });
     } else {
-      setCategory((prev) => [...prev, e.target.value]);
+      // setCategory((prev) => [...prev, e.target.value]);
       setSubCategory((prev) => [
         ...prev,
-        ...Collections[e.target.value].map((subCat) => subCat.name),
+        ...CollectionsData[e.target.value].map((subCat) => subCat.name),
       ]);
     }
 
@@ -105,13 +123,19 @@ function Collection() {
   };
 
   const toggleSubCategory = (e) => {
-    if (subCategory.includes(e.target.value)) {
-      setSubCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setSubCategory((prev) => [...prev, e.target.value]);
-    }
+    console.log(e.target.value);
+    // if (subCategory.includes(e.target.value)) {
 
-    //
+    //   console.log("disselected remove products", e.target.value);
+
+    //   setSubCategory((prev) => prev.filter((item) => item !== e.target.value));
+    // } else {
+    //   // selected subcategory
+    //   console.log("selected subcategory", e.target.value);
+
+
+    //   // setSubCategory((prev) => [...prev, e.target.value]);
+    // }
   };
 
   const applyFilter = () => {
@@ -150,9 +174,9 @@ function Collection() {
     applyFilter();
   }, [category, subCategory]);
 
-  useEffect(() => {
-    sortProduct();
-  }, [sortType]);
+  // useEffect(() => {
+  //   sortProduct();
+  // }, [sortType]);
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t p-10">
       {/* Filter Options */}
@@ -172,27 +196,29 @@ function Collection() {
 
         {/* Category Filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">CATEGORIES</p>
 
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-            {Object.keys(Collections).map((col, index) => (
-              <p className="flex gap-2" key={index}>
-                <input type="checkbox" value={col} onChange={toogleCategory} />{" "}
-                {col}
-              </p>
-            ))}
+            {Object.keys(CollectionsData).map((category, index) => {
+              console.log("-------->>>",category.toLowerCase(),"===",selectedCategory);
+              return (
+              
+                <p className="flex gap-2" key={index}>
+                  <input type="checkbox" checked={category.toLowerCase()===selectedCategory} value={category} onChange={toogleCategory} />{" "}
+                  {category}
+                </p>
+              )
+            })}
           </div>
         </div>
 
         {/* Sub Category filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
