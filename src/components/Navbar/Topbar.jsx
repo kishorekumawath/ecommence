@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import MenuItem from "./MenuItem";
 import CollectionMenu from "./CollectionMenu";
@@ -10,6 +10,7 @@ function Topbar() {
         <NavLink to="/">
           <MenuItem name={"HOME"} />
         </NavLink>
+        {/*  CollectionMenu component */}
         <CollectionMenu />
         <NavLink to="/about" className="flex flex-col items-center gap-1">
           <MenuItem name={"ABOUT"} />

@@ -1,63 +1,203 @@
+// import React, { useEffect } from "react";
+// import { Title } from "./Title";
+// import { useCollections } from "../context/CollectionsContext";
+// import { assets } from "../assets/assets";
+// import { useNavigate } from "react-router-dom";
+// import { CollectionCategoryItem } from "./ProductItem";
+
+// // Skeleton for individual category item
+// const CategorySkeleton = () => (
+//   <div className="animate-pulse">
+//     <div className="relative aspect-square bg-gray-200 rounded-lg"></div>
+//     <div className="h-4 bg-gray-200 rounded w-3/4 mt-2"></div>
+//   </div>
+// );
+
+// // Skeleton for category section
+// const CategorySectionSkeleton = () => (
+//   <div className="text-center py-8">
+//     <div className="animate-pulse">
+//       <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
+//       <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-6"></div>
+//       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
+//         {Array(8)
+//           .fill(0)
+//           .map((_, index) => (
+//             <CategorySkeleton key={index} />
+//           ))}
+//       </div>
+//     </div>
+//   </div>
+// );
+
+// function Collections() {
+//   const { CollectionsData, isLoading, error, fetchCollections } =
+//     useCollections();
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     fetchCollections();
+//   }, [fetchCollections]);
+
+//   // Show skeleton loading state
+//   if (
+//     isLoading ||
+//     !CollectionsData ||
+//     Object.keys(CollectionsData).length === 0
+//   ) {
+//     return (
+//       <div className="my-2 sm:my-8 lg:my-10">
+//         <CategorySectionSkeleton />
+//         <CategorySectionSkeleton />
+//       </div>
+//     );
+//   }
+
+//   // Show error state
+//   if (error) {
+//     return (
+//       <div className="text-center py-8 text-red-600">
+//         <p>Error loading collections: {error.message}</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="my-2 sm:my-8 lg:my-10">
+//       {Object.keys(CollectionsData).map((collectionKey, index) => (
+//         <div key={index} className="text-center py-8 text-3xl">
+//           <Title
+//             text1={collectionKey.split(" ")[0]}
+//             text2={` ${collectionKey.split(" ")[1] || ""}`}
+//           />
+//           <p className="w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600">
+//             {collectionKey.description}
+//           </p>
+//           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
+//             {CollectionsData[collectionKey].map((subCategory, CIndex) => (
+//               <CollectionCategoryItem
+//                 key={CIndex}
+//                 title={subCategory.name}
+//                 img={subCategory.thumbnail || assets.p_img1}
+//                 categoryName={subCategory.name}
+//                 onClick={() => {
+//                   navigate(`/collection/${collectionKey.id}/${subCategory.id}`);
+//                 }}
+//               />
+//             ))}
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
+
+// export default Collections;
+
 import React, { useEffect } from "react";
 import { Title } from "./Title";
-import { CollectionCategoryItem } from "./ProductItem";
 import { useCollections } from "../context/CollectionsContext";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { CollectionCategoryItem } from "./ProductItem";
+
+// Skeleton components remain the same
+const CategorySkeleton = () => (
+  <div className="animate-pulse">
+    <div className="relative aspect-square bg-gray-200 rounded-lg"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4 mt-2"></div>
+  </div>
+);
+
+const CategorySectionSkeleton = () => (
+  <div className="text-center py-8">
+    <div className="animate-pulse">
+      <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
+      <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-6"></div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
+        {Array(8)
+          .fill(0)
+          .map((_, index) => (
+            <CategorySkeleton key={index} />
+          ))}
+      </div>
+    </div>
+  </div>
+);
 
 function Collections() {
   const { CollectionsData, isLoading, error, fetchCollections } =
     useCollections();
-
   const navigate = useNavigate();
-  // console.log("CollectionsData", CollectionsData);
 
   useEffect(() => {
     fetchCollections();
   }, [fetchCollections]);
 
-  // Handle loading and error states
-  if (isLoading) {
-    return <p>Loading collections...</p>;
+  if (
+    isLoading ||
+    !CollectionsData ||
+    Object.keys(CollectionsData).length === 0
+  ) {
+    return (
+      <div className="my-2 sm:my-8 lg:my-10">
+        <CategorySectionSkeleton />
+        <CategorySectionSkeleton />
+      </div>
+    );
   }
 
   if (error) {
-    return <p>Error loading collections: {error.message}</p>;
-  }
-
-  // Ensure CollectionsData exists and has the correct structure
-  if (!CollectionsData || Object.keys(CollectionsData).length === 0) {
-    return <p>No collections available.</p>;
+    return (
+      <div className="text-center py-8 text-red-600">
+        <p>Error loading collections: {error.message}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="my-2 sm:my-8 lg:my-10 ">
-      {Object.keys(CollectionsData).map((collectionKey, index) => (
-        <div key={index} className="text-center py-8 text-3xl">
-          <Title
-            text1={collectionKey.split(" ")[0]}
-            text2={` ${collectionKey.split(" ")[1] || ""}`}
-          />
-          <p className="w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600">
-            {collectionKey.description}
-          </p>
-          {/* Image Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10  justify-center mt-6 mx-10">
-            {CollectionsData[collectionKey].map((subCategory, CIndex) => (
-              <CollectionCategoryItem
-                key={CIndex}
-                title={subCategory.name}
-                img={subCategory.thumbnail || assets.p_img1}
-                categoryId={subCategory.id}
-                categoryName={subCategory.name}
-                onClick= {() => {
-                  navigate(`/collection/${subCategory.id}`);
-                }}
+    <div className="my-2 sm:my-8 lg:my-10">
+      {Object.entries(CollectionsData).map(
+        ([categoryName, categoryData], index) => {
+          // Assuming each category has an id property in the data
+          const categoryId =
+            categoryData.id || categoryName.toLowerCase().replace(/\s+/g, "-");
+
+          return (
+            <div key={index} className="text-center py-8 text-3xl">
+              <Title
+                text1={categoryName.split(" ")[0]}
+                text2={` ${categoryName.split(" ")[1] || ""}`}
               />
-            ))}
-          </div>
-        </div>
-      ))}
+              <p className="w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600">
+                {categoryData.description}
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
+                {categoryData.map((subCategory, subIndex) => {
+                  // Ensure subcategory has an id, fallback to generated one if not present
+                  // const subCategoryId =
+                  //   subCategory.id ||
+                  //   `${subCategory.name.toLowerCase().replace(/\s+/g, "-")}`;
+                  const subCategoryId = `${subCategory.name
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`;
+                  return (
+                    <CollectionCategoryItem
+                      key={subIndex}
+                      title={subCategory.name}
+                      img={subCategory.thumbnail || assets.p_img1}
+                      categoryName={subCategory.name}
+                      onClick={() => {
+                        navigate(`/collection/${categoryId}/${subCategoryId}`);
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+      )}
     </div>
   );
 }

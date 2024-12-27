@@ -54,40 +54,22 @@ export function ProductItemDesign2({ id, name, image, price }) {
   );
 }
 
-export function CollectionCategoryItem({
-  title,
-  img,
-  categoryId,
-  onClick
-}) {
-
-
+export function CollectionCategoryItem({ title, img, onClick }) {
   return (
-    // card holder
-
     <div>
       <div
         onClick={onClick}
-        className="relative aspect-square  group  bg-gray-300 rounded-lg flex-shrink-0 hover:ring-2 hover:ring-gray-300 transition-all cursor-pointer"
+        className="relative aspect-square group bg-gray-300 rounded-lg flex-shrink-0 hover:ring-2 hover:ring-gray-300 transition-all cursor-pointer"
       >
-        {/* image */}
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg">
           <img
             src={img}
-            alt=""
-            className="object-cover h-full w-full group-hover:scale-125 transition ease-in-out "
+            alt={title}
+            className="object-cover h-full w-full group-hover:scale-125 transition ease-in-out"
           />
         </div>
-
-        {/* overllay
-        <div className='absolute inset-0 bg-black/30 rounded-lg hover:backdrop-blur-sm transition-all ease-in-out'></div> */}
-
-        {/* title
-        <p className="absolute font-light bottom-0 border bg-white px-4 py-1  rounded-b-lg left-1/2 -translate-x-1/2 text-gray text-sm lg:text-md   opacity-100 translate-y-full transition-all ease-out duration-300 select-none ">
-          {title}
-        </p> */}
       </div>
-      <p className="text-lg text-gray mt-2"> {title}</p> 
+      <p className="text-lg text-gray mt-2">{title}</p>
     </div>
   );
 }
