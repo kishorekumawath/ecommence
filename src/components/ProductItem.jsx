@@ -58,21 +58,17 @@ export function CollectionCategoryItem({
   title,
   img,
   categoryId,
-  categoryName,
+  onClick
 }) {
-  const navigate = useNavigate();
-  // console.log("CollectionCategoryItem", categoryId);
-  const handleClick = () => {
-    navigate(`/collection/${categoryId}`);
-  };
+
 
   return (
     // card holder
 
     <div>
       <div
-        onClick={handleClick}
-        className="relative h-40 group  bg-gray-300 rounded-lg flex-shrink-0 hover:ring-2 hover:ring-gray-300 transition-all cursor-pointer"
+        onClick={onClick}
+        className="relative aspect-square  group  bg-gray-300 rounded-lg flex-shrink-0 hover:ring-2 hover:ring-gray-300 transition-all cursor-pointer"
       >
         {/* image */}
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg">
@@ -91,7 +87,7 @@ export function CollectionCategoryItem({
           {title}
         </p> */}
       </div>
-      <p className="text-lg text-gray "> {title}</p>
+      <p className="text-lg text-gray mt-2"> {title}</p> 
     </div>
   );
 }

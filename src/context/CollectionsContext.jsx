@@ -23,6 +23,11 @@ export const CollectionsProvider = ({ children }) => {
 
   const fetchCollections = useCallback(async () => {
     // console.log("Fetching collections started...");
+    if(CollectionsData && Object.keys(CollectionsData).length > 0) {
+      // console.log("CollectionsData already exists:", CollectionsData);
+      console.log("CollectionsData already exists: ------>>",);
+      return;
+    }
     setIsLoading(true);
     setError(null);
 

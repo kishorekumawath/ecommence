@@ -1,19 +1,16 @@
-import React from "react";
+import React,{useState} from "react";
 import { NavLink } from "react-router-dom";
 import MenuItem from "./MenuItem";
 import CollectionMenu from "./CollectionMenu";
-function Topbar({ CollectionsData, isLoading }) {
-  //   console.log("CollectionsData:Topbar page", CollectionsData, isLoading);
+function Topbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
     <div>
       <ul className=" sm:flex gap-5 text-sm text-gray-700 hidden">
         <NavLink to="/">
           <MenuItem name={"HOME"} />
         </NavLink>
-        <CollectionMenu
-          CollectionsData={CollectionsData}
-          isLoading={isLoading}
-        />
+        <CollectionMenu />
         <NavLink to="/about" className="flex flex-col items-center gap-1">
           <MenuItem name={"ABOUT"} />
         </NavLink>

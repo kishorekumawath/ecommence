@@ -2,10 +2,14 @@ import React, { useEffect } from "react";
 import { Title } from "./Title";
 import { CollectionCategoryItem } from "./ProductItem";
 import { useCollections } from "../context/CollectionsContext";
+import { assets } from "../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 function Collections() {
   const { CollectionsData, isLoading, error, fetchCollections } =
     useCollections();
+
+  const navigate = useNavigate();
   // console.log("CollectionsData", CollectionsData);
 
   useEffect(() => {
@@ -35,20 +39,20 @@ function Collections() {
             text2={` ${collectionKey.split(" ")[1] || ""}`}
           />
           <p className="w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis
-            perspiciatis eligendi quis ipsa accusantium aliquam aut ducimus!
-            Excepturi eligendi, sunt dolore architecto adipisci perspiciatis
-            maxime ut ad, vitae nostrum nesciunt?
+            {collectionKey.description}
           </p>
           {/* Image Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10  justify-center mt-6 mx-10">
             {CollectionsData[collectionKey].map((subCategory, CIndex) => (
               <CollectionCategoryItem
                 key={CIndex}
                 title={subCategory.name}
-                img={subCategory.thumbnail || subCategory.image || ""}
+                img={subCategory.thumbnail || assets.p_img1}
                 categoryId={subCategory.id}
                 categoryName={subCategory.name}
+                onClick= {() => {
+                  navigate(`/collection/${subCategory.id}`);
+                }}
               />
             ))}
           </div>

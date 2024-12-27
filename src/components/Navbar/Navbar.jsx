@@ -3,37 +3,11 @@ import { assets } from "../../assets/assets";
 import { Link, NavLink } from "react-router-dom";
 import SlidBarMenu from "./SlidBarMenu";
 import Topbar from "./Topbar";
-import { useCollections } from "../../context/CollectionsContext";
-import { i } from "framer-motion/client";
+
+
 
 function Navbar() {
   const [menuVisible, setMenuVisible] = useState(false);
-  const { CollectionsData, isLoading, error, fetchCollections } =
-    useCollections();
-
-  useEffect(() => {
-    // console.log("Navbar - fetchCollections called");
-    fetchCollections();
-  }, [fetchCollections]);
-
-  // Separate useEffect to monitor data changes
-  useEffect(() => {
-    // console.log("Navbar - CollectionsData updated:", CollectionsData);
-  }, [CollectionsData]);
-
-  useEffect(() => {
-    // console.log("Navbar - Loading state:", isLoading);
-  }, [isLoading]);
-
-  // Show loading state while data is being fetched
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  // Check if CollectionsData exists and has properties
-  if (!CollectionsData || Object.keys(CollectionsData).length === 0) {
-    return <div>Loading collections...</div>;
-  }
-
   return (
     <div className=" flex items-center justify-between py-5 font-medium px-10 ">
       {/* LOGO Icon */}
@@ -42,7 +16,7 @@ function Navbar() {
       </Link>
 
       {/* Top Menu Items */}
-      <Topbar CollectionsData={CollectionsData} isLoading={isLoading} />
+      <Topbar/>
 
       {/* Right side */}
       <div className="flex items-center gap-6">
@@ -70,8 +44,6 @@ function Navbar() {
         <SlidBarMenu
           menuVisible={menuVisible}
           setMenuVisible={setMenuVisible}
-          CollectionsData={CollectionsData}
-          isLoading={isLoading}
         />
       </div>
     </div>
