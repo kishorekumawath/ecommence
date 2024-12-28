@@ -6,17 +6,20 @@ import { assets } from "../assets/assets";
 
 export function ProductItem({ id, name, image, price }) {
   // const { currency } = useContext(ShopContext);
-  const currency = "$";
+  const currency = "₹";
   return (
-    <Link className="text-gray-700 cursor-pointer" to={`/product/${id}`}>
-      <div className="overflow-hidden">
+    <Link className="text-gray-700 cursor-pointer" to={`/product/${id} `}>
+      <div>
+        <div className='rounded-md overflow-hidden'>
         <img
-          className="hover:scale-110 transition ease-in-out"
-          src={image[0]}
+          className="hover:scale-105 transition ease-in-out h-96 w-64 object-cover "
+          src={image}
           alt=""
         />
-        <p className="pt-3 pb-1 text-sm">{name}</p>
-        <p className="text-sm font-medium">
+        </div>
+        
+        <p className="pt-3 pb-1 text-md">{name}</p>
+        <p className="text-lg font-semibold">
           {currency}
           {price}
         </p>

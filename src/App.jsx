@@ -11,6 +11,7 @@ import Product from "./pages/Product";
 import Navbar from "./components/Navbar/Navbar";
 import { CollectionsProvider } from "./context/CollectionsContext";
 import Footer from "./components/Footer";
+import SearchBar from "./components/Navbar/SearchBar";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
     <BrowserRouter>
       <CollectionsProvider>
         <Navbar />
+        <SearchBar/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

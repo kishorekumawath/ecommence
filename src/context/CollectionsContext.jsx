@@ -6,6 +6,13 @@ const CollectionsContext = createContext({
   isLoading: false,
   error: null,
   fetchCollections: () => {},
+  search:"",
+  setSearch:()=>{},
+  showSearch:false,
+  setShowSearch:()=>{},
+  fetchProducts:()=>{},
+  fetchSpecificProduct:()=>{}
+  
 });
 
 export const useCollections = () => {
@@ -20,6 +27,9 @@ export const CollectionsProvider = ({ children }) => {
   const [CollectionsData, setCollectionsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [search,setSearch] = useState("");
+  const [showSearch,setShowSearch] = useState(false);
+
 
   const fetchCollections = useCallback(async () => {
     // console.log("Fetching collections started...");
@@ -66,20 +76,50 @@ export const CollectionsProvider = ({ children }) => {
     }
   }, []);
 
-  // Add effect to monitor state changes
-  React.useEffect(() => {
-    // console.log("CollectionsData updated:", CollectionsData);
-  }, [CollectionsData]);
 
-  React.useEffect(() => {
-    // console.log("Loading state updated:", isLoading);
-  }, [isLoading]);
+  const fetchProducts = useCallback(async(category,subCategory)=>{
+    try {
+      const response = await fetch(
+        `http://localhost:9000/api/v1/products/${category}/${subCategory}`
+      );
+      const data = await response.json();
+      return data.products;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+
+  })
+
+  const fetchSpecificProduct = useCallback(async(productID)=>{
+    try{
+      const response = await fetch(`http://localhost:9000/api/v1/product/${productID}`);
+      const data = await response.json();
+      return data.product;
+    }catch(error){
+      console.log("error while fetching product data");
+    }
+  })
+
+  // Add effect to monitor state changes
+  // React.useEffect(() => {
+  //   // console.log("CollectionsData updated:", CollectionsData);
+  // }, [CollectionsData]);
+
+  // React.useEffect(() => {
+  //   // console.log("Loading state updated:", isLoading);
+  // }, [isLoading]);
 
   const value = {
     CollectionsData,
     isLoading,
     error,
     fetchCollections,
+    search,
+    setSearch,
+    showSearch,
+    setShowSearch,
+    fetchProducts,
+    fetchSpecificProduct
   };
 
   return (

@@ -70,15 +70,14 @@ function LatestCollections() {
           ref={carouselRef}
           className="flex overflow-x-auto scrollbar-hide space-x-4 px-6"
         >
-          {Array(10)
-            .fill()
-            .map((_, index) => (
+          {products.slice(0,10)
+            .map((product, index) => (
               <ProductItemDesign2
                 key={index}
-                id={"aaaa"}
-                name={"name"}
-                image={assets.p_img1}
-                price={100}
+                id={product._id}
+                name={product.name}
+                image={product.image[0]}
+                price={product.price}
               />
             ))}
         </div>

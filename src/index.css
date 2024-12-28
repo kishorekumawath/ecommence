@@ -23,6 +23,10 @@ a.active hr{
     font-style: normal;
   }
 
+  ::-webkit-scrollbar{
+    display: none;
+  }
+
   @media (max-width:640px){
     a.active{
         background-color: rgb(223, 223, 223);
