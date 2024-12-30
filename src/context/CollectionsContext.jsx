@@ -90,7 +90,7 @@ export const CollectionsProvider = ({ children }) => {
 
   })
 
-  const fetchSpecificProduct = useCallback(async(productID)=>{
+  const fetchSpecificProduct = async(productID)=>{
     try{
       const response = await fetch(`http://localhost:9000/api/v1/product/${productID}`);
       const data = await response.json();
@@ -98,7 +98,7 @@ export const CollectionsProvider = ({ children }) => {
     }catch(error){
       console.log("error while fetching product data");
     }
-  })
+  }
 
   // Add effect to monitor state changes
   // React.useEffect(() => {

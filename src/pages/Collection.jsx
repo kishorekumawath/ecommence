@@ -106,50 +106,36 @@ function Collection() {
           category.toLowerCase().replace(/\s/g, "-") ===
           categoryName.toLowerCase()
       );
-  
-      // Special cases that should maintain their exact casing
-      const specialCases = {
-        "hooded-sweatshirt": "Hooded SweatShirt",
-        "3/4th-sleeve-t-shirt": "3/4th Sleeve T-Shirt"
-      };
-  
-      let subcategoryNameNormalized;
-  
-      // Check if the subcategoryName matches any special case
-      const specialCaseKey = Object.keys(specialCases).find(
-        key => key.toLowerCase() === subCategoryName.toLowerCase()
-      );
-  
-      if (specialCaseKey) {
-        // Use the predefined format for special cases
-        subcategoryNameNormalized = specialCases[specialCaseKey];
-      } else {
-        // Default normalization for other cases
-        subcategoryNameNormalized = subCategoryName
-          .replace(/-/g, " ")
-          .split(" ")
-          .map((word, index, array) => {
-            // Convert word to lowercase for comparison
-            const lowerWord = word.toLowerCase();
-  
-            // Special case for T-Shirt
-            if (lowerWord === "t" && index < array.length - 1 && 
-                array[index + 1].toLowerCase() === "shirt") {
-              return "T";
-            }
-            if (lowerWord === "shirt" && index > 0 && 
-                array[index - 1].toLowerCase() === "t") {
-              return "Shirt";
-            }
-  
-            // Capitalize first letter for all other words
-            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-          })
-          .join(" ")
-          .replace(/T Shirt/i, "T-Shirt");
-      }
-  
-      console.log(matchingCategory,'---', subcategoryNameNormalized);
+
+      let subcategoryNameNormalized = subCategoryName
+        .replace(/-/g, " ")
+        .split(" ")
+        .map((word, index, array) => {
+          // Convert word to lowercase for comparison
+          const lowerWord = word.toLowerCase();
+
+          // Special case for T-Shirt
+          if (
+            lowerWord === "t" &&
+            index < array.length - 1 &&
+            array[index + 1].toLowerCase() === "shirt"
+          ) {
+            return "T";
+          }
+          if (
+            lowerWord === "shirt" &&
+            index > 0 &&
+            array[index - 1].toLowerCase() === "t"
+          ) {
+            return "Shirt";
+          }
+
+          // Capitalize first letter for all other words
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(" ")
+        .replace(/T Shirt/i, "T-Shirt");
+
       return [matchingCategory, subcategoryNameNormalized];
     }
     return []; // Return empty array if categoryName or subCategoryName is missing

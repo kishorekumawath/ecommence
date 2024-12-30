@@ -12,12 +12,19 @@ import Navbar from "./components/Navbar/Navbar";
 import { CollectionsProvider } from "./context/CollectionsContext";
 import Footer from "./components/Footer";
 import SearchBar from "./components/Navbar/SearchBar";
+import { CartProvider } from "./context/CartContext";
+import PlaceOrder from "./pages/PlaceOrder";
+
 
 function App() {
 
   return (
     <BrowserRouter>
+  
+
+
       <CollectionsProvider>
+      <CartProvider>
         <Navbar />
         <SearchBar/>
         <Routes>
@@ -28,10 +35,13 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/place-order"element={<PlaceOrder />} />
           <Route path="/product/:productId" element={<Product />} />
         </Routes>
         <Footer />
+        </CartProvider>
       </CollectionsProvider>
+     
     </BrowserRouter>
   );
 }

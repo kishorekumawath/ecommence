@@ -12,7 +12,7 @@ export function ProductItem({ id, name, image, price }) {
       <div>
         <div className='rounded-md overflow-hidden'>
         <img
-          className="hover:scale-105 transition ease-in-out h-96 w-64 object-cover "
+          className="hover:scale-105 transition ease-in-out h-64 sm:h-80 w-52 object-cover "
           src={image}
           alt=""
         />

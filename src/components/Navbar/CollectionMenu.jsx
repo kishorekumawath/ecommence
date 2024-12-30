@@ -126,7 +126,7 @@
 
 import React, { useState, useEffect } from "react";
 import MenuItem from "./MenuItem";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCollections } from "../../context/CollectionsContext";
 
 function CollectionMenu() {
@@ -135,6 +135,7 @@ function CollectionMenu() {
   const { CollectionsData, isLoading, error, fetchCollections } =
     useCollections();
   const navigate = useNavigate();
+  const loaction = useLocation();
 
   useEffect(() => {
     fetchCollections();
@@ -238,7 +239,9 @@ function CollectionMenu() {
       onMouseLeave={() => setIsMenuOpen(false)}
     >
       <div className="flex flex-col items-center gap-1 cursor-pointer">
-        <MenuItem name={"COLLECTIONS"} />
+
+        
+        <MenuItem name={"COLLECTIONS"} forceShowDash={location.pathname.includes('/collection')?true:false} />
       </div>
 
       <div
