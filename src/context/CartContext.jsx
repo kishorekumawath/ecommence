@@ -90,6 +90,7 @@ export const CartProvider = ({ children }) => {
     return totalAmount;
   };
 
+
   const value = {
     cartItems,
     setCartItems,

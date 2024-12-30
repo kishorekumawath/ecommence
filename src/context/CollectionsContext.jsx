@@ -11,8 +11,8 @@ const CollectionsContext = createContext({
   showSearch:false,
   setShowSearch:()=>{},
   fetchProducts:()=>{},
-  fetchSpecificProduct:()=>{}
-  
+  fetchSpecificProduct:()=>{},
+  calculateReview:()=>{},
 });
 
 export const useCollections = () => {
@@ -100,6 +100,19 @@ export const CollectionsProvider = ({ children }) => {
     }
   }
 
+
+  const calculateReview = (product) => {
+
+    
+    let totalReviews = 0; // Use let instead of const
+    for (let i = 0; i < product.reviews.length; i++) {
+      totalReviews += product.reviews[i].rating;
+    }
+
+    const review =Math.floor(Number(totalReviews / product.reviews.length));
+    return [review,5-review];
+  };
+
   // Add effect to monitor state changes
   // React.useEffect(() => {
   //   // console.log("CollectionsData updated:", CollectionsData);
@@ -119,7 +132,8 @@ export const CollectionsProvider = ({ children }) => {
     showSearch,
     setShowSearch,
     fetchProducts,
-    fetchSpecificProduct
+    fetchSpecificProduct,
+    calculateReview
   };
 
   return (

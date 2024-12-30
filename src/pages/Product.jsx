@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { assets, products } from "../assets/assets";
 import { useCollections } from "../context/CollectionsContext";
 import { useCartContext } from "../context/CartContext";
+import ReviewBox from "../components/ReviewBox";
 
 const colorMap = {
   Yl: "bg-yellow-400",
@@ -40,10 +41,12 @@ const colorMap = {
   Fl: "bg-pink-500",
 };
 
+const bottomSection = ['Description', 'Additional Information', 'Reviews',];
+
 function Product() {
   const navigate = useNavigate();
   const { productId } = useParams();
-  const { fetchSpecificProduct } = useCollections();
+  const { fetchSpecificProduct, calculateReview } = useCollections();
   const { addToCart } = useCartContext();
 
   const [product, setProduct] = useState({});
@@ -52,19 +55,25 @@ function Product() {
   const [selectedColor, setSelectedColor] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const [selectedBottomSection, setSelectedBottomSection] = useState(bottomSection[0]);
+  const [overAllReview, setOverAllReview] = useState([0, 0]);
   const fetchProductData = async () => {
     setIsLoading(true);
-    fetchSpecificProduct(productId).then((data) => {
+    await fetchSpecificProduct(productId).then((data) => {
       setProduct(data);
       setImage(data.image);
+      setOverAllReview(calculateReview(data));
       setIsLoading(false);
     });
+
+
+  
   };
 
   useEffect(() => {
     fetchProductData();
   }, []);
-  console.log(product);
+
 
   const OriginalToSlug = (subcategory) => {
     // const categorySlug = category.toLowerCase().replace(/\s+/g, "-");
@@ -79,9 +88,8 @@ function Product() {
           <button
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
-              selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
-            }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
+              }`}
           />
         ))}
       </div>
@@ -94,9 +102,10 @@ function Product() {
       color: selectedColor,
       quantity: 1,
     };
-    addToCart(cartItem);
-    // addToCart(product._id, size);
+    addToCart(product._id,size);
   };
+
+
   const ProductSkeleton = () => (
     <div className="border-t-2 pt-5 sm:pt-10 px-4 sm:px-10">
       {/* Breadcrumb */}
@@ -201,12 +210,12 @@ function Product() {
               )}/${OriginalToSlug(product?.category?.name)}`
             )
           }
-          className="hover:text-gray-900 capitalize"
+          className="hover:text-gray-900 capitalize line-clamp-1"
         >
           {product?.category?.name}
         </button>
         <span>/</span>
-        <span className="text-gray-900">{product?.name}</span>
+        <span className="text-gray-900 line-clamp-1">{product?.name}</span>
       </div>
       {/* ---------------- product info ----------------- */}
       <div className="flex-1 flex flex-col gap-3 sm:flex-row ">
@@ -229,24 +238,33 @@ function Product() {
         {/* ---------------- product information ------------------ */}
         <div className="flex-1">
           <h1 className="font-medium text-2xl mt-2">{product.name}</h1>
-          <div className="flex items-center gap-1 mt-2">
-            <img src={assets.star_icon} alt="" className="w-3 " />
-            <img src={assets.star_icon} alt="" className="w-3 " />
-            <img src={assets.star_icon} alt="" className="w-3 " />
-            <img src={assets.star_icon} alt="" className="w-3 " />
-            <img src={assets.star_dull_icon} alt="" className="w-3 " />
-            <p className="pl-2">{112}</p>
+          <div  className="flex items-center gap-1 mt-2">
+           
+            {Array(overAllReview[0])
+                      .fill()
+                      .map((_, index) => (
+                        <img key={`filled-${index}`} src={assets.star_icon} alt="" className="w-3 " />
+                      ))}
+                    {Array(overAllReview[1])
+                      .fill()
+                      .map((_, index) => (
+                        <img key={`dull-${index}`} src={assets.star_dull_icon} alt="" className="w-3 " />
+                      ))}
+  
+
+            <p className="pl-2">{product.reviews.length}</p>
           </div>
           <p className="mt-5 text-3xl font-medium">{`$ ${product.price}`}</p>
-          <p className="mt-5 text-gray-500 md:w-4/5">{product.description}</p>
+          <p className="mt-2 text-gray-500">MRP: <span className="line-through text-gray-700 font-semibold">{product.price + 500}</span>  Inclusive of all Taxes</p>
+
+
           <div className="flex  gap-4 my-8">
             {product?.size?.map((item, index) => (
               <button
                 onClick={() => setSize(item)}
                 key={index}
-                className={`border bg-gray-100 py-2 px-4 rounded-md ${
-                  item === size ? "ring-2 ring-orange-300 text-black" : ""
-                }`}
+                className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
+                  }`}
               >
                 {item}
               </button>
@@ -260,38 +278,61 @@ function Product() {
 
           <button
             onClick={handleAddToCart} // handleAddToCart function
-            className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700"
+            className=" text-black w-full px-8 py-3 mb-2 sm:w-auto text-sm active:bg-gray-700 mr-5 bg-orange-300 rounded-md"
+          >
+            BUY NOW
+          </button>
+
+
+          <button
+            onClick={handleAddToCart} // handleAddToCart function
+            className="bg-black w-full sm:w-auto text-white px-8 py-3 text-sm active:bg-gray-700 rounded-md"
           >
             ADD TO CART
           </button>
+
+
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
-            <p>100% Orignal product</p>
-            <p>Cash on delivery is available on this product.</p>
-            <p>Easy return and exchange policy within 7 days.</p>
+            {
+              product.details.map((item, index) => <p key={index}>{item}</p>)
+            }
+
           </div>
         </div>
       </div>
 
-      {/* ------------------ Description & review sections  --------------------*/}
-      <div className="mt-20">
-        <div className="flex">
-          <b className="border px-5 py-3 text-sm">Description</b>
-          <p className="border px-5 py-3 text-sm">Reviews</p>
+      {/* ------------------ Description, add info & review sections  --------------------*/}
+      <div className="mt-10 sm:mt-20">
+        <div className="flex w-full sm:w-auto">
+          <p onClick={() => setSelectedBottomSection(bottomSection[0])} className={` w-full sm:w-auto border px-5 py-3 text-sm ${selectedBottomSection === bottomSection[0] ? 'font-semibold' : 'font-light'} cursor-pointer`}>Description</p>
+          <p onClick={() => setSelectedBottomSection(bottomSection[1])} className={`w-full sm:w-auto border px-5 py-3 text-sm ${selectedBottomSection === bottomSection[1] ? 'font-semibold' : 'font-light'} cursor-pointer`}>Additional Information</p>
+          <p onClick={() => setSelectedBottomSection(bottomSection[2])} className={`w-full sm:w-auto border px-5 py-3 text-sm ${selectedBottomSection === bottomSection[2] ? 'font-semibold' : 'font-light'} cursor-pointer`}>Reviews</p>
         </div>
-        <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
-          <p>
-            An e-commerce website is an online platformthat failitates the
-            buying and selling products{" "}
-          </p>
-          <p>
-            E-commerce websites typically display products or servies along with
-            detailed information of products
-          </p>
-        </div>
+
+        {selectedBottomSection === bottomSection[0] && (
+          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500 w-full">
+            {product.description.split('.').map((item, index) => (
+              <p key={index}>{item}</p>
+            ))}
+          </div>
+        )}
+
+        {selectedBottomSection === bottomSection[1] && (
+          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+            <p>{product.addInfo}</p>
+          </div>
+        )}
+        {selectedBottomSection === bottomSection[2] && (
+          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+            {product.reviews.map((review, index) => (
+              <ReviewBox key={index} review={review} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
+
   );
 }
-
 export default Product;

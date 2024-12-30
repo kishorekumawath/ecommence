@@ -74,14 +74,14 @@ function Cart() {
       <div>
         <Title text1={"YOUR"} text2={"CART"} />
       </div>
-      <div className='px-10 mt-5'>
+      <div className='px-2 mt-5'>
         {cartItemsData.length > 0 ? (
           cartItemsData.map((item, index) => (
             <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
               <div className='flex items-start gap-6'>
                 <img src={item.product.image} alt="" className='w-16 sm:w-20' />
                 <div>
-                  <p className='text-xs sm:text-lg font-medium'>{item.product.name}</p>
+                  <p className='text-lg font-medium'>{item.product.name}</p>
                   <div className='flex items-center gap-5 mt-2'>
                   <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.size}</p>
                   <p className='text-xs text-gray-500'>Quantity: {item.quantity}</p>

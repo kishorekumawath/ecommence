@@ -5,11 +5,13 @@ import SlidBarMenu from "./SlidBarMenu";
 import Topbar from "./Topbar";
 import { useCollections } from "../../context/CollectionsContext";
 import { useCartContext } from "../../context/CartContext";
+import CartSlider from "./CartSlider";
 
 
 
 function Navbar() {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [cartVisible, setCartVisible] = useState(false);
   const {setShowSearch} = useCollections();
   const {getCartCount} = useCartContext();
   return (
@@ -30,13 +32,22 @@ function Navbar() {
         {/* Profile Icon */}
         <img src={assets.profile_icon} alt="" className="w-5 cursor-pointer" />
 
-        {/* Cart Icon */}
-        <Link to="/cart" className="relative">
+        {/* Cart Icon for mobile */}
+        <Link to="/cart" className="relative sm:hidden">
           <img src={assets.cart_icon} alt="" className="w-5 min-w-5" />
           <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px] ">
             {getCartCount()}
           </p>
         </Link>
+
+        {/* Cart Icon for desktop */}
+        <div onClick={()=>setCartVisible(true)} className="relative hidden sm:block cursor-pointer">
+          <img src={assets.cart_icon} alt="" className="w-5 min-w-5" />
+          <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px] ">
+            {getCartCount()}
+          </p>
+        </div>
+          <CartSlider cartVisible={cartVisible} setCartVisible={setCartVisible}/>
 
         {/* SlideBarMenu */}
         <img
