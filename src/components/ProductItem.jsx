@@ -10,14 +10,14 @@ export function ProductItem({ id, name, image, price }) {
   return (
     <Link className="text-gray-700 cursor-pointer" to={`/product/${id} `}>
       <div>
-        <div className='rounded-md overflow-hidden'>
-        <img
-          className="hover:scale-105 transition ease-in-out h-64 sm:h-80 w-52 object-cover "
-          src={image}
-          alt=""
-        />
+        <div className="rounded-md  overflow-hidden">
+          <img
+            className="hover:scale-105 rounded-md transition ease-in-out h-64 sm:h-80 w-52 object-cover "
+            src={image}
+            alt=""
+          />
         </div>
-        
+
         <p className="pt-3 pb-1 text-md">{name}</p>
         <p className="text-lg font-semibold">
           {currency}
@@ -37,19 +37,19 @@ export function ProductItemDesign2({ id, name, image, price }) {
     setLiked(!liked);
   };
   return (
-    <Link to={`/product/${id}`} className=" border p-1 rounded-lg">
+    <Link to={`/product/${id}`}>
       <div className="w-52 sm:w-64 lg:w-72  rounded-lg group relative flex-shrink-1 overflow-hidden">
         <img
           src={image}
           alt=""
-          className="rounded-lg  group-hover:scale-110 transition ease-in-out overflow-hidden"
+          className="rounded-lg group-hover:scale-110 transition ease-in-out overflow-hidden"
         />
         <div className="flex justify-between absolute top-4 left-5 right-5  ">
           <IconButton
             iconPath={liked ? assets.like : assets.unLike}
             onClick={onLikeClick}
           />
-          <IconButton iconPath={assets.cart_icon} />
+          {/* <IconButton iconPath={assets.cart_icon} /> */}
         </div>
       </div>
       <ProductTitle name={name} price={price} />
