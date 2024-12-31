@@ -6,13 +6,13 @@ const CollectionsContext = createContext({
   isLoading: false,
   error: null,
   fetchCollections: () => {},
-  search:"",
-  setSearch:()=>{},
-  showSearch:false,
-  setShowSearch:()=>{},
-  fetchProducts:()=>{},
-  fetchSpecificProduct:()=>{},
-  calculateReview:()=>{},
+  search: "",
+  setSearch: () => {},
+  showSearch: false,
+  setShowSearch: () => {},
+  fetchProducts: () => {},
+  fetchSpecificProduct: () => {},
+  calculateReview: () => {},
 });
 
 export const useCollections = () => {
@@ -27,15 +27,14 @@ export const CollectionsProvider = ({ children }) => {
   const [CollectionsData, setCollectionsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [search,setSearch] = useState("");
-  const [showSearch,setShowSearch] = useState(false);
-
+  const [search, setSearch] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const fetchCollections = useCallback(async () => {
     // console.log("Fetching collections started...");
-    if(CollectionsData && Object.keys(CollectionsData).length > 0) {
+    if (CollectionsData && Object.keys(CollectionsData).length > 0) {
       // console.log("CollectionsData already exists:", CollectionsData);
-      console.log("CollectionsData already exists: ------>>",);
+      console.log("CollectionsData already exists: ------>>");
       return;
     }
     setIsLoading(true);
@@ -76,8 +75,7 @@ export const CollectionsProvider = ({ children }) => {
     }
   }, []);
 
-
-  const fetchProducts = useCallback(async(category,subCategory)=>{
+  const fetchProducts = useCallback(async (category, subCategory) => {
     try {
       const response = await fetch(
         `http://localhost:9000/api/v1/products/${category}/${subCategory}`
@@ -87,30 +85,28 @@ export const CollectionsProvider = ({ children }) => {
     } catch (error) {
       console.error("Error fetching products:", error);
     }
+  });
 
-  })
-
-  const fetchSpecificProduct = async(productID)=>{
-    try{
-      const response = await fetch(`http://localhost:9000/api/v1/product/${productID}`);
+  const fetchSpecificProduct = async (productID) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/api/v1/product/${productID}`
+      );
       const data = await response.json();
       return data.product;
-    }catch(error){
+    } catch (error) {
       console.log("error while fetching product data");
     }
-  }
-
+  };
 
   const calculateReview = (product) => {
-
-    
     let totalReviews = 0; // Use let instead of const
     for (let i = 0; i < product.reviews.length; i++) {
       totalReviews += product.reviews[i].rating;
     }
 
-    const review =Math.floor(Number(totalReviews / product.reviews.length));
-    return [review,5-review];
+    const review = Math.floor(Number(totalReviews / product.reviews.length));
+    return [review, 5 - review];
   };
 
   // Add effect to monitor state changes
@@ -133,7 +129,7 @@ export const CollectionsProvider = ({ children }) => {
     setShowSearch,
     fetchProducts,
     fetchSpecificProduct,
-    calculateReview
+    calculateReview,
   };
 
   return (

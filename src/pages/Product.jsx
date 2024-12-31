@@ -41,7 +41,7 @@ const colorMap = {
   Fl: "bg-pink-500",
 };
 
-const bottomSection = ['Description', 'Additional Information', 'Reviews',];
+const bottomSection = ["Description", "Additional Information", "Reviews"];
 
 function Product() {
   const navigate = useNavigate();
@@ -55,25 +55,39 @@ function Product() {
   const [selectedColor, setSelectedColor] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const [selectedBottomSection, setSelectedBottomSection] = useState(bottomSection[0]);
+  const [selectedBottomSection, setSelectedBottomSection] = useState(
+    bottomSection[0]
+  );
   const [overAllReview, setOverAllReview] = useState([0, 0]);
   const fetchProductData = async () => {
     setIsLoading(true);
     await fetchSpecificProduct(productId).then((data) => {
       setProduct(data);
       setImage(data.image);
-      setOverAllReview(calculateReview(data));
+      const reviewScore = calculateReview(data);
+      // Ensure we have valid numbers for the star display
+      setOverAllReview([
+        Math.max(0, Math.min(5, Math.floor(reviewScore[0] || 0))),
+        Math.max(0, Math.min(5, Math.floor(reviewScore[1] || 0))),
+      ]);
+
       setIsLoading(false);
     });
-
-
-  
   };
-
+  // Helper function to render stars
+  const renderStars = (filledStars, totalStars = 5) => {
+    return Array.from({ length: totalStars }, (_, index) => (
+      <img
+        key={index}
+        src={index < filledStars ? assets.star_icon : assets.star_dull_icon}
+        alt={index < filledStars ? "filled star" : "empty star"}
+        className="w-3"
+      />
+    ));
+  };
   useEffect(() => {
     fetchProductData();
-  }, []);
-
+  }, [productId]);
 
   const OriginalToSlug = (subcategory) => {
     // const categorySlug = category.toLowerCase().replace(/\s+/g, "-");
@@ -88,8 +102,9 @@ function Product() {
           <button
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
-              }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
+              selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
+            }`}
           />
         ))}
       </div>
@@ -102,9 +117,8 @@ function Product() {
       color: selectedColor,
       quantity: 1,
     };
-    addToCart(product._id,size);
+    addToCart(product._id, size);
   };
-
 
   const ProductSkeleton = () => (
     <div className="border-t-2 pt-5 sm:pt-10 px-4 sm:px-10">
@@ -219,52 +233,54 @@ function Product() {
       </div>
       {/* ---------------- product info ----------------- */}
       <div className="flex-1 flex flex-col gap-3 sm:flex-row ">
-        {/* ---------------- product images ----------------- */}
-        <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal w-[10vw] ">
-          {product?.addImages?.map((img, index) => (
+        {/* Mobile layout: Main image first, then additional images */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-1/2">
+          {/* Main Image */}
+          <div className="w-full sm:w-[80%] order-1 sm:order-2">
             <img
-              onClick={() => setImage(img)}
-              src={img}
-              key={index}
-              className="w-[50%] sm:w-[100%] sm:mb-3 flex-shrink-0 cursor-pointer"
+              className="w-full h-auto object-cover rounded-md"
+              src={image}
+              alt={product?.name || "Product image"}
             />
-          ))}
-        </div>
+          </div>
 
-        <div className="w-full sm:w-[40%]">
-          <img className="w-full h-auto" src={image} alt="" />
+          {/* Additional Images - Now below main image on mobile */}
+          <div className="flex sm:flex-col gap-2 sm:gap-3 overflow-x-auto sm:overflow-y-auto sm:h-[600px] w-full sm:w-[20%] pb-4 sm:pb-0 order-2 sm:order-1">
+            {product?.addImages?.map((img, index) => (
+              <img
+                onClick={() => setImage(img)}
+                src={img}
+                key={index}
+                className="w-[80px] sm:w-full h-[80px] sm:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-opacity"
+              />
+            ))}
+          </div>
         </div>
 
         {/* ---------------- product information ------------------ */}
         <div className="flex-1">
-          <h1 className="font-medium text-2xl mt-2">{product.name}</h1>
-          <div  className="flex items-center gap-1 mt-2">
-           
-            {Array(overAllReview[0])
-                      .fill()
-                      .map((_, index) => (
-                        <img key={`filled-${index}`} src={assets.star_icon} alt="" className="w-3 " />
-                      ))}
-                    {Array(overAllReview[1])
-                      .fill()
-                      .map((_, index) => (
-                        <img key={`dull-${index}`} src={assets.star_dull_icon} alt="" className="w-3 " />
-                      ))}
-  
-
-            <p className="pl-2">{product.reviews.length}</p>
+          <h1 className="font-medium text-2xl mt-2">{product?.name}</h1>
+          <div className="flex items-center gap-1 mt-2">
+            {renderStars(overAllReview[0])}
+            <p className="pl-2">{product?.reviews?.length || 0}</p>
           </div>
-          <p className="mt-5 text-3xl font-medium">{`$ ${product.price}`}</p>
-          <p className="mt-2 text-gray-500">MRP: <span className="line-through text-gray-700 font-semibold">{product.price + 500}</span>  Inclusive of all Taxes</p>
-
+          <p className="mt-5 text-3xl font-medium">{`$ ${product?.price}`}</p>
+          <p className="mt-2 text-gray-500">
+            MRP:{" "}
+            <span className="line-through text-gray-700 font-semibold">
+              {product?.price + 500}
+            </span>{" "}
+            Inclusive of all Taxes
+          </p>
 
           <div className="flex  gap-4 my-8">
             {product?.size?.map((item, index) => (
               <button
                 onClick={() => setSize(item)}
                 key={index}
-                className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
-                  }`}
+                className={`border bg-gray-100 py-2 px-4 rounded-md ${
+                  item === size ? "ring-2 ring-orange-300 text-black" : ""
+                }`}
               >
                 {item}
               </button>
@@ -283,7 +299,6 @@ function Product() {
             BUY NOW
           </button>
 
-
           <button
             onClick={handleAddToCart} // handleAddToCart function
             className="bg-black w-full sm:w-auto text-white px-8 py-3 text-sm active:bg-gray-700 rounded-md"
@@ -291,13 +306,11 @@ function Product() {
             ADD TO CART
           </button>
 
-
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
-            {
-              product.details.map((item, index) => <p key={index}>{item}</p>)
-            }
-
+            {product?.details.map((item, index) => (
+              <p key={index}>{item}</p>
+            ))}
           </div>
         </div>
       </div>
@@ -305,14 +318,41 @@ function Product() {
       {/* ------------------ Description, add info & review sections  --------------------*/}
       <div className="mt-10 sm:mt-20">
         <div className="flex w-full sm:w-auto">
-          <p onClick={() => setSelectedBottomSection(bottomSection[0])} className={` w-full sm:w-auto border px-5 py-3 text-sm ${selectedBottomSection === bottomSection[0] ? 'font-semibold' : 'font-light'} cursor-pointer`}>Description</p>
-          <p onClick={() => setSelectedBottomSection(bottomSection[1])} className={`w-full sm:w-auto border px-5 py-3 text-sm ${selectedBottomSection === bottomSection[1] ? 'font-semibold' : 'font-light'} cursor-pointer`}>Additional Information</p>
-          <p onClick={() => setSelectedBottomSection(bottomSection[2])} className={`w-full sm:w-auto border px-5 py-3 text-sm ${selectedBottomSection === bottomSection[2] ? 'font-semibold' : 'font-light'} cursor-pointer`}>Reviews</p>
+          <p
+            onClick={() => setSelectedBottomSection(bottomSection[0])}
+            className={` w-full sm:w-auto border px-5 py-3 text-sm ${
+              selectedBottomSection === bottomSection[0]
+                ? "font-semibold"
+                : "font-light"
+            } cursor-pointer`}
+          >
+            Description
+          </p>
+          <p
+            onClick={() => setSelectedBottomSection(bottomSection[1])}
+            className={`w-full sm:w-auto border px-5 py-3 text-sm ${
+              selectedBottomSection === bottomSection[1]
+                ? "font-semibold"
+                : "font-light"
+            } cursor-pointer`}
+          >
+            Additional Information
+          </p>
+          <p
+            onClick={() => setSelectedBottomSection(bottomSection[2])}
+            className={`w-full sm:w-auto border px-5 py-3 text-sm ${
+              selectedBottomSection === bottomSection[2]
+                ? "font-semibold"
+                : "font-light"
+            } cursor-pointer`}
+          >
+            Reviews
+          </p>
         </div>
 
         {selectedBottomSection === bottomSection[0] && (
           <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500 w-full">
-            {product.description.split('.').map((item, index) => (
+            {product.description.split(".").map((item, index) => (
               <p key={index}>{item}</p>
             ))}
           </div>
@@ -332,7 +372,6 @@ function Product() {
         )}
       </div>
     </div>
-
   );
 }
 export default Product;
