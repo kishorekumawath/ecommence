@@ -209,7 +209,7 @@ function Product() {
   }
 
   return (
-    <div className="border-t-2  pt-10 px-10 transition-opacity ease-in duration-500 opacity-100 ">
+    <div className="border-t-2  pt-10 px-6 transition-opacity ease-in duration-500 opacity-100 ">
       {/* breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
         <button onClick={() => navigate("/")} className="hover:text-gray-900">
@@ -236,9 +236,9 @@ function Product() {
         {/* Mobile layout: Main image first, then additional images */}
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-1/2">
           {/* Main Image */}
-          <div className="w-full sm:w-[80%] order-1 sm:order-2">
+          <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] overflow-hidden order-1 sm:order-2">
             <img
-              className="w-full h-auto object-cover rounded-md"
+              className="w-full object-cover rounded-md"
               src={image}
               alt={product?.name || "Product image"}
             />
@@ -316,11 +316,11 @@ function Product() {
       </div>
 
       {/* ------------------ Description, add info & review sections  --------------------*/}
-      <div className="mt-10 sm:mt-20">
-        <div className="flex w-full sm:w-auto">
+      <div className="mt-10">
+        <div className="flex w-full sm:w-auto overflow-hidden">
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={` w-full sm:w-auto border px-5 py-3 text-sm ${
+            className={` w-full sm:w-auto border px-2 py-2 text-sm ${
               selectedBottomSection === bottomSection[0]
                 ? "font-semibold"
                 : "font-light"
@@ -330,7 +330,7 @@ function Product() {
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-5 py-3 text-sm ${
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
               selectedBottomSection === bottomSection[1]
                 ? "font-semibold"
                 : "font-light"
@@ -340,7 +340,7 @@ function Product() {
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[2])}
-            className={`w-full sm:w-auto border px-5 py-3 text-sm ${
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
               selectedBottomSection === bottomSection[2]
                 ? "font-semibold"
                 : "font-light"
@@ -349,27 +349,29 @@ function Product() {
             Reviews
           </p>
         </div>
+        {/* Content container */}
+        <div className="w-full">
+          {selectedBottomSection === bottomSection[0] && (
+            <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500 w-full">
+              {product.description.split(".").map((item, index) => (
+                <p key={index}>{item}</p>
+              ))}
+            </div>
+          )}
 
-        {selectedBottomSection === bottomSection[0] && (
-          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500 w-full">
-            {product.description.split(".").map((item, index) => (
-              <p key={index}>{item}</p>
-            ))}
-          </div>
-        )}
-
-        {selectedBottomSection === bottomSection[1] && (
-          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
-            <p>{product.addInfo}</p>
-          </div>
-        )}
-        {selectedBottomSection === bottomSection[2] && (
-          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
-            {product.reviews.map((review, index) => (
-              <ReviewBox key={index} review={review} />
-            ))}
-          </div>
-        )}
+          {selectedBottomSection === bottomSection[1] && (
+            <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+              <p>{product.addInfo}</p>
+            </div>
+          )}
+          {selectedBottomSection === bottomSection[2] && (
+            <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+              {product.reviews.map((review, index) => (
+                <ReviewBox key={index} review={review} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
