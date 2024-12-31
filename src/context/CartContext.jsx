@@ -30,33 +30,49 @@ export const CartProvider = ({ children }) => {
   const [cartItemsData, setCartItemsData] = useState([]);
   // {itemId: 1, size: "S"}
   const navigate = useNavigate();
+  
+  
 
-  const addToCart = (itemId, size) => {
-    if (!size) {
-      console.log("size is required");
-      return;
-    }
-
+  const addToCart = (itemId, size,color) => {
+    
     let cartData = structuredClone(cartItems);
+
 
     if (cartData[itemId]) {
       //item already exists
-      if (cartData[itemId][size]) {
+      if ((cartData[itemId].map((item) => item.size).includes(size) && cartData[itemId].map((item) => item.color).includes(color))) {
         //item already exists with size
-        cartData[itemId][size] += 1;
+        cartData[itemId].map((item) => {
+          if (item.size === size && item.color === color) {
+            item.quantity += 1;
+          }
+        });
       } else {
         // item does not exist with size
-        cartData[itemId][size] = 1;
+       cartData[itemId].push({
+          size: size,
+          quantity: 1,
+          color: color
+        });
+        
       }
+       
     } else {
       // item does not exist
-      cartData[itemId] = {};
-      cartData[itemId][size] = 1;
+      cartData[itemId] = [];
+      cartData[itemId].push({
+        size: size,
+        quantity: 1,
+        color: color
+      });
+   
     }
 
     setCartItems(cartData);
+  
   };
 
+  console.log(cartItems);
   const getCartCount = () => {
     let count = 0;
     for (const items in cartItems) {
@@ -104,3 +120,6 @@ export const CartProvider = ({ children }) => {
   };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
+
+
+

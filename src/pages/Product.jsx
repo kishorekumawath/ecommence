@@ -111,13 +111,19 @@ function Product() {
     </div>
   );
   const handleAddToCart = () => {
-    const cartItem = {
-      productId: product._id,
-      size: size,
-      color: selectedColor,
-      quantity: 1,
-    };
-    addToCart(product._id, size);
+    if (!size) {
+      console.log("size is required");
+      return;
+    }
+
+    if(!selectedColor){
+      console.log("color is required");
+      return;
+    }
+
+    addToCart(product._id, size,selectedColor);
+
+
   };
 
   const ProductSkeleton = () => (

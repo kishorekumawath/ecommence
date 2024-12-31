@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import SearchBar from "./components/Navbar/SearchBar";
 import { CartProvider } from "./context/CartContext";
 import PlaceOrder from "./pages/PlaceOrder";
+import { AuthProvider } from "./context/AuthContext";
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
     <BrowserRouter>
   
 
-
+      <AuthProvider>
       <CollectionsProvider>
       <CartProvider>
         <Navbar />
@@ -41,6 +42,7 @@ function App() {
         <Footer />
         </CartProvider>
       </CollectionsProvider>
+      </AuthProvider>
      
     </BrowserRouter>
   );
