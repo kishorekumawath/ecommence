@@ -121,7 +121,11 @@ function Product() {
       return;
     }
 
-    addToCart(product._id, size,selectedColor);
+    // let cartObject = {
+    //   id: product._id,
+    //   size:
+    // }
+    addToCart(product._id, size,selectedColor,product);
 
 
   };

@@ -23,6 +23,42 @@ export const useCollections = () => {
   return context;
 };
 
+export const colorMap = {
+  Yl: "bg-yellow-400",
+  Wh: "bg-white",
+  BB: "bg-blue-200",
+  SG: "bg-gray-400",
+  Sb: "bg-sky-400",
+  Rb: "bg-blue-600",
+  Rd: "bg-red-500",
+  Pu: "bg-purple-500",
+  Pb: "bg-blue-800",
+  Ph: "bg-orange-200",
+  Or: "bg-orange-500",
+  OG: "bg-olive-600",
+  NYl: "bg-yellow-300",
+  Nb: "bg-navy-800",
+  MYl: "bg-yellow-600",
+  Mh: "bg-stone-400",
+  Mnt: "bg-green-200",
+  Mn: "bg-red-800",
+  LBp: "bg-pink-200",
+  Lv: "bg-purple-200",
+  Jd: "bg-emerald-400",
+  Gm: "bg-gray-300",
+  GYl: "bg-yellow-500",
+  Fgn: "bg-green-600",
+  Cor: "bg-orange-400",
+  Cop: "bg-amber-600",
+  Bn: "bg-brown-700",
+  Cm: "bg-gray-600",
+  BRd: "bg-red-700",
+  Gn: "bg-green-800",
+  Bk: "bg-black",
+  Be: "bg-amber-100",
+  Fl: "bg-pink-500",
+};
+
 export const CollectionsProvider = ({ children }) => {
   const [CollectionsData, setCollectionsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);

@@ -1,24 +1,25 @@
-import { s } from "framer-motion/client";
-import { use } from "react";
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useId,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CartContext = createContext({
+  cart: {},
   cartItems: {},
-  setCartItems: () => {},
-  addToCart: () => {},
+  setCartItems: () => { },
+  addToCart: () => { },
   getCartCount: 0,
-  updateQuantity: () => {},
-  navigate: () => {},
-  getCartAmount: () => {},
+  updateQuantity: () => { },
+  navigate: () => { },
+  getCartAmount: () => { },
   cartItemsData: [],
-  setCartItemsData: () => {},
+  setCartItemsData: () => { },
+  removeCartItem: () => { },
 });
 
 export const useCartContext = () => {
@@ -31,98 +32,172 @@ const getStorageKey = (userId) => {
 };
 
 export const CartProvider = ({ children }) => {
+
+  const [cart, setCart] = useState({});
+
   const [cartItems, setCartItems] = useState([]);
 
   const [cartItemsData, setCartItemsData] = useState([]);
 
   const navigate = useNavigate();
-  
-   // Load all carts from localStorage on mount
-   useEffect(() => {
-    const loadedCarts= {};
 
-    console.log("key", getStorageKey(null));
-   const Data = localStorage.getItem(getStorageKey(null));
+  // Load all carts from localStorage on mount
+  // useEffect(() => {
+  //   const loadedCarts = {};
 
-   console.log("Data local", Data);
- 
-}, []);
+  //   console.log("key", getStorageKey(null));
+  //   const Data = localStorage.getItem(getStorageKey(null));
+
+  //   console.log("Data local", Data);
+
+  // }, []);
+
+  //   {
+  //     "676ed08e3bf6d02449d766c7": [
+  //         {
+  //             "id": "1",  
+  //             "size": "M",
+  //             "quantity": 1,
+  //             "color": "Wh",
+  //             "product": {
+  //                 "_id": "676ed08e3bf6d02449d766c7",
+  //                 "name": "Unisex  Oversized T-Shirt White",
+  //                 "sku": "UAopUOs-Wh-S-UntitledProjectArtboard1-Fr-aop",
+  //                 "details": [
+  //                     "100% COTTON",
+  //                     "WEIGHT - 250 GSM",
+  //                     "HIGH-DENSITY PRINT"
+  //                 ],
+  //                 "description": "Material composition: Single Jersey 100% cotton.Fit type: Regular Fit .Sleeve typeHalf Sleeve.Collar style: Collarless. Length: Standard Length. Neck style: Round Neck. Country of Origin: India",
+  //                 "category": {
+  //                     "_id": "675ac0d9de6a7b69413b8118",
+  //                     "name": "Oversized Classic T-Shirt",
+  //                     "description": "",
+  //                     "parentCategory": {
+  //                         "_id": "675ac0d8de6a7b69413b80ee",
+  //                         "name": "Men's Clothing"
+  //                     },
+  //                     "level": 2
+  //                 },
+  //                 "price": 600,
+  //                 "size": [
+  //                     "S",
+  //                     "M",
+  //                     "L",
+  //                     "XL",
+  //                     "XXl"
+  //                 ],
+  //                 "stock": 8,
+  //                 "image": "https://dashboard.qikink.com/assets//client_products/22122578/1735289567.png",
+  //                 "addImages": [],
+  //                 "reviews": [
+  //                     {
+  //                         "_id": "6772c06ebcec8a5e5d498db1",
+  //                         "user": "675bcd77bbb356a32b34fe94",
+  //                         "rating": 4.8,
+  //                         "comment": "Very Nive Product",
+  //                         "createdAt": "2024-12-30T15:46:54.344Z"
+  //                     }
+  //                 ],
+  //                 "createdAt": "2024-12-27T16:06:38.381Z",
+  //                 "updatedAt": "2024-12-31T11:48:42.510Z",
+  //                 "__v": 0,
+  //                 "color": [
+  //                     "Bk",
+  //                     "Wh"
+  //                 ],
+  //                 "addInfo": "Just Additional Information"
+  //             }
+  //         }
+  //     ]
+  // }
+  // useEffect(() => {
+  //   console.log("cartData", cartItems);
+  //   const jsonData = JSON.stringify(cartItems);
+  //   console.log("eee", jsonData);
+  //   localStorage.setItem(getStorageKey(null), JSON.stringify(cartItems));
+  // }, [cartItems])
+
+  console.log("cart", cart);
 
 
-useEffect(() => {
-  console.log("cartData", cartItems);
-  const jsonData = JSON.stringify(cartItems);
-  console.log("eee", jsonData);
-  localStorage.setItem(getStorageKey(null), JSON.stringify(cartItems));
-},[cartItems])
-  
+  const addToCart = (id, size, color, product) => {
 
-  const addToCart = (itemId, size,color) => {
-    
-    let cartData = structuredClone(cartItems);
+    let copyCart = structuredClone(cart);
+    console.log('ccc', copyCart[id]);
+    if (copyCart[id]) {
 
-
-    if (cartData[itemId]) {
       //item already exists
-      if ((cartData[itemId].map((item) => item.size).includes(size) && cartData[itemId].map((item) => item.color).includes(color))) {
-        //item already exists with size
-        cartData[itemId].map((item) => {
+      console.log("cart",);
+      //item already exists with size and color
+      if ((copyCart[id].map((item) => item.size).includes(size)) && (copyCart[id].map((item) => item.color).includes(color))) {
+        copyCart[id].map((item) => {
           if (item.size === size && item.color === color) {
             item.quantity += 1;
           }
-        });
-      } else {
-        // item does not exist with size
-       cartData[itemId].push({
+        })
+      }else{
+        copyCart[id].push({
+          
           size: size,
           quantity: 1,
-          color: color
+          color: color,
+          product: product
         });
-        
-        
       }
-       
     } else {
-      // item does not exist
-      cartData[itemId] = [];
-      cartData[itemId].push({
+      copyCart[id] = [];
+      copyCart[id].push({
+    
         size: size,
         quantity: 1,
-        color: color
+        color: color,
+        product: product
       });
-   
-    }
 
-    
-    setCartItems(cartData);
+    }
+    setCart(copyCart);
+
   };
 
 
 
   const getCartCount = () => {
-   return Object.values(cartItems).reduce((total, items) => {
+    return Object.values(cart).reduce((total, items) => {
       return total + items.reduce((itemTotal, item) => {
         return itemTotal + item.quantity;
-        }, 0);
       }, 0);
+    }, 0);
   };
 
 
-  const updateQuantity = async (itemId, size, quantity) => {
-    let cartData = structuredClone(cartItems);
+  const updateQuantity = async (itemId,size,color, quantity) => {
+    
+    let copyCart = structuredClone(cart);
+    console.log('ccc', copyCart[itemId]);
+    copyCart[itemId].map((item) => {
+      if (item.size === size && item.color === color) {
+        item.quantity = quantity;
+      }
+    })
 
-    cartData[itemId][size] = quantity;
-    setCartItems(cartData);
+    setCart(copyCart);
+  };
+
+  const removeCartItem = (id,size,color) => {
+    let copyCart = structuredClone(cart);
+    copyCart[id] = copyCart[id].filter((item) => item.size !== size || item.color !== color);
+    setCart(copyCart);
   };
 
   const getCartAmount = async () => {
-    let totalAmount = 0;
-    for (const item in cartItemsData) {
-      totalAmount +=
-        cartItemsData[item].quantity * cartItemsData[item].product.price;
-    }
-    console.log("price", totalAmount);
-    return totalAmount;
+   
+    return Object.values(cart).reduce((total,items) => {
+      return total + items.reduce((subTotal,item) => {
+        return subTotal += item.quantity * item.product.price;
+      },0);
+    },0);
+    
   };
 
 
@@ -136,6 +211,8 @@ useEffect(() => {
     getCartAmount,
     cartItemsData,
     setCartItemsData,
+    removeCartItem,
+    cart
   };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
