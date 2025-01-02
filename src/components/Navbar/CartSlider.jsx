@@ -22,19 +22,18 @@ function CartSlider({ cartVisible, setCartVisible }) {
       setLoading(true);
       setError(null);
       const tempData = [];
-
       try {
         // Process items sequentially to maintain order
         for (const items in cartItems) {
           for (const item in cartItems[items]) {
-            if (cartItems[items][item] > 0) {
+          
               try {
                 const productData = await fetchSpecificProduct(items);
                 if (productData) {
                   tempData.push({
                     itemId: items,
-                    size: item,
-                    quantity: cartItems[items][item],
+                    size: item.size,
+                    quantity: item.quantity,
                     product: productData,
                   });
                 }
@@ -42,7 +41,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
                 console.error(`Error fetching product ${items}:`, productError);
                 // Continue with other products even if one fails
               }
-            }
+            
           }
         }
         setCartItemsData(tempData);
