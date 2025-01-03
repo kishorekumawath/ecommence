@@ -6,10 +6,10 @@ const CollectionsContext = createContext({
   isLoading: false,
   error: null,
   fetchCollections: () => {},
-  search: "",
-  setSearch: () => {},
-  showSearch: false,
-  setShowSearch: () => {},
+  // search: "",
+  // setSearch: () => {},
+  // showSearch: false,
+  // setShowSearch: () => {},
   fetchProducts: () => {},
   fetchSpecificProduct: () => {},
   calculateReview: () => {},
@@ -63,8 +63,8 @@ export const CollectionsProvider = ({ children }) => {
   const [CollectionsData, setCollectionsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
+  // const [search, setSearch] = useState("");
+  // const [showSearch, setShowSearch] = useState(false);
 
   const fetchCollections = useCallback(async () => {
     // console.log("Fetching collections started...");
@@ -145,24 +145,15 @@ export const CollectionsProvider = ({ children }) => {
     return [review, 5 - review];
   };
 
-  // Add effect to monitor state changes
-  // React.useEffect(() => {
-  //   // console.log("CollectionsData updated:", CollectionsData);
-  // }, [CollectionsData]);
-
-  // React.useEffect(() => {
-  //   // console.log("Loading state updated:", isLoading);
-  // }, [isLoading]);
-
   const value = {
     CollectionsData,
     isLoading,
     error,
     fetchCollections,
-    search,
-    setSearch,
-    showSearch,
-    setShowSearch,
+    // search,
+    // setSearch,
+    // showSearch,
+    // setShowSearch,
     fetchProducts,
     fetchSpecificProduct,
     calculateReview,

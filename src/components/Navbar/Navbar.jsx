@@ -3,14 +3,12 @@ import { assets } from "../../assets/assets";
 import { Link, NavLink } from "react-router-dom";
 import SlidBarMenu from "./SlidBarMenu";
 import Topbar from "./Topbar";
-import { useCollections } from "../../context/CollectionsContext";
 import { useCartContext } from "../../context/CartContext";
 import CartSlider from "./CartSlider";
 
 function Navbar() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
-  const { setShowSearch } = useCollections();
   const { getCartCount } = useCartContext();
   return (
     <div className=" flex items-center justify-between py-5 font-medium px-10 sticky top-0 bg-white z-50">
@@ -24,13 +22,13 @@ function Navbar() {
 
       {/* Right side */}
       <div className="flex items-center gap-6">
-        {/* Search Icon */}
+        {/* Search Icon
         <img
           onClick={() => setShowSearch(true)}
           src={assets.search_icon}
           alt=""
           className="w-5 cursor-pointer"
-        />
+        /> */}
 
         {/* Profile Icon */}
         <img src={assets.profile_icon} alt="" className="w-5 cursor-pointer" />
