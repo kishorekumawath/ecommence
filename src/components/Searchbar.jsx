@@ -6,21 +6,21 @@ export const Searchbar = ({
   setSearchQuery,
   filteredProducts,
 }) => {
-  console.log(filteredProducts);
+
   return (
-    <div className="mb-6">
-      <div className="relative">
+    <div className="">
+      <div className="relative w-full">
         <input
           type="text"
           placeholder="Search products..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full sm:w-[30%] p-2 border border-gray-300 rounded-md pl-8"
+          className="p-3 w-full md:w-auto border border-gray-300 hover:border-gray-500 rounded-full  pr-10 pl-5 bg-gray-50"
         />
         <img
           src={assets.search_icon}
           alt="search"
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 h-4 w-4 cursor-pointer hover:scale-125 transition-all duration-300"
         />
       </div>
       {searchQuery && (

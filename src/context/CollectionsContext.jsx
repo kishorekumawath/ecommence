@@ -10,6 +10,7 @@ const CollectionsContext = createContext({
   // setSearch: () => {},
   // showSearch: false,
   // setShowSearch: () => {},
+  fetchAllProducts: () => {},
   fetchProducts: () => {},
   fetchSpecificProduct: () => {},
   calculateReview: () => {},
@@ -135,6 +136,16 @@ export const CollectionsProvider = ({ children }) => {
     }
   };
 
+  const fetchAllProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:9000/api/v1/products");
+      const data = await response.json();
+      return data.products;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
   const calculateReview = (product) => {
     let totalReviews = 0; // Use let instead of const
     for (let i = 0; i < product.reviews.length; i++) {
@@ -155,6 +166,7 @@ export const CollectionsProvider = ({ children }) => {
     // showSearch,
     // setShowSearch,
     fetchProducts,
+    fetchAllProducts,
     fetchSpecificProduct,
     calculateReview,
   };

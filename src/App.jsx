@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
@@ -14,8 +14,17 @@ import Footer from "./components/Footer";
 import SearchBar from "./components/Navbar/SearchBar";
 import { CartProvider } from "./context/CartContext";
 import PlaceOrder from "./pages/PlaceOrder";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Signup from "./pages/signup";
 
+const ProtectedRoute = ({ element, }) => {
+  const { user ,isLoading} = useAuth();
+  if (isLoading) return <p>Loading...</p>;
+  if (!user) {
+    return <Navigate to="/signup" />;
+  }
+  return <>{element}</>;
+}
 
 function App() {
 
@@ -24,6 +33,7 @@ function App() {
   
 
       <AuthProvider>
+      
       <CollectionsProvider>
       <CartProvider>
         <Navbar />
@@ -35,9 +45,13 @@ function App() {
           <Route path="/collection/:categoryName/:subCategoryName" element={<Collection />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/place-order"element={<PlaceOrder />} />
+          
+          <Route path="/place-order"element={<ProtectedRoute><PlaceOrder />  </ProtectedRoute>} />
+         
           <Route path="/product/:productId" element={<Product />} />
+
         </Routes>
         <Footer />
         </CartProvider>

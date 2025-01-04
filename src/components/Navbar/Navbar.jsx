@@ -5,11 +5,13 @@ import SlidBarMenu from "./SlidBarMenu";
 import Topbar from "./Topbar";
 import { useCartContext } from "../../context/CartContext";
 import CartSlider from "./CartSlider";
+import { useAuth } from "../../context/AuthContext";
 
 function Navbar() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
   const { getCartCount } = useCartContext();
+  const {user} = useAuth();
   return (
     <div className=" flex items-center justify-between py-5 font-medium px-10 sticky top-0 bg-white z-50">
       {/* LOGO Icon */}
@@ -31,7 +33,21 @@ function Navbar() {
         /> */}
 
         {/* Profile Icon */}
-        <img src={assets.profile_icon} alt="" className="w-5 cursor-pointer" />
+
+  {
+                user ? (
+                  <img src={assets.profile_icon} alt="" className="w-5 cursor-pointer" />
+                ) : (
+                  <Link
+                    to="/login"
+                    className={`block px-4 py-2 text-sm text-gray-500  hover:text-gray-900`}
+                  >
+                    Login 
+                  </Link>
+                )
+              }
+
+      
 
         {/* Cart Icon for mobile */}
         {/* <Link to="/cart" className="relative sm:hidden">

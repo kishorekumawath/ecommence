@@ -11,7 +11,7 @@ function Collection() {
   const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
 
-  const { CollectionsData, fetchProducts } = useCollections();
+  const { CollectionsData, fetchProducts,fetchAllProducts } = useCollections();
   const { categoryName, subCategoryName } = useParams();
 
   const [availablesCategory, setAvailablesCategory] = useState([]);
@@ -27,15 +27,13 @@ function Collection() {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredProducts(products);
-    } else {
+    
       const searchResults = products.filter((product) =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredProducts(searchResults);
-    }
-  }, [searchQuery, products]);
+
+  }, [searchQuery]);
 
   useEffect(() => {
     if (!CollectionsData || !categoryName) return;
@@ -208,9 +206,8 @@ function Collection() {
 
         {/* Category Filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">CATEGORIES</p>
 
@@ -233,9 +230,8 @@ function Collection() {
 
         {/* Sub Category filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
@@ -273,27 +269,37 @@ function Collection() {
           </select>
         </div> */}
 
-      {/* Map Products */}
+
+      {/* Right side */}
       <div className="w-full">
-        <Searchbar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          filteredProducts={filteredProducts}
-        />
-        {/* Navigation title */}
-        <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
-          <button onClick={() => navigate("/")} className="hover:text-gray-900">
-            Home
-          </button>
-          <span>/</span>
-          <span className="hover:text-gray-900 capitalize">
-            {selectedCategory.map((category) => category).join(" & ")}
-          </span>
+
+        <div className="flex flex-col md:flex-row justify-between mb-2 ">
+          {/* Navigation title Breadcrumbs */}
+          <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+            <button onClick={() => navigate("/")} className="hover:text-gray-900">
+              Home
+            </button>
+            <span>/</span>
+            <span className="hover:text-gray-900 capitalize">
+              {selectedCategory.map((category) => category).join(" & ")}
+            </span>
+          </div>
+
+          {/* Searchbar */}
+          <Searchbar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filteredProducts={filteredProducts}
+          />
+
         </div>
 
-        {/* Products */}
+
+        {/* Map Products */}
         <div className="  grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 place-items-center">
-          {/* {products.map((item, index) => (
+          {
+          
+          filteredProducts.length ==0?products.map((item, index) => (
             <ProductItem
               key={index}
               name={item.name}
@@ -301,8 +307,20 @@ function Collection() {
               price={item.price}
               image={item.image}
             />
-          ))} */}
-          {filteredProducts.length > 0 ? (
+          )):(
+            filteredProducts.map((item, index) => (
+              <ProductItem
+                key={index}
+                name={item.name}
+                id={item._id}
+                price={item.price}
+                image={item.image}
+              />
+            ))
+          )
+        
+        }
+          {/* {filteredProducts.length > 0 ? (
             filteredProducts.map((item, index) => (
               <ProductItem
                 key={index}
@@ -316,7 +334,9 @@ function Collection() {
             <div className="col-span-full text-center py-10 text-gray-500">
               No products found matching your search.
             </div>
-          )}
+          )} */}
+
+
         </div>
       </div>
     </div>

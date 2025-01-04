@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import MenuItem from "./MenuItem";
 import CollectionMenu from "./CollectionMenu";
+import { useAuth } from "../../context/AuthContext";
+
+
 function Topbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const {user,} = useAuth();
+  const openProfile = () => {
+   navigate("/profile") 
+  }
   return (
     <div>
       <ul className=" sm:flex gap-5 text-sm text-gray-700 hidden">
@@ -29,12 +36,29 @@ function Topbar() {
 
           <div className="absolute z-10 w-56 bg-white  rounded-md shadow-lg group-hover:block hidden">
             <div className="py-1">
-              <a
-                href="#"
+              {
+                user ? (
+                  <div
+                    onClick={openProfile}
+                    className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900`}
+                  >
+                    My Profile
+                  </div>
+                ) : (
+                  <Link
+                    to="/signup"
+                    className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900`}
+                  >
+                    Sign Up
+                  </Link>
+                )
+              }
+              {/* <div
+                onClick={openProfile}
                 className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900`}
               >
                 My Profile
-              </a>
+              </div> */}
               <a
                 href="#"
                 className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900`}
