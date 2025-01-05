@@ -70,7 +70,7 @@ function Navbar() {
 
           {/* Profile Dropdown Menu */}
           {user && (
-            <div className="absolute z-10 right-0 w-56 bg-white rounded-md shadow-lg group-hover:block hidden">
+            <div className="absolute z-10 top-4 right-0 w-56 bg-white rounded-md shadow-lg group-hover:block hidden">
               <div className="py-1">
                 <div
                   onClick={openProfile}

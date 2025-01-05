@@ -15,7 +15,7 @@ import SearchBar from "./components/Navbar/SearchBar";
 import { CartProvider } from "./context/CartContext";
 import PlaceOrder from "./pages/PlaceOrder";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import Signup from "./pages/Signup";
+
 import Profile from "./pages/Profile";
 import {
   PrivacyPolicy,
@@ -23,12 +23,14 @@ import {
   ShippingPolicy,
   TermsOfService,
 } from "./components/PolicyComponents";
+import Signup from "./pages/signup";
+import SuccessPage from "./pages/SuccessPage";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   // Show loading state while checking authentication
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
@@ -65,7 +67,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/orders" element={<Orders />} />
-
+              <Route path="/successPage" element={<SuccessPage />} />
               <Route
                 path="/place-order"
                 element={

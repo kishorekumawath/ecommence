@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { assets } from "../assets/assets";
 
 const PolicyLayout = ({ children }) => {
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-lg p-6">{children}</div>
+      <div className="bg-white rounded-lg shadow-md p-6">{children}</div>
     </div>
   );
 };
@@ -21,7 +22,7 @@ const AccordionSection = ({ title, children, isOpen, onClick }) => {
             isOpen ? "rotate-180" : ""
           }`}
         >
-          ▼
+          <img src={assets.arrow_right} alt="" className="w-8 h-8 rotate-90"/>
         </span>
       </button>
       {isOpen && <div className="p-4 bg-gray-50">{children}</div>}

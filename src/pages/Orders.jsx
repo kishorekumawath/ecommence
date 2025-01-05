@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { Package, ChevronDown, ChevronUp, MapPin, Truck } from "lucide-react";
+import { Title } from "../components/Title";
 
 const Orders = () => {
   const { user } = useAuth();
@@ -78,12 +79,15 @@ const Orders = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 mt-8">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white rounded-lg">
         <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">My Orders</h2>
-            <Package className="h-6 w-6 text-gray-400" />
+          <div className="flex items-center text-2xl  justify-between mb-6">
+            <Title text1={"MY"} text2={" ORDERS"} />
+              <div className="flex items-center space-x-2">
+              <p className="text-sm font-bold">{orders.length}</p>
+              <Package className="h-6 w-6 text-gray-400" />
+              </div>    
           </div>
 
           {error && (

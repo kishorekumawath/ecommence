@@ -63,14 +63,6 @@ export function AuthProvider({ children }) {
   };
 
   const signup = async (firstName, lastName, email, password, phone) => {
-    console.log(
-      "Signup function called with:",
-      firstName,
-      lastName,
-      email,
-      password,
-      phone
-    );
     try {
       const response = await fetch(`${BASE_URL}/api/v1/signup`, {
         method: "POST",

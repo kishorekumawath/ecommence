@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import Orders from "./Orders";
+import { Title } from "../components/Title";
+import { Pencil, PencilOff } from "lucide-react";
+import ProfileInputField from "../components/profileInputField";
 
 const Profile = () => {
   const { user, loading, error, updateUser } = useAuth();
@@ -41,7 +45,7 @@ const Profile = () => {
       updateUser(formData);
       // setMessage({ text: 'Profile updated successfully!', type: 'success' });
       setIsEditing(false);
-      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+      // setTimeout(() => setMessage({ text: "", type: "" }), 3000);
     } catch (error) {
       console.error("Profile update error:", error);
       //   setMessage({
@@ -51,6 +55,9 @@ const Profile = () => {
     }
   };
 
+  const updateProfilePic = ()=>{
+    alert("I am an alert box!");
+  }
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -68,31 +75,52 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
-          >
-            {isEditing ? "Cancel" : "Edit Profile"}
-          </button>
+    <div className="flex md:flex-row flex-col  gap-5 px-5">
+      <div className="flex-1 bg-white shadow rounded-lg p-6 mb-5 sm:m-0 border border-gray-100">
+
+        {/* Profile Header */}
+        <div className="flex justify-between items-center text-2xl mb-6">
+          <Title text1={"MY"} text2={"  PROFILE"} />
+
+          <div onClick={() => setIsEditing(!isEditing)} className="rounded-full bg-orange-300 p-3">
+            {isEditing ?
+              <Pencil className="text-black" size={15} /> :
+              <PencilOff className="text-black" size={15} />
+            }
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Avatar Section */}
-          <div className="flex flex-col items-center mb-6">
+          <div className="flex gap-2 mb-6">
+            {/* <div className="relative"> */}
             <div className="relative">
               <img
                 src={formData.avatar}
                 alt="Profile"
-                className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
-                onError={(e) => {
-                  e.target.src = "/default-avatar.png";
-                }}
+                className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
               />
-              {isEditing && (
+              {
+                isEditing && (
+                  <div>
+                    <div className="absolute inset-0 bg-black/30 rounded-lg"></div>
+                    <div onClick={updateProfilePic} className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 bg-orange-300 p-2 rounded-full">
+                      <Pencil className=" text-black  " size={15} />
+                    </div></div>
+                )
+              }
+
+            </div>
+
+            <div className="flex gap-5 justify-center items-center">
+
+              <ProfileInputField isDisable={isEditing} title={"First Name"} value={formData.firstName} handleInputChange={handleInputChange} />
+              <ProfileInputField isDisable={isEditing} title={"Last Name"} value={formData.lastName} handleInputChange={handleInputChange} />
+
+            </div>
+
+
+            {/* {isEditing && (
                 <div className="mt-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Avatar URL
@@ -106,126 +134,38 @@ const Profile = () => {
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   />
                 </div>
-              )}
-            </div>
+              )} */}
+            {/* </div> */}
           </div>
+          <ProfileInputField isDisable={false} title={"Email"} value={formData.email} handleInputChange={() => { }} />
+          <ProfileInputField isDisable={false} title={"Phone Number"} value={formData.phone} handleInputChange={() => { }} />
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* First Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                First Name
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                />
-              ) : (
-                <p className="py-2">{formData.firstName || "Not set"}</p>
-              )}
-            </div>
-
-            {/* Last Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                />
-              ) : (
-                <p className="py-2">{formData.lastName || "Not set"}</p>
-              )}
-            </div>
-
-            {/* Email - Read Only */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <p className="py-2">{formData.email || "Not set"}</p>
-            </div>
-
-            {/* Phone - Read Only */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone
-              </label>
-              <p className="py-2">{formData.phone || "Not set"}</p>
-            </div>
-
-            {/* Address - Full Width */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Address
-              </label>
-              {isEditing ? (
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                />
-              ) : (
-                <p className="py-2">{formData.address || "Not set"}</p>
-              )}
-            </div>
+            <ProfileInputField isDisable={isEditing} title={"Country"} value={"India"} handleInputChange={() => { }} />
+            <ProfileInputField isDisable={isEditing} title={"State"} value={"AP"} handleInputChange={() => { }} />
+            <ProfileInputField isDisable={isEditing} title={"City"} value={"Tirupati"} handleInputChange={() => { }} />
+            <ProfileInputField isDisable={isEditing} title={"Street"} value={"Balaji Colony"} handleInputChange={() => { }} />
+            <ProfileInputField isDisable={isEditing} title={"Zip Code"} value={"517501"} handleInputChange={() => { }} />
+            <ProfileInputField isDisable={isEditing} title={"Door No."} value={"4-11/3"} handleInputChange={() => { }} />
           </div>
 
           {isEditing && (
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+                className="px-6 py-2 bg-orange-300 text-black rounded hover:bg-orange-400 transition"
               >
                 Save Changes
               </button>
             </div>
           )}
         </form>
-
-        {/* Orders Section */}
-        {/* <div className="mt-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Recent Orders
-          </h2>
-          {user?.orders?.length > 0 ? (
-            <div className="space-y-4">
-              {user.orders.map((order) => (
-                <div
-                  key={order._id}
-                  className="border rounded-lg p-4 hover:bg-gray-50 transition cursor-pointer"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">Order #{order._id}</p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">${order.totalAmount}</p>
-                      <p className="text-sm text-gray-500">{order.status}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">No orders yet</p>
-          )}
-        </div> */}
       </div>
+      <div className="flex-1 border border-gray-100 shadow-md rounded-md h-[60vh] overflow-y-scroll">
+        <Orders />
+      </div>
+
     </div>
   );
 };
