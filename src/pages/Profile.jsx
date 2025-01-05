@@ -55,9 +55,9 @@ const Profile = () => {
     }
   };
 
-  const updateProfilePic = ()=>{
+  const updateProfilePic = () => {
     alert("I am an alert box!");
-  }
+  };
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -77,22 +77,25 @@ const Profile = () => {
   return (
     <div className="flex md:flex-row flex-col  gap-5 px-5">
       <div className="flex-1 bg-white shadow rounded-lg p-6 mb-5 sm:m-0 border border-gray-100">
-
         {/* Profile Header */}
         <div className="flex justify-between items-center text-2xl mb-6">
           <Title text1={"MY"} text2={"  PROFILE"} />
 
-          <div onClick={() => setIsEditing(!isEditing)} className="rounded-full bg-orange-300 p-3">
-            {isEditing ?
-              <Pencil className="text-black" size={15} /> :
+          <div
+            onClick={() => setIsEditing(!isEditing)}
+            className="rounded-full bg-orange-300 p-3"
+          >
+            {!isEditing ? (
+              <Pencil className="text-black" size={15} />
+            ) : (
               <PencilOff className="text-black" size={15} />
-            }
+            )}
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Avatar Section */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
             {/* <div className="relative"> */}
             <div className="relative">
               <img
@@ -100,25 +103,43 @@ const Profile = () => {
                 alt="Profile"
                 className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
               />
-              {
-                isEditing && (
-                  <div>
-                    <div className="absolute inset-0 bg-black/30 rounded-lg"></div>
-                    <div onClick={updateProfilePic} className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 bg-orange-300 p-2 rounded-full">
-                      <Pencil className=" text-black  " size={15} />
-                    </div></div>
-                )
-              }
 
+              {isEditing && (
+                <div>
+                  <div className="absolute inset-0 bg-black/30 rounded-lg"></div>
+                  <div
+                    onClick={updateProfilePic}
+                    className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 bg-orange-300 p-2 rounded-full"
+                  >
+                    <Pencil className=" text-black  " size={15} />
+                  </div>
+                </div>
+              )}
             </div>
-
-            <div className="flex gap-5 justify-center items-center">
-
-              <ProfileInputField isDisable={isEditing} title={"First Name"} value={formData.firstName} handleInputChange={handleInputChange} />
-              <ProfileInputField isDisable={isEditing} title={"Last Name"} value={formData.lastName} handleInputChange={handleInputChange} />
-
+            <div className="flex flex-col-reverse md:flex-col w-full gap-2">
+              <div className="flex gap-5 justify-center items-center  w-full">
+                <ProfileInputField
+                  isDisable={isEditing}
+                  title={"First Name"}
+                  value={formData.firstName}
+                  handleInputChange={handleInputChange}
+                />
+                <ProfileInputField
+                  isDisable={isEditing}
+                  title={"Last Name"}
+                  value={formData.lastName}
+                  handleInputChange={handleInputChange}
+                />
+              </div>
+              {isEditing && (
+                <ProfileInputField
+                  isDisable={isEditing}
+                  title={"Avatar URL"}
+                  value={formData.avatar}
+                  handleInputChange={handleInputChange}
+                />
+              )}
             </div>
-
 
             {/* {isEditing && (
                 <div className="mt-2">
@@ -137,17 +158,56 @@ const Profile = () => {
               )} */}
             {/* </div> */}
           </div>
-          <ProfileInputField isDisable={false} title={"Email"} value={formData.email} handleInputChange={() => { }} />
-          <ProfileInputField isDisable={false} title={"Phone Number"} value={formData.phone} handleInputChange={() => { }} />
-
+          <ProfileInputField
+            isDisable={false}
+            title={"Email"}
+            value={formData.email}
+            handleInputChange={() => {}}
+          />
+          <ProfileInputField
+            isDisable={false}
+            title={"Phone Number"}
+            value={formData.phone}
+            handleInputChange={() => {}}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ProfileInputField isDisable={isEditing} title={"Country"} value={"India"} handleInputChange={() => { }} />
-            <ProfileInputField isDisable={isEditing} title={"State"} value={"AP"} handleInputChange={() => { }} />
-            <ProfileInputField isDisable={isEditing} title={"City"} value={"Tirupati"} handleInputChange={() => { }} />
-            <ProfileInputField isDisable={isEditing} title={"Street"} value={"Balaji Colony"} handleInputChange={() => { }} />
-            <ProfileInputField isDisable={isEditing} title={"Zip Code"} value={"517501"} handleInputChange={() => { }} />
-            <ProfileInputField isDisable={isEditing} title={"Door No."} value={"4-11/3"} handleInputChange={() => { }} />
+            <ProfileInputField
+              isDisable={isEditing}
+              title={"Country"}
+              value={user?.address?.country || "India"}
+              handleInputChange={handleInputChange}
+            />
+            <ProfileInputField
+              isDisable={isEditing}
+              title={"State"}
+              value={user?.address?.state || ""}
+              handleInputChange={handleInputChange}
+            />
+            <ProfileInputField
+              isDisable={isEditing}
+              title={"City"}
+              value={user?.address?.city || ""}
+              handleInputChange={handleInputChange}
+            />
+            <ProfileInputField
+              isDisable={isEditing}
+              title={"Street"}
+              value={user?.address?.street || ""}
+              handleInputChange={handleInputChange}
+            />
+            <ProfileInputField
+              isDisable={isEditing}
+              title={"Zip Code"}
+              value={user?.address?.pincode || ""}
+              handleInputChange={handleInputChange}
+            />
+            <ProfileInputField
+              isDisable={isEditing}
+              title={"Door No."}
+              value={user?.address?.doorNo || ""}
+              handleInputChange={handleInputChange}
+            />
           </div>
 
           {isEditing && (
@@ -165,7 +225,6 @@ const Profile = () => {
       <div className="flex-1 border border-gray-100 shadow-md rounded-md h-[60vh] overflow-y-scroll">
         <Orders />
       </div>
-
     </div>
   );
 };

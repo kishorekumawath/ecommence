@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <div>
-      <div className="m-5 flex flex-col sm:grid grid-cols-[3fr_1fr_1fr_1fr] gap-14 my-10 text-sm">
+      <div className="m-5 pt-10 flex flex-col sm:grid grid-cols-[3fr_1fr_1fr_1fr] gap-14 my-10 text-sm">
         <div>
           <img src={assets.logo} alt="" className="mb-5 w-32" />
           <p className="w-full md:w-2/3 text-gray-600">

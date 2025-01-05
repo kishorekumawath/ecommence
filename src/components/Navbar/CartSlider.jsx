@@ -36,78 +36,83 @@ function CartSlider({ cartVisible, setCartVisible }) {
             cart[key].map((item) => (
               <div
                 key={`${Math.random()}`}
-                className="py-4 border-b text-gray-700 gap-4 flex items-center justify-between"
+                className="py-4 border-b text-gray-700 gap-4 flex flex-col items-center justify-between"
               >
-                {/* Product Image */}
-                <img
-                  onClick={() => navigate(`/product/${item.product._id}`)}
-                  src={item.product.image}
-                  alt={item.product.name}
-                  className="w-20 h-20 object-cover rounded-md cursor-pointer"
-                />
+                <div className="flex items-start gap-4 text-sm  md:text-base w-full">
+                  {/* Product Image */}
+                  <img
+                    onClick={() => navigate(`/product/${item.product._id}`)}
+                    src={item.product.image}
+                    alt={item.product.name}
+                    className="w-20 h-20 object-cover rounded-md cursor-pointer"
+                  />
 
-                {/* Product Details */}
-                <div className="flex flex-col flex-grow gap-1 px-4">
-                  <p className="text-md font-semibold">{item.product.name}</p>
-                  <p className="text-sm text-gray-500">
-                    Price: ₹{item.product.price}
-                  </p>
-                  <div className="flex">
-                    <p className="text-sm text-gray-500">Color: </p>
-                    <div
-                      className={`w-5 ml-2 h-5 rounded-full border border-gray-300 ${
-                        colorMap[item.color]
-                      }`}
-                    ></div>
+                  {/* Product Details */}
+                  <div className="flex flex-col flex-grow gap-1 px-4">
+                    <p className="text-md font-semibold">{item.product.name}</p>
+                    <p className="text-sm text-gray-500">
+                      Price: ₹{item.product.price}
+                    </p>
+                    <div className="flex">
+                      <p className="text-sm text-gray-500">Color: </p>
+                      <div
+                        className={`w-5 ml-2 h-5 rounded-full border border-gray-300 ${
+                          colorMap[item.color]
+                        }`}
+                      ></div>
+                      <p className="text-sm pl-2 text-gray-500">
+                        Size: {item.size}
+                      </p>
+                    </div>
                   </div>
-
-                  <p className="text-sm text-gray-500">Size: {item.size}</p>
                 </div>
 
                 {/* Quantity Controls */}
-                <div className="flex flex-col-reverse text-sm items-center gap-2 bg-gray-50 py-3 px-2 rounded-full">
-                  <button
-                    onClick={() => {
-                      if (item.quantity > 1) {
-                        return updateQuantity(
+                <div className="flex justify-between w-full items-center">
+                  <div className="flex text-sm items-center gap-2 bg-gray-50 py-3 px-2 rounded-full">
+                    <button
+                      onClick={() => {
+                        if (item.quantity > 1) {
+                          return updateQuantity(
+                            item.product._id,
+                            item.size,
+                            item.color,
+                            item.quantity - 1
+                          );
+                        }
+                      }}
+                      className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
+                    >
+                      -
+                    </button>
+                    <span className="text-lg font-medium px-2">
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() =>
+                        updateQuantity(
                           item.product._id,
                           item.size,
                           item.color,
-                          item.quantity - 1
-                        );
+                          item.quantity + 1
+                        )
                       }
-                    }}
-                    className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
-                  >
-                    -
-                  </button>
-                  <span className="text-lg font-medium px-2">
-                    {item.quantity}
-                  </span>
-                  <button
-                    onClick={() =>
-                      updateQuantity(
-                        item.product._id,
-                        item.size,
-                        item.color,
-                        item.quantity + 1
-                      )
-                    }
-                    className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
-                  >
-                    +
-                  </button>
-                </div>
+                      className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
+                    >
+                      +
+                    </button>
+                  </div>
 
-                {/* Delete Button */}
-                <img
-                  onClick={() =>
-                    removeCartItem(item.product._id, item.size, item.color)
-                  }
-                  className="w-5 h-5 cursor-pointe"
-                  src={assets.bin_icon}
-                  alt="Delete"
-                />
+                  {/* Delete Button */}
+                  <img
+                    onClick={() =>
+                      removeCartItem(item.product._id, item.size, item.color)
+                    }
+                    className="w-5 h-5 cursor-pointe"
+                    src={assets.bin_icon}
+                    alt="Delete"
+                  />
+                </div>
               </div>
             ))
           )

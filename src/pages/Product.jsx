@@ -4,6 +4,7 @@ import { assets, products } from "../assets/assets";
 import { useCollections } from "../context/CollectionsContext";
 import { useCartContext } from "../context/CartContext";
 import ReviewBox from "../components/ReviewBox";
+import { SizeChartModal } from "../components/SizeChartModal";
 
 const colorMap = {
   Yl: "bg-yellow-400",
@@ -54,6 +55,7 @@ function Product() {
   const [size, setSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedBottomSection, setSelectedBottomSection] = useState(
     bottomSection[0]
@@ -116,7 +118,7 @@ function Product() {
       return;
     }
 
-    if(!selectedColor){
+    if (!selectedColor) {
       console.log("color is required");
       return;
     }
@@ -125,9 +127,7 @@ function Product() {
     //   id: product._id,
     //   size:
     // }
-    addToCart(product._id, size,selectedColor,product);
-
-
+    addToCart(product._id, size, selectedColor, product);
   };
 
   const ProductSkeleton = () => (
@@ -282,8 +282,13 @@ function Product() {
             </span>{" "}
             Inclusive of all Taxes
           </p>
-
-          <div className="flex  gap-4 my-8">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
+          >
+            Size Chart
+          </button>
+          <div className="flex  gap-4 my-2">
             {product?.size?.map((item, index) => (
               <button
                 onClick={() => setSize(item)}
@@ -324,7 +329,7 @@ function Product() {
           </div>
         </div>
       </div>
-
+      {isModalOpen && <SizeChartModal setIsModalOpen={setIsModalOpen} />}
       {/* ------------------ Description, add info & review sections  --------------------*/}
       <div className="mt-10">
         <div className="flex w-full sm:w-auto overflow-hidden">

@@ -23,7 +23,7 @@ import {
   ShippingPolicy,
   TermsOfService,
 } from "./components/PolicyComponents";
-import Signup from "./pages/signup";
+import Signup from "./pages/Signup";
 import SuccessPage from "./pages/SuccessPage";
 
 const ProtectedRoute = ({ children }) => {
