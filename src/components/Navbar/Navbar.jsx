@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { assets } from "../../assets/assets";
-import { Link, NavLink } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SlidBarMenu from "./SlidBarMenu";
 import Topbar from "./Topbar";
 import { useCartContext } from "../../context/CartContext";
@@ -8,10 +8,18 @@ import CartSlider from "./CartSlider";
 import { useAuth } from "../../context/AuthContext";
 
 function Navbar() {
+  const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
   const { getCartCount } = useCartContext();
-  const {user} = useAuth();
+  const { user, logout } = useAuth();
+
+  const openProfile = () => {
+    navigate("/profile");
+  };
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <div className=" flex items-center justify-between py-5 font-medium px-10 sticky top-0 bg-white z-50">
       {/* LOGO Icon */}
@@ -24,38 +32,74 @@ function Navbar() {
 
       {/* Right side */}
       <div className="flex items-center gap-6">
-        {/* Search Icon
-        <img
-          onClick={() => setShowSearch(true)}
-          src={assets.search_icon}
-          alt=""
-          className="w-5 cursor-pointer"
-        /> */}
-
         {/* Profile Icon */}
+        {/* 
+        {user ? (
+          <img
+            src={assets.profile_icon}
+            alt=""
+            className="w-5 cursor-pointer"
+          />
+        ) : (
+          <Link
+            to="/login"
+            className={`block px-4 py-2 text-sm text-gray-500  hover:text-gray-900`}
+          >
+            Login
+          </Link>
+        )} */}
 
-  {
-                user ? (
-                  <img src={assets.profile_icon} alt="" className="w-5 cursor-pointer" />
-                ) : (
-                  <Link
-                    to="/login"
-                    className={`block px-4 py-2 text-sm text-gray-500  hover:text-gray-900`}
-                  >
-                    Login 
-                  </Link>
-                )
-              }
+        {/* Profile Icon with Dropdown - Desktop */}
+        <div className="hidden sm:block group relative">
+          {user ? (
+            <div className="cursor-pointer">
+              <img
+                src={assets.profile_icon}
+                alt="profile"
+                className="w-5 cursor-pointer"
+              />
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className={`block px-4 py-2 text-sm text-gray-500 hover:text-gray-900`}
+            >
+              Login
+            </Link>
+          )}
 
-      
-
-        {/* Cart Icon for mobile */}
-        {/* <Link to="/cart" className="relative sm:hidden">
-          <img src={assets.cart_icon} alt="" className="w-5 min-w-5" />
-          <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px] ">
-            {getCartCount()}
-          </p>
-        </Link> */}
+          {/* Profile Dropdown Menu */}
+          {user && (
+            <div className="absolute z-10 right-0 w-56 bg-white rounded-md shadow-lg group-hover:block hidden">
+              <div className="py-1">
+                <div
+                  onClick={openProfile}
+                  className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900 cursor-pointer`}
+                >
+                  My Profile
+                </div>
+                <Link
+                  to="/orders"
+                  className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900`}
+                >
+                  Orders
+                </Link>
+                <Link
+                  to="/wishlist"
+                  className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900`}
+                >
+                  Wishlist
+                </Link>
+                <div
+                  onClick={handleLogout}
+                  className={`block px-4 py-2 text-sm text-gray-500 hover:bg-orange-50 hover:text-gray-900 cursor-pointer`}
+                >
+                  Log Out
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Cart Icon for desktop */}
         <div

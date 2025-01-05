@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { useCollections } from "../../context/CollectionsContext";
+import { useAuth } from "../../context/AuthContext";
 
 function SlidBarMenu({ menuVisible, setMenuVisible }) {
   const [visibleCollections, setVisibleCollections] = useState(false);
   const [expandedSubcategories, setExpandedSubcategories] = useState({});
   const { CollectionsData, isLoading, error, fetchCollections } =
     useCollections();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const SkeletonItem = () => (
@@ -33,7 +35,10 @@ function SlidBarMenu({ menuVisible, setMenuVisible }) {
     navigate(`/collection/${categorySlug}/${subcategorySlug}`);
     setMenuVisible(false);
   };
-
+  const handleLogout = () => {
+    logout();
+    () => setMenuVisible(false);
+  };
   return (
     <div
       className={`fixed top-0 right-0 bottom-0 z-50 flex flex-col bg-white transition-all duration-500 ${
@@ -151,13 +156,47 @@ function SlidBarMenu({ menuVisible, setMenuVisible }) {
           >
             CONTACT
           </NavLink>
-          <NavLink
-            onClick={() => setMenuVisible(false)}
-            className="block hover:bg-gray-100 hover:text-black bg-gray-50 p-2 my-1 transition-colors duration-500"
-            to="/"
-          >
-            My Profile
-          </NavLink>
+          {user ? (
+            // Render these links only when user is logged in
+            <>
+              <NavLink
+                onClick={() => setMenuVisible(false)}
+                className="block hover:bg-gray-100 hover:text-black bg-gray-50 p-2 my-1 transition-colors duration-500"
+                to="/wishlist"
+              >
+                Wishlist
+              </NavLink>
+              <NavLink
+                onClick={() => setMenuVisible(false)}
+                className="block hover:bg-gray-100 hover:text-black bg-gray-50 p-2 my-1 transition-colors duration-500"
+                to="/orders"
+              >
+                My Orders
+              </NavLink>
+              <NavLink
+                onClick={() => setMenuVisible(false)}
+                className="block hover:bg-gray-100 hover:text-black bg-gray-50 p-2 my-1 transition-colors duration-500"
+                to="/profile"
+              >
+                My Profile
+              </NavLink>
+              <div
+                onClick={handleLogout}
+                className="block hover:bg-gray-100 hover:text-black bg-gray-50 p-2 my-1 transition-colors duration-500 cursor-pointer"
+              >
+                Logout
+              </div>
+            </>
+          ) : (
+            // Render login button when user is not logged in
+            <NavLink
+              onClick={() => setMenuVisible(false)}
+              className="block hover:bg-gray-100 hover:text-black bg-gray-50 p-2 my-1 transition-colors duration-500"
+              to="/login"
+            >
+              Login
+            </NavLink>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MenuItem from "./MenuItem";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCollections } from "../../context/CollectionsContext";
 
 function CollectionMenu() {
@@ -9,7 +9,6 @@ function CollectionMenu() {
   const { CollectionsData, isLoading, error, fetchCollections } =
     useCollections();
   const navigate = useNavigate();
-  const loaction = useLocation();
 
   useEffect(() => {
     fetchCollections();

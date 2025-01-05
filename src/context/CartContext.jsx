@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext({
   cart: {},
@@ -27,15 +28,6 @@ export const useCartContext = () => {
 const getStorageKey = (userId) => {
   return userId ? `cart_${userId}` : "anonymous_cart";
 };
-// Helper functions for localStorage
-const saveCartToStorage = (cart, userId) => {
-  const storageKey = getStorageKey(userId);
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(cart));
-  } catch (error) {
-    console.error("Error saving cart to localStorage:", error);
-  }
-};
 
 const loadCartFromStorage = (userId) => {
   const storageKey = getStorageKey(userId);
@@ -49,16 +41,52 @@ const loadCartFromStorage = (userId) => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(() => loadCartFromStorage());
-
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [carts, setCarts] = useState({}); // Store all carts
+  const [cart, setCart] = useState({}); // Current user's cart
 
-  // Save cart to localStorage whenever it changes
+  // Load all carts from localStorage on mount
   useEffect(() => {
-    saveCartToStorage(cart);
-  }, [cart]);
+    const loadedCarts = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("cart_")) {
+        try {
+          const cartData = localStorage.getItem(key);
+          if (cartData) {
+            loadedCarts[key] = JSON.parse(cartData);
+          }
+        } catch (error) {
+          console.error("Error loading cart:", error);
+        }
+      }
+    }
+    setCarts(loadedCarts);
+  }, []);
 
   console.log("cart", cart);
+
+  // Switch cart when user changes
+  useEffect(() => {
+    const storageKey = getStorageKey(user?._id);
+    const savedCart = carts[storageKey] || {};
+    setCart(savedCart);
+  }, [user, carts]);
+
+  // Save cart to localStorage whenever it changes
+  const saveCart = (newCart) => {
+    const storageKey = getStorageKey(user?._id);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newCart));
+      setCarts((prev) => ({
+        ...prev,
+        [storageKey]: newCart,
+      }));
+    } catch (error) {
+      console.error("Error saving cart:", error);
+    }
+  };
 
   const addToCart = (id, size, color, product) => {
     let copyCart = structuredClone(cart);
@@ -94,6 +122,7 @@ export const CartProvider = ({ children }) => {
       });
     }
     setCart(copyCart);
+    saveCart(copyCart);
   };
 
   const getCartCount = () => {
@@ -117,6 +146,7 @@ export const CartProvider = ({ children }) => {
     });
 
     setCart(copyCart);
+    saveCart(copyCart);
   };
 
   const removeCartItem = (id, size, color) => {
@@ -125,6 +155,7 @@ export const CartProvider = ({ children }) => {
       (item) => item.size !== size || item.color !== color
     );
     setCart(copyCart);
+    saveCart(copyCart);
   };
 
   const getCartAmount = async () => {
@@ -137,6 +168,31 @@ export const CartProvider = ({ children }) => {
       );
     }, 0);
   };
+
+  // Function to merge anonymous cart with user cart on login
+  const mergeAnonymousCart = () => {
+    const anonymousKey = getStorageKey();
+    const anonymousCart = loadCartFromStorage();
+
+    if (Object.keys(anonymousCart).length > 0) {
+      // Merge items from anonymous cart into user's cart
+      Object.entries(anonymousCart).forEach(([productId, items]) => {
+        items.forEach((item) => {
+          addToCart(productId, item.size, item.color, item.product);
+        });
+      });
+
+      // Clear anonymous cart
+      localStorage.removeItem(anonymousKey);
+    }
+  };
+
+  // Handle cart merging when user logs in
+  useEffect(() => {
+    if (user?._id) {
+      mergeAnonymousCart();
+    }
+  }, [user?._id]);
 
   const value = {
     addToCart,
