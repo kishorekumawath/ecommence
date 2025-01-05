@@ -1,5 +1,6 @@
 import React from "react";
 import { assets } from "../assets/assets";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -18,20 +19,22 @@ function Footer() {
         <div>
           <p className="text-xl font-medium mb-5">COMPANY</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>Home</li>
-            <li>About Us</li>
-            <li>Delivery</li>
-            <li>Shop</li>
+            <Link to="/">Home</Link>
+            <Link to="/collection/men's-clothing/unisex-t-shirt-classic">
+              Shop
+            </Link>
+            <Link to="/contact">Contact Us</Link>
+            <Link to="/about">About Us</Link>
           </ul>
         </div>
 
         <div>
           <p className="text-xl font-medium mb-5">MORT INFO</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>Privacy Policy</li>
-            <li>Terms & Condition</li>
-            <li>Refund Policy</li>
-            <li>Shipping Policy</li>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms & Condition</Link>
+            <Link to="/return">Refund Policy</Link>
+            <Link to="/shipping">Shipping Policy</Link>
           </ul>
         </div>
 

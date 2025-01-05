@@ -17,6 +17,12 @@ import PlaceOrder from "./pages/PlaceOrder";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
+import {
+  PrivacyPolicy,
+  ReturnPolicy,
+  ShippingPolicy,
+  TermsOfService,
+} from "./components/PolicyComponents";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -77,6 +83,10 @@ function App() {
                 }
               />
               <Route path="/product/:productId" element={<Product />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/return" element={<ReturnPolicy />} />
+              <Route path="/shipping" element={<ShippingPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
             </Routes>
             <Footer />
           </CartProvider>
