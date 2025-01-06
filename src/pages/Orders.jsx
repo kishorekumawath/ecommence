@@ -84,10 +84,10 @@ const Orders = () => {
         <div className="p-6">
           <div className="flex items-center text-2xl  justify-between mb-6">
             <Title text1={"MY"} text2={" ORDERS"} />
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <p className="text-sm font-bold">{orders.length}</p>
               <Package className="h-6 w-6 text-gray-400" />
-              </div>    
+            </div>
           </div>
 
           {error && (
@@ -161,7 +161,6 @@ const Orders = () => {
                                     <p>
                                       Size: {item.size}, Color: {item.color}
                                     </p>
-                                    <p className="text-xs">SKU: {item.sku}</p>
                                   </div>
                                 </div>
                                 <span className="font-medium">
@@ -211,18 +210,30 @@ const Orders = () => {
                             </h4>
                           </div>
                           <div className="bg-white p-3 rounded-lg space-y-2">
-                            <div className="flex justify-between text-sm text-gray-600">
+                            {/* <div className="flex justify-between text-sm text-gray-600">
                               <span>Order Type</span>
                               <span>{order.orderType}</span>
-                            </div>
+                            </div> */}
                             <div className="flex justify-between text-sm text-gray-600">
-                              <span>Qikink Order ID</span>
+                              <span>Order ID</span>
                               <span>{order.qikinkOrderId}</span>
                             </div>
                             {order.awbNo && (
                               <div className="flex justify-between text-sm text-gray-600">
                                 <span>AWB Number</span>
                                 <span>{order.awbNo}</span>
+                              </div>
+                            )}
+                            {order.razorpayOrderId && (
+                              <div className="flex justify-between text-sm text-gray-600">
+                                <span>RazorPay OrderId</span>
+                                <span>{order.razorpayOrderId}</span>
+                              </div>
+                            )}
+                            {order.paymentId && (
+                              <div className="flex justify-between text-sm text-gray-600">
+                                <span>RazorPay Payment Id</span>
+                                <span>{order.paymentId}</span>
                               </div>
                             )}
                             <div className="flex justify-between font-medium text-gray-900 pt-2 border-t">

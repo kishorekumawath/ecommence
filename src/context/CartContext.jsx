@@ -18,6 +18,7 @@ const CartContext = createContext({
   navigate: () => {},
   getCartAmount: () => {},
   removeCartItem: () => {},
+  clearCart: () => {},
 });
 
 export const useCartContext = () => {
@@ -169,6 +170,10 @@ export const CartProvider = ({ children }) => {
     }, 0);
   };
 
+  const clearCart = () => {
+    setCart({});
+    saveCart({});
+  };
   // Function to merge anonymous cart with user cart on login
   const mergeAnonymousCart = () => {
     const anonymousKey = getStorageKey();
@@ -202,6 +207,7 @@ export const CartProvider = ({ children }) => {
     getCartAmount,
     removeCartItem,
     cart,
+    clearCart,
   };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

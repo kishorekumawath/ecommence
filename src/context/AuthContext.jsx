@@ -1,3 +1,4 @@
+import { use } from "framer-motion/client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext({
@@ -105,19 +106,46 @@ export function AuthProvider({ children }) {
   const fetchUser = async (userId) => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `http://localhost:9000/api/v1/user/${userId}`
-      );
-      setUser(response.data);
-      //   setError(null);
+      const response = await fetch(`${BASE_URL}/api/v1/user/${userId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error fetching user data");
+      }
+
+      const data = await response.json(); // Extract JSON data
+      setUser(data); // Optionally update state if needed
+      return data; // Return data for further use
     } catch (err) {
-      //   setError(err.response?.data?.message || "Error fetching user data");
+      console.error("Error fetching user data:", err);
+      throw err; // Re-throw the error for handling in the caller
     } finally {
       setIsLoading(false);
     }
   };
 
+  //   const loadUserData = async () => {
+  //     try {
+  //       const userData = await fetchUser(user?._id);
+  //       console.log("Fetched User Data:", userData);
+  //       // Use userData for further operations
+  //     } catch (error) {
+  //       console.error("Failed to fetch user:", error.message);
+  //     }
+  //   };
+
+  //   useEffect(() => {
+  //     loadUserData();
+  //   }, []);
+
   const updateUser = async (updates) => {
+    console.log("Updating user with updates:", updates, "user:", user._id);
     try {
       if (!user || !accessToken) {
         throw new Error("No user logged in");
@@ -127,6 +155,7 @@ export function AuthProvider({ children }) {
         Object.entries(updates).filter(([_, value]) => value !== undefined)
       );
 
+      console.log("Sending updates:", cleanUpdates);
       const response = await fetch(
         `${BASE_URL}/api/v1/user/update/${user._id}`,
         {
@@ -149,6 +178,7 @@ export function AuthProvider({ children }) {
       }
 
       const updatedData = await response.json();
+      console.log("Updated data:", updatedData);
       const updatedUser = updatedData.user;
 
       setUser(updatedUser);

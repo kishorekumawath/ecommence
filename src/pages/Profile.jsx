@@ -13,8 +13,13 @@ const Profile = () => {
     lastName: "",
     email: "",
     phone: "",
-    address: "",
     avatar: "",
+    country: "",
+    state: "",
+    city: "",
+    street: "",
+    pincode: "",
+    doorNo: "",
   });
 
   useEffect(() => {
@@ -24,18 +29,25 @@ const Profile = () => {
         lastName: user.lastName || "",
         email: user.email || "",
         phone: user.phone || "",
-        address: user.address || "",
         avatar: user.avatar || "",
+        country: user.address?.country || "",
+        state: user.address?.state || "",
+        city: user.address?.city || "",
+        street: user.address?.street || "",
+        pincode: user.address?.pincode || "",
+        doorNo: user.address?.doorNo || "",
       });
     }
   }, [user]);
-
+  console.log(formData);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // console.log(name, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+    // console.log(formData);
   };
 
   const handleSubmit = async (e) => {
@@ -55,9 +67,6 @@ const Profile = () => {
     }
   };
 
-  const updateProfilePic = () => {
-    alert("I am an alert box!");
-  };
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -103,30 +112,20 @@ const Profile = () => {
                 alt="Profile"
                 className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
               />
-
-              {isEditing && (
-                <div>
-                  <div className="absolute inset-0 bg-black/30 rounded-lg"></div>
-                  <div
-                    onClick={updateProfilePic}
-                    className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 bg-orange-300 p-2 rounded-full"
-                  >
-                    <Pencil className=" text-black  " size={15} />
-                  </div>
-                </div>
-              )}
             </div>
             <div className="flex flex-col-reverse md:flex-col w-full gap-2">
               <div className="flex gap-5 justify-center items-center  w-full">
                 <ProfileInputField
                   isDisable={isEditing}
                   title={"First Name"}
+                  name={"firstName"}
                   value={formData.firstName}
                   handleInputChange={handleInputChange}
                 />
                 <ProfileInputField
                   isDisable={isEditing}
                   title={"Last Name"}
+                  name={"lastName"}
                   value={formData.lastName}
                   handleInputChange={handleInputChange}
                 />
@@ -135,6 +134,7 @@ const Profile = () => {
                 <ProfileInputField
                   isDisable={isEditing}
                   title={"Avatar URL"}
+                  name={"avatar"}
                   value={formData.avatar}
                   handleInputChange={handleInputChange}
                 />
@@ -161,12 +161,14 @@ const Profile = () => {
           <ProfileInputField
             isDisable={false}
             title={"Email"}
+            name={"email"}
             value={formData.email}
             handleInputChange={() => {}}
           />
           <ProfileInputField
             isDisable={false}
             title={"Phone Number"}
+            name={"phone"}
             value={formData.phone}
             handleInputChange={() => {}}
           />
@@ -175,37 +177,43 @@ const Profile = () => {
             <ProfileInputField
               isDisable={isEditing}
               title={"Country"}
-              value={user?.address?.country || "India"}
+              name={"country"}
+              value={formData.country}
               handleInputChange={handleInputChange}
             />
             <ProfileInputField
               isDisable={isEditing}
               title={"State"}
-              value={user?.address?.state || ""}
+              name={"state"}
+              value={formData.state}
               handleInputChange={handleInputChange}
             />
             <ProfileInputField
               isDisable={isEditing}
               title={"City"}
-              value={user?.address?.city || ""}
+              name={"city"}
+              value={formData.city}
               handleInputChange={handleInputChange}
             />
             <ProfileInputField
               isDisable={isEditing}
               title={"Street"}
-              value={user?.address?.street || ""}
+              name={"street"}
+              value={formData.street}
               handleInputChange={handleInputChange}
             />
             <ProfileInputField
               isDisable={isEditing}
               title={"Zip Code"}
-              value={user?.address?.pincode || ""}
+              name={"pincode"}
+              value={formData.pincode}
               handleInputChange={handleInputChange}
             />
             <ProfileInputField
               isDisable={isEditing}
               title={"Door No."}
-              value={user?.address?.doorNo || ""}
+              name={"doorNo"}
+              value={formData.doorNo}
               handleInputChange={handleInputChange}
             />
           </div>

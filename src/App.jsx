@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
@@ -25,10 +31,11 @@ import {
 } from "./components/PolicyComponents";
 import Signup from "./pages/Signup";
 import SuccessPage from "./pages/SuccessPage";
+import ScrollToTop from "./components/ScrollTop";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
-
+  const location = useLocation();
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -40,7 +47,12 @@ const ProtectedRoute = ({ children }) => {
 
   // Redirect to login if no user
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to={`/login?returnTo=${encodeURIComponent(location.pathname)}`}
+        replace
+      />
+    );
   }
 
   // Render the protected content if user exists
@@ -53,6 +65,7 @@ function App() {
       <AuthProvider>
         <CollectionsProvider>
           <CartProvider>
+            <ScrollToTop /> {/* Scroll restoration feature */}
             <Navbar />
             <SearchBar />
             <Routes>
@@ -67,7 +80,10 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/orders" element={<Orders />} />
-              <Route path="/successPage" element={<SuccessPage />} />
+              <Route
+                path="/successPage/:qiKinkOrderId"
+                element={<SuccessPage />}
+              />
               <Route
                 path="/place-order"
                 element={

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Title } from "../components/Title";
 
@@ -12,6 +12,10 @@ export default function Signup() {
   const [errors, setErrors] = useState({});
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Get the return URL from query parameters
+  const searchParams = new URLSearchParams(location.search);
+  const returnTo = searchParams.get("returnTo") || "/";
 
   const validateForm = () => {
     let newErrors = {};
@@ -50,7 +54,8 @@ export default function Signup() {
 
     try {
       await signup(firstName, lastName, email, password, phone);
-      navigate("/");
+      // After successful signup, redirect to the return URL
+      navigate(returnTo, { replace: true });
     } catch (err) {
       setErrors({ form: err.message });
     }
