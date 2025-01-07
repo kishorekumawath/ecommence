@@ -112,6 +112,20 @@ function Product() {
       </div>
     </div>
   );
+
+  const handleBuyNow = () => {
+    console.log("buy now clicked");
+    if (!size) {
+      console.log("size is required");
+      return;
+    }
+
+    if (!selectedColor) {
+      console.log("color is required");
+      return;
+    }
+  };
+
   const handleAddToCart = () => {
     if (!size) {
       console.log("size is required");
@@ -123,10 +137,6 @@ function Product() {
       return;
     }
 
-    // let cartObject = {
-    //   id: product._id,
-    //   size:
-    // }
     addToCart(product._id, size, selectedColor, product);
   };
 
@@ -308,7 +318,7 @@ function Product() {
           />
 
           <button
-            onClick={handleAddToCart} // handleAddToCart function
+            onClick={handleBuyNow} // handleBuyNow function
             className=" text-black w-full px-8 py-3 mb-2 sm:w-auto text-sm active:bg-gray-700 mr-5 bg-orange-300 rounded-md"
           >
             BUY NOW

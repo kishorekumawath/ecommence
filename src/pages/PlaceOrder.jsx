@@ -474,7 +474,7 @@ function PlaceOrder() {
       </div>
 
       {/* Right side remains mostly the same, just update the button */}
-      <div className="mt-8">
+      <div className="mt-8 w-full lg:w-[40%]">
         {/* ... existing cart display code ... */}
 
         <div className="flex">
@@ -482,84 +482,93 @@ function PlaceOrder() {
           <p className="pl-2">{getCartCount()}</p>
         </div>
         {/* Scrollable Cart Items */}
-        <div className="flex-1 h-[40vh] overflow-y-auto p-5 border border-gray-300 rounded-md">
+        <div className="flex-1 overflow-y-auto p-2 border border-gray-300  rounded-md w-full">
           {Object.keys(cart).length > 0 ? (
             Object.keys(cart).map((key) =>
               cart[key].map((item) => (
                 <div
                   key={`${Math.random()}`}
-                  className="py-4 border-b text-gray-700 gap-4 flex items-center justify-between"
+                  className="py-4 border-b text-gray-700 flex flex-col gap-4 md:gap-6 "
                 >
-                  {/* Product Image */}
-                  <img
-                    onClick={() => navigate(`/product/${item.product._id}`)}
-                    src={item.product.image}
-                    alt={item.product.name}
-                    className="w-20 h-20 object-cover rounded-md cursor-pointer"
-                  />
+                  {/* Product Details Section */}
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 text-sm md:text-base w-full">
+                    {/* Product Image */}
+                    <img
+                      onClick={() => navigate(`/product/${item.product._id}`)}
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="w-20 h-20 object-cover rounded-md cursor-pointer"
+                    />
 
-                  {/* Product Details */}
-                  <div className="flex flex-col flex-grow gap-1 px-4">
-                    <p className="text-md font-semibold">{item.product.name}</p>
-                    <p className="text-sm text-gray-500">
-                      Price: ₹{item.product.price}
-                    </p>
-                    <div className="flex">
-                      <p className="text-sm text-gray-500">Color: </p>
-                      <div
-                        className={`w-5 ml-2 h-5 rounded-full border border-gray-300 ${
-                          colorMap[item.color]
-                        }`}
-                      ></div>
+                    {/* Product Details */}
+                    <div className="flex flex-col flex-grow gap-2">
+                      <p className="text-md font-semibold">
+                        {item.product.name}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Price: ₹{item.product.price}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-gray-500">Color:</p>
+                        <div
+                          className={`w-5 h-5 rounded-full border border-gray-300 ${
+                            colorMap[item.color]
+                          }`}
+                        ></div>
+                        <p className="text-sm text-gray-500 pl-2">
+                          Size: {item.size}
+                        </p>
+                      </div>
                     </div>
-
-                    <p className="text-sm text-gray-500">Size: {item.size}</p>
                   </div>
 
-                  {/* Quantity Controls */}
-                  <div className="flex flex-col-reverse text-sm items-center gap-2 bg-gray-50 py-3 px-2 rounded-full">
-                    <button
-                      onClick={() => {
-                        if (item.quantity > 1) {
-                          return updateQuantity(
+                  {/* Quantity Controls & Delete Button */}
+                  <div className="flex justify-between items-center gap-4">
+                    {/* Quantity Controls */}
+                    <div className="flex items-center gap-2 bg-gray-50 py-3 px-2 rounded-full">
+                      <button
+                        onClick={() => {
+                          if (item.quantity > 1) {
+                            return updateQuantity(
+                              item.product._id,
+                              item.size,
+                              item.color,
+                              item.quantity - 1
+                            );
+                          }
+                        }}
+                        className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
+                      >
+                        -
+                      </button>
+                      <span className="text-lg font-medium px-2">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateQuantity(
                             item.product._id,
                             item.size,
                             item.color,
-                            item.quantity - 1
-                          );
+                            item.quantity + 1
+                          )
                         }
-                      }}
-                      className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
-                    >
-                      -
-                    </button>
-                    <span className="text-lg font-medium px-2">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() =>
-                        updateQuantity(
-                          item.product._id,
-                          item.size,
-                          item.color,
-                          item.quantity + 1
-                        )
-                      }
-                      className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
-                    >
-                      +
-                    </button>
-                  </div>
+                        className="w-8 h-8 border border-gray-300 text-gray-400 flex items-center justify-center rounded-lg hover:text-black hover:border-black"
+                      >
+                        +
+                      </button>
+                    </div>
 
-                  {/* Delete Button */}
-                  <img
-                    onClick={() =>
-                      removeCartItem(item.product._id, item.size, item.color)
-                    }
-                    className="w-5 h-5 cursor-pointe"
-                    src={assets.bin_icon}
-                    alt="Delete"
-                  />
+                    {/* Delete Button */}
+                    <img
+                      onClick={() =>
+                        removeCartItem(item.product._id, item.size, item.color)
+                      }
+                      className="w-5 h-5 cursor-pointer"
+                      src={assets.bin_icon}
+                      alt="Delete"
+                    />
+                  </div>
                 </div>
               ))
             )
@@ -568,7 +577,7 @@ function PlaceOrder() {
           )}
         </div>
 
-        <div className="mt-8 min-w-80">
+        <div className="mt-8 min-w-60">
           <CartTotal />
         </div>
 
@@ -582,7 +591,7 @@ function PlaceOrder() {
               >
                 <p
                   className={`min-w-3.5 h-3.5 border rounded-full ${
-                    paymentMethod === "razorpay" ? "bg-orange-300" : ""
+                    paymentMethod === "Prepaid" ? "bg-orange-300" : ""
                   }`}
                 ></p>
                 <img className="h-5 mx-4" src={assets.razorpay_logo} alt="" />
@@ -603,7 +612,7 @@ function PlaceOrder() {
               </div>
             </div>
           </div>
-          <div className="w-full text-end mt-8">
+          <div className="flex justify-center md:justify-start w-full text-end mt-8">
             <button
               type="submit"
               className="bg-orange-300 text-black px-16 py-3 text-sm rounded-md"

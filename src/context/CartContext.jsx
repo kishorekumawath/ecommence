@@ -91,37 +91,37 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (id, size, color, product) => {
     let copyCart = structuredClone(cart);
-    console.log("ccc", copyCart[id]);
+
     if (copyCart[id]) {
-      //item already exists
-      console.log("cart");
-      //item already exists with size and color
-      if (
-        copyCart[id].map((item) => item.size).includes(size) &&
-        copyCart[id].map((item) => item.color).includes(color)
-      ) {
-        copyCart[id].map((item) => {
-          if (item.size === size && item.color === color) {
-            item.quantity += 1;
-          }
-        });
+      // Check if item with same size AND color combination exists
+      const existingItem = copyCart[id].find(
+        (item) => item.size === size && item.color === color
+      );
+
+      if (existingItem) {
+        // If same size and color combination exists, increment quantity
+        existingItem.quantity += 1;
       } else {
+        // If combination doesn't exist, add new item
         copyCart[id].push({
-          size: size,
+          size,
           quantity: 1,
-          color: color,
-          product: product,
+          color,
+          product,
         });
       }
     } else {
-      copyCart[id] = [];
-      copyCart[id].push({
-        size: size,
-        quantity: 1,
-        color: color,
-        product: product,
-      });
+      // If product id doesn't exist in cart, create new array with item
+      copyCart[id] = [
+        {
+          size,
+          quantity: 1,
+          color,
+          product,
+        },
+      ];
     }
+
     setCart(copyCart);
     saveCart(copyCart);
   };
