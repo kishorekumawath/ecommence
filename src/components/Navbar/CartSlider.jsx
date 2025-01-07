@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Title } from "../../components/Title";
 import { useCartContext } from "../../context/CartContext";
@@ -6,8 +6,60 @@ import { colorMap } from "../../context/CollectionsContext";
 import CartTotal from "../CartTotal";
 
 function CartSlider({ cartVisible, setCartVisible }) {
-  const { cart, updateQuantity, navigate, removeCartItem } = useCartContext();
+  const { cart, updateQuantity, navigate, removeCartItem, getCartAmount } =
+    useCartContext();
+  const [total, setTotal] = useState(0);
+  const [shippingFee, setShippingFee] = useState(0);
 
+  useEffect(() => {
+    getCartAmount().then((total) => setTotal(total));
+  }, [getCartAmount]);
+
+  const handleCheckout = () => {
+    // Convert cart object to array of items
+    const cartItems = Object.keys(cart).flatMap((key) => cart[key]);
+
+    // Calculate totals
+    const itemsTotal = cartItems.reduce((total, item) => {
+      return total + item.product.price * item.quantity;
+    }, 0);
+
+    // Format items for summary
+    const formattedItems = cartItems.map((item) => ({
+      id: item.product._id,
+      name: item.product.name,
+      sku: item.product.sku,
+      quantity: item.quantity,
+      price: item.product.price,
+      size: item.size,
+      color: item.color,
+      image: item.product.image,
+      subtotal: item.product.price * item.quantity,
+    }));
+
+    const cartSummary = {
+      items: formattedItems,
+      summary: {
+        totalAmount: itemsTotal,
+        itemCount: cartItems.length,
+        shippingFee: shippingFee, // Using the shippingFee from state
+        // tax: itemsTotal * 0.18, // 18% GST
+        finalTotal: itemsTotal + shippingFee, // Final total including tax and shipping (temsTotal * 0.18)
+      },
+      orderDetails: {
+        createdAt: new Date().toISOString(),
+        currency: "INR",
+        status: "pending",
+      },
+    };
+
+    // Navigate to place order with cart summary
+    navigate("/place-order", {
+      state: { cartSummary },
+      replace: false, // If user navigates back, they can see their cart
+    });
+    setCartVisible(false);
+  };
   return (
     <div
       className={`fixed top-0 right-0 bottom-0 z-50 bg-white flex flex-col transition-all duration-500 ${
@@ -123,13 +175,10 @@ function CartSlider({ cartVisible, setCartVisible }) {
 
       {/* Bottom Section: Cart Total and Checkout */}
       <div className="p-5">
-        <CartTotal />
+        <CartTotal total={total} shippingFee={shippingFee} />
         <div className="w-full text-end mt-5">
           <button
-            onClick={() => {
-              navigate("/place-order");
-              setCartVisible(false);
-            }}
+            onClick={handleCheckout}
             className="bg-black text-white px-10 py-3 text-sm"
           >
             Checkout

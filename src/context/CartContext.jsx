@@ -91,7 +91,7 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (id, size, color, product) => {
     let copyCart = structuredClone(cart);
-
+    // console.log("Product", id, product);
     if (copyCart[id]) {
       // Check if item with same size AND color combination exists
       const existingItem = copyCart[id].find(

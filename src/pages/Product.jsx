@@ -49,7 +49,7 @@ function Product() {
   const { productId } = useParams();
   const { fetchSpecificProduct, calculateReview } = useCollections();
   const { addToCart } = useCartContext();
-
+  const [shippingFee, setShippingFee] = useState(0);
   const [product, setProduct] = useState({});
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
@@ -114,7 +114,6 @@ function Product() {
   );
 
   const handleBuyNow = () => {
-    console.log("buy now clicked");
     if (!size) {
       console.log("size is required");
       return;
@@ -124,6 +123,42 @@ function Product() {
       console.log("color is required");
       return;
     }
+
+    const itemTotal = product.price * 1; // quantity is always 1 for buy now
+
+    const cartSummary = {
+      items: [
+        {
+          id: product._id,
+          name: product.name,
+          sku: product.sku,
+          quantity: 1,
+          price: product.price,
+          size: size,
+          color: selectedColor,
+          image: image,
+          subtotal: itemTotal,
+        },
+      ],
+      summary: {
+        totalAmount: itemTotal,
+        itemCount: 1,
+        shippingFee: shippingFee, // Can be updated based on your shipping logic
+        //tax: itemTotal * 0.18, // Assuming 18% tax
+        finalTotal: itemTotal + shippingFee, //* 0.18, // Final total including tax + (itemTotal * 0.18)
+      },
+      orderDetails: {
+        createdAt: new Date().toISOString(),
+        currency: "INR",
+        status: "pending",
+        isBuyNow: true,
+      },
+    };
+
+    navigate("/place-order", {
+      state: { cartSummary, isBuyNow: true },
+      replace: false,
+    });
   };
 
   const handleAddToCart = () => {
