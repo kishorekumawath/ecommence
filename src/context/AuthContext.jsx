@@ -168,6 +168,7 @@ export function AuthProvider({ children }) {
         }
       );
 
+      console.log("Response status:", response);
       if (!response.ok) {
         if (response.status === 401) {
           logout();
