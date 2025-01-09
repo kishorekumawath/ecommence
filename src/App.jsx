@@ -32,6 +32,8 @@ import {
 import Signup from "./pages/Signup";
 import SuccessPage from "./pages/SuccessPage";
 import ScrollToTop from "./components/ScrollTop";
+import Wishlist from "./pages/Wishlist";
+import { WishlistProvider } from "./context/WhislistContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -63,6 +65,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <WishlistProvider>
         <CollectionsProvider>
           <CartProvider>
             <ScrollToTop /> {/* Scroll restoration feature */}
@@ -84,6 +87,7 @@ function App() {
                 path="/successPage/:qiKinkOrderId"
                 element={<SuccessPage />}
               />
+              <Route path="/wishlist" element={<Wishlist />} />
               <Route
                 path="/place-order"
                 element={
@@ -109,6 +113,7 @@ function App() {
             <Footer />
           </CartProvider>
         </CollectionsProvider>
+        </WishlistProvider>
       </AuthProvider>
     </BrowserRouter>
   );

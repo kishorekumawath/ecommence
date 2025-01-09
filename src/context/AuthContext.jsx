@@ -29,9 +29,15 @@ export function AuthProvider({ children }) {
       setAccessToken(storedAccess);
       setRefreshToken(storedRefresh);
       setUser(JSON.parse(storedUser));
+
+    
     }
     setIsLoading(false);
   }, []);
+
+  useEffect(()=>{
+    console.log("user->>>>>>>>>>>>>>>",user)
+  })
 
   const login = async (email, password) => {
     try {

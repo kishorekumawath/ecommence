@@ -1,8 +1,10 @@
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ProductTitle } from "./Title";
 import { IconButton } from "./icons";
 import { assets } from "../assets/assets";
+import { use } from "react";
+import { s } from "framer-motion/client";
 
 export function ProductItem({ id, name, image, price }) {
   // const { currency } = useContext(ShopContext);
@@ -28,9 +30,12 @@ export function ProductItem({ id, name, image, price }) {
   );
 }
 
-export function ProductItemDesign2({ id, name, image, price }) {
+export function ProductItemDesign2({ id, name, image, price ,like}) {
   const [liked, setLiked] = useState(false);
 
+  useEffect(() => {
+    setLiked(like);
+  }, [like]);
   const onLikeClick = (e) => {
     e.preventDefault();
     console.log("liked");
