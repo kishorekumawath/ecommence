@@ -29,15 +29,13 @@ export function AuthProvider({ children }) {
       setAccessToken(storedAccess);
       setRefreshToken(storedRefresh);
       setUser(JSON.parse(storedUser));
-
-    
     }
     setIsLoading(false);
   }, []);
 
-  useEffect(()=>{
-    console.log("user->>>>>>>>>>>>>>>",user)
-  })
+  useEffect(() => {
+    console.log("user->>>>>>>>>>>>>>>", user);
+  });
 
   const login = async (email, password) => {
     try {
@@ -135,20 +133,6 @@ export function AuthProvider({ children }) {
       setIsLoading(false);
     }
   };
-
-  //   const loadUserData = async () => {
-  //     try {
-  //       const userData = await fetchUser(user?._id);
-  //       console.log("Fetched User Data:", userData);
-  //       // Use userData for further operations
-  //     } catch (error) {
-  //       console.error("Failed to fetch user:", error.message);
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     loadUserData();
-  //   }, []);
 
   const updateUser = async (updates) => {
     console.log("Updating user with updates:", updates, "user:", user._id);

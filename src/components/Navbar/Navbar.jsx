@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import SlidBarMenu from "./SlidBarMenu";
 import Topbar from "./Topbar";
 import { useCartContext } from "../../context/CartContext";
 import CartSlider from "./CartSlider";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/NewAuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -17,9 +17,10 @@ function Navbar() {
   const openProfile = () => {
     navigate("/profile");
   };
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
-  };
+    navigate("/login");
+  }, [logout, navigate]);
   return (
     <div className=" flex items-center justify-between py-5 font-medium px-10 sticky top-0 bg-white z-50">
       {/* LOGO Icon */}
@@ -32,23 +33,6 @@ function Navbar() {
 
       {/* Right side */}
       <div className="flex items-center gap-6">
-        {/* Profile Icon */}
-        {/* 
-        {user ? (
-          <img
-            src={assets.profile_icon}
-            alt=""
-            className="w-5 cursor-pointer"
-          />
-        ) : (
-          <Link
-            to="/login"
-            className={`block px-4 py-2 text-sm text-gray-500  hover:text-gray-900`}
-          >
-            Login
-          </Link>
-        )} */}
-
         {/* Profile Icon with Dropdown - Desktop */}
         <div className="hidden sm:block group relative">
           {user ? (

@@ -20,7 +20,7 @@ import Footer from "./components/Footer";
 import SearchBar from "./components/Navbar/SearchBar";
 import { CartProvider } from "./context/CartContext";
 import PlaceOrder from "./pages/PlaceOrder";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NewAuthProvider, useAuth } from "./context/NewAuthContext";
 
 import Profile from "./pages/Profile";
 import {
@@ -34,6 +34,7 @@ import SuccessPage from "./pages/SuccessPage";
 import ScrollToTop from "./components/ScrollTop";
 import Wishlist from "./pages/Wishlist";
 import { WishlistProvider } from "./context/WhislistContext";
+// import { NewAuthProvider } from "./context/NewAuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -64,57 +65,57 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
+      <NewAuthProvider>
         <WishlistProvider>
-        <CollectionsProvider>
-          <CartProvider>
-            <ScrollToTop /> {/* Scroll restoration feature */}
-            <Navbar />
-            <SearchBar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route
-                path="/collection/:categoryName/:subCategoryName"
-                element={<Collection />}
-              />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route
-                path="/successPage/:qiKinkOrderId"
-                element={<SuccessPage />}
-              />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route
-                path="/place-order"
-                element={
-                  <ProtectedRoute>
-                    <PlaceOrder />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/product/:productId" element={<Product />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/return" element={<ReturnPolicy />} />
-              <Route path="/shipping" element={<ShippingPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
-            </Routes>
-            <Footer />
-          </CartProvider>
-        </CollectionsProvider>
+          <CollectionsProvider>
+            <CartProvider>
+              <ScrollToTop /> {/* Scroll restoration feature */}
+              <Navbar />
+              <SearchBar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route
+                  path="/collection/:categoryName/:subCategoryName"
+                  element={<Collection />}
+                />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route
+                  path="/successPage/:qiKinkOrderId"
+                  element={<SuccessPage />}
+                />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route
+                  path="/place-order"
+                  element={
+                    <ProtectedRoute>
+                      <PlaceOrder />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/product/:productId" element={<Product />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/return" element={<ReturnPolicy />} />
+                <Route path="/shipping" element={<ShippingPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+              </Routes>
+              <Footer />
+            </CartProvider>
+          </CollectionsProvider>
         </WishlistProvider>
-      </AuthProvider>
+      </NewAuthProvider>
     </BrowserRouter>
   );
 }

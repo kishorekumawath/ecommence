@@ -1,13 +1,6 @@
-import { use } from "react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./NewAuthContext";
 
 const CartContext = createContext({
   cart: {},
@@ -16,14 +9,10 @@ const CartContext = createContext({
   getCartCount: 0,
   updateQuantity: () => {},
   navigate: () => {},
-  getCartAmount: () => {},
+  getCartAmount: () => 0,
   removeCartItem: () => {},
   clearCart: () => {},
 });
-
-export const useCartContext = () => {
-  return useContext(CartContext);
-};
 
 // Helper function to get storage key for a user
 const getStorageKey = (userId) => {
@@ -210,4 +199,8 @@ export const CartProvider = ({ children }) => {
     clearCart,
   };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+};
+
+export const useCartContext = () => {
+  return useContext(CartContext);
 };

@@ -1,17 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
-import { assets, products } from "../assets/assets";
-import { Title } from "../components/Title";
+import React, { useEffect, useState } from "react";
+import { assets } from "../assets/assets";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProductItem } from "../components/ProductItem";
 import { useCollections } from "../context/CollectionsContext";
-import SearchBar from "../components/Navbar/SearchBar";
 import { Searchbar } from "../components/Searchbar";
 
 function Collection() {
   const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
 
-  const { CollectionsData, fetchProducts,fetchAllProducts } = useCollections();
+  const { CollectionsData, fetchProducts } = useCollections();
   const { categoryName, subCategoryName } = useParams();
 
   const [availablesCategory, setAvailablesCategory] = useState([]);
@@ -27,12 +25,10 @@ function Collection() {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    
-      const searchResults = products.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredProducts(searchResults);
-
+    const searchResults = products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProducts(searchResults);
   }, [searchQuery]);
 
   useEffect(() => {
@@ -206,8 +202,9 @@ function Collection() {
 
         {/* Category Filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
-            } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${
+            showFilter ? "" : "hidden"
+          } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">CATEGORIES</p>
 
@@ -230,8 +227,9 @@ function Collection() {
 
         {/* Sub Category filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
-            } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${
+            showFilter ? "" : "hidden"
+          } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
@@ -269,14 +267,15 @@ function Collection() {
           </select>
         </div> */}
 
-
       {/* Right side */}
       <div className="w-full">
-
         <div className="flex flex-col md:flex-row justify-between mb-2 ">
           {/* Navigation title Breadcrumbs */}
           <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
-            <button onClick={() => navigate("/")} className="hover:text-gray-900">
+            <button
+              onClick={() => navigate("/")}
+              className="hover:text-gray-900"
+            >
               Home
             </button>
             <span>/</span>
@@ -291,52 +290,29 @@ function Collection() {
             setSearchQuery={setSearchQuery}
             filteredProducts={filteredProducts}
           />
-
         </div>
-
 
         {/* Map Products */}
         <div className="  grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 place-items-center">
-          {
-          
-          filteredProducts.length ==0?products.map((item, index) => (
-            <ProductItem
-              key={index}
-              name={item.name}
-              id={item._id}
-              price={item.price}
-              image={item.image}
-            />
-          )):(
-            filteredProducts.map((item, index) => (
-              <ProductItem
-                key={index}
-                name={item.name}
-                id={item._id}
-                price={item.price}
-                image={item.image}
-              />
-            ))
-          )
-        
-        }
-          {/* {filteredProducts.length > 0 ? (
-            filteredProducts.map((item, index) => (
-              <ProductItem
-                key={index}
-                name={item.name}
-                id={item._id}
-                price={item.price}
-                image={item.image}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-10 text-gray-500">
-              No products found matching your search.
-            </div>
-          )} */}
-
-
+          {filteredProducts.length == 0
+            ? products.map((item, index) => (
+                <ProductItem
+                  key={index}
+                  name={item.name}
+                  id={item._id}
+                  price={item.price}
+                  image={item.image}
+                />
+              ))
+            : filteredProducts.map((item, index) => (
+                <ProductItem
+                  key={index}
+                  name={item.name}
+                  id={item._id}
+                  price={item.price}
+                  image={item.image}
+                />
+              ))}
         </div>
       </div>
     </div>

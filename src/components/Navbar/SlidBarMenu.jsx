@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { useCollections } from "../../context/CollectionsContext";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/NewAuthContext";
 
 function SlidBarMenu({ menuVisible, setMenuVisible }) {
   const [visibleCollections, setVisibleCollections] = useState(false);
