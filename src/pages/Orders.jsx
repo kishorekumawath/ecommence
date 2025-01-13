@@ -106,7 +106,7 @@ const Orders = () => {
               <p className="text-gray-500">No orders found</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col-reverse">
               {orders.map((order) => (
                 <div
                   key={order._id}

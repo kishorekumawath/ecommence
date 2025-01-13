@@ -4,14 +4,16 @@ import { useAuth } from "./NewAuthContext";
 
 const CartContext = createContext({
   cart: {},
-  setCart: () => {},
-  addToCart: () => {},
+  setCart: () => { },
+  addToCart: () => { },
+  isLoading: false,
+  error: null,
   getCartCount: 0,
-  updateQuantity: () => {},
-  navigate: () => {},
+  updateQuantity: () => { },
+  navigate: () => { },
   getCartAmount: () => 0,
-  removeCartItem: () => {},
-  clearCart: () => {},
+  removeCartItem: () => { },
+  clearCart: () => { },
 });
 
 // Helper function to get storage key for a user
@@ -35,24 +37,31 @@ export const CartProvider = ({ children }) => {
   const navigate = useNavigate();
   const [carts, setCarts] = useState({}); // Store all carts
   const [cart, setCart] = useState({}); // Current user's cart
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Load all carts from localStorage on mount
   useEffect(() => {
-    const loadedCarts = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("cart_")) {
-        try {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const loadedCarts = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("cart_")) {
           const cartData = localStorage.getItem(key);
           if (cartData) {
             loadedCarts[key] = JSON.parse(cartData);
           }
-        } catch (error) {
-          console.error("Error loading cart:", error);
         }
       }
+      setCarts(loadedCarts);
+    } catch (error) {
+      console.error("Error loading cart:", error);
+      setError("Failed to load cart");
+    } finally {
+      setIsLoading(false);
     }
-    setCarts(loadedCarts);
   }, []);
 
   console.log("cart", cart);
@@ -66,6 +75,7 @@ export const CartProvider = ({ children }) => {
 
   // Save cart to localStorage whenever it changes
   const saveCart = (newCart) => {
+    setError(null);
     const storageKey = getStorageKey(user?._id);
     try {
       localStorage.setItem(storageKey, JSON.stringify(newCart));
@@ -75,44 +85,54 @@ export const CartProvider = ({ children }) => {
       }));
     } catch (error) {
       console.error("Error saving cart:", error);
+      setError("Failed to save cart");
+      throw error;
     }
   };
 
   const addToCart = (id, size, color, product) => {
-    let copyCart = structuredClone(cart);
-    // console.log("Product", id, product);
-    if (copyCart[id]) {
-      // Check if item with same size AND color combination exists
-      const existingItem = copyCart[id].find(
-        (item) => item.size === size && item.color === color
-      );
+    try {
+      setError(null);
+      let copyCart = structuredClone(cart);
+      // console.log("Product", id, product);
+      if (copyCart[id]) {
+        // Check if item with same size AND color combination exists
+        const existingItem = copyCart[id].find(
+          (item) => item.size === size && item.color === color
+        );
 
-      if (existingItem) {
-        // If same size and color combination exists, increment quantity
-        existingItem.quantity += 1;
+        if (existingItem) {
+          // If same size and color combination exists, increment quantity
+          existingItem.quantity += 1;
+        } else {
+          // If combination doesn't exist, add new item
+          copyCart[id].push({
+            size,
+            quantity: 1,
+            color,
+            product,
+          });
+        }
       } else {
-        // If combination doesn't exist, add new item
-        copyCart[id].push({
-          size,
-          quantity: 1,
-          color,
-          product,
-        });
+        // If product id doesn't exist in cart, create new array with item
+        copyCart[id] = [
+          {
+            size,
+            quantity: 1,
+            color,
+            product,
+          },
+        ];
       }
-    } else {
-      // If product id doesn't exist in cart, create new array with item
-      copyCart[id] = [
-        {
-          size,
-          quantity: 1,
-          color,
-          product,
-        },
-      ];
-    }
 
-    setCart(copyCart);
-    saveCart(copyCart);
+      setCart(copyCart);
+      saveCart(copyCart);
+    }
+    catch (error) {
+      console.error("Error adding to cart:", error);
+      setError(error.message || "Failed to add item to cart");
+      return false;
+    }
   };
 
   const getCartCount = () => {
@@ -127,28 +147,48 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = async (itemId, size, color, quantity) => {
-    let copyCart = structuredClone(cart);
-    console.log("ccc", copyCart[itemId]);
-    copyCart[itemId].map((item) => {
-      if (item.size === size && item.color === color) {
-        item.quantity = quantity;
+    try {
+      let copyCart = structuredClone(cart);
+      if (!copyCart[itemId]) {
+        throw new Error("Product not found in cart");
       }
-    });
+      copyCart[itemId].map((item) => {
+        if (item.size === size && item.color === color) {
+          item.quantity = quantity;
+        }
+      });
 
-    setCart(copyCart);
-    saveCart(copyCart);
+      setCart(copyCart);
+      saveCart(copyCart);
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      setError(error.message || "Failed to update quantity");
+      return false;
+    }
+
   };
 
   const removeCartItem = (id, size, color) => {
-    let copyCart = structuredClone(cart);
-    copyCart[id] = copyCart[id].filter(
-      (item) => item.size !== size || item.color !== color
-    );
-    setCart(copyCart);
-    saveCart(copyCart);
+    try {
+      let copyCart = structuredClone(cart);
+
+      if (!copyCart[id]) {
+        throw new Error("Product not found in cart");
+      }
+
+      copyCart[id] = copyCart[id].filter(
+        (item) => item.size !== size || item.color !== color
+      );
+      setCart(copyCart);
+      saveCart(copyCart);
+    } catch (error) {
+      console.error("Error removing item:", error);
+      setError(error.message || "Failed to remove item");
+      return false;
+    }
   };
 
-  const getCartAmount = async () => {
+  const getCartAmount = async() => {
     return Object.values(cart).reduce((total, items) => {
       return (
         total +
@@ -160,8 +200,16 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearCart = () => {
-    setCart({});
-    saveCart({});
+    try {
+      setError(null);
+      setCart({});
+      saveCart({});
+      return true;
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      setError("Failed to clear cart");
+      return false;
+    }
   };
   // Function to merge anonymous cart with user cart on login
   const mergeAnonymousCart = () => {

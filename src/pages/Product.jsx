@@ -49,7 +49,6 @@ function Product() {
   const { productId } = useParams();
   const { fetchSpecificProduct, calculateReview } = useCollections();
   const { addToCart } = useCartContext();
-  const [shippingFee, setShippingFee] = useState(0);
   const [product, setProduct] = useState({});
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
@@ -142,10 +141,9 @@ function Product() {
       ],
       summary: {
         totalAmount: itemTotal,
-        itemCount: 1,
-        shippingFee: shippingFee, // Can be updated based on your shipping logic
+        itemCount: 1, 
         //tax: itemTotal * 0.18, // Assuming 18% tax
-        finalTotal: itemTotal + shippingFee, //* 0.18, // Final total including tax + (itemTotal * 0.18)
+        finalTotal: itemTotal, //* 0.18, // Final total including tax + (itemTotal * 0.18)
       },
       orderDetails: {
         createdAt: new Date().toISOString(),

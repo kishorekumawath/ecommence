@@ -339,6 +339,7 @@ const PlaceOrder = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  const [shippingfee,setShippingFee ] = useState(50);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -447,7 +448,7 @@ const PlaceOrder = () => {
       },
       customerId: user?._id,
       customerName: `${formData.firstName} ${formData.lastName}`,
-      totalAmount: cartSummary.summary.finalTotal,
+      totalAmount: cartSummary.summary.finalTotal+shippingfee,
       gateway: paymentMethod,
       gift_wrap: 0,
       rush_order: 0,
@@ -760,7 +761,7 @@ const PlaceOrder = () => {
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span>₹{cartSummary?.summary.shippingFee}</span>
+                <span>₹{shippingfee}</span>
               </div>
               <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                 <span>Total</span>
@@ -773,7 +774,9 @@ const PlaceOrder = () => {
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("Prepaid")}
+                  onClick={() => {setPaymentMethod("Prepaid");
+                    setShippingFee(0)
+                  }}
                   className={`border p-4 rounded flex-1 ${
                     paymentMethod === "Prepaid" ? "border-orange-300" : ""
                   }`}
@@ -782,7 +785,9 @@ const PlaceOrder = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("COD")}
+                  onClick={() => {setPaymentMethod("COD")
+                    setShippingFee(50)
+                  }}
                   className={`border p-4 rounded flex-1 ${
                     paymentMethod === "COD" ? "border-orange-300" : ""
                   }`}

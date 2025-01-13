@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Title } from "./Title";
 
-function CartTotal({ total, shippingFee = 0 }) {
+function CartTotal({ total,}) {
   return (
     <div className="w-full">
       <div className="text-2xl">
@@ -13,11 +13,7 @@ function CartTotal({ total, shippingFee = 0 }) {
           <p>{`₹ ${total}`}</p>
         </div>
 
-        <hr />
-        <div className="flex justify-between">
-          <p>Shipping Fee</p>
-          <p>{shippingFee}</p>
-        </div>
+  
         <hr />
         <div className="flex justify-between">
           <b>Total</b>
