@@ -338,7 +338,6 @@ const PlaceOrder = () => {
                 name="phone"
                 value={formData.phone}
                 handleInputChange={handleInputChange}
-
                 type="tel"
                 placeholder="Phone"
                 required
@@ -357,7 +356,6 @@ const PlaceOrder = () => {
                 name="doorNo"
                 value={formData.doorNo}
                 handleInputChange={handleInputChange}
-
                 placeholder="Door No"
                 required
               />
@@ -366,7 +364,6 @@ const PlaceOrder = () => {
                 name="address"
                 value={formData.address}
                 handleInputChange={handleInputChange}
-
                 placeholder="Street Address"
                 required
               />
@@ -378,7 +375,6 @@ const PlaceOrder = () => {
                 name="city"
                 value={formData.city}
                 handleInputChange={handleInputChange}
-
                 placeholder="City"
                 required
               />
@@ -387,7 +383,6 @@ const PlaceOrder = () => {
                 name="state"
                 value={formData.state}
                 handleInputChange={handleInputChange}
-
                 placeholder="State"
                 required
               />
@@ -398,7 +393,6 @@ const PlaceOrder = () => {
                 name="pincode"
                 value={formData.pincode}
                 handleInputChange={handleInputChange}
-
                 placeholder="PIN Code"
                 required
               />
@@ -418,7 +412,6 @@ const PlaceOrder = () => {
       <div className="w-full lg:w-2/5">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="text-xl">
-
             <Title text1={"Order"} text2={"Summary"} />
           </div>
           <div className="flex flex-col gap-4">
@@ -440,8 +433,9 @@ const PlaceOrder = () => {
                     <div className="flex items-center gap-2">
                       <p className="text-sm text-gray-500">Color:</p>
                       <div
-                        className={`w-5 h-5 rounded-full border border-gray-300 ${colorMap[item.color]
-                          }`}
+                        className={`w-5 h-5 rounded-full border border-gray-300 ${
+                          colorMap[item.color]
+                        }`}
                       ></div>
                     </div>
                   </div>
@@ -460,10 +454,9 @@ const PlaceOrder = () => {
               </div>
               <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                 <span>Total</span>
-                <span>₹{cartSummary?.summary.finalTotal}</span>
+                <span>₹{cartSummary?.summary.finalTotal + shippingfee}</span>
               </div>
             </div>
-
 
             <div className="mt-6">
               <p className="font-medium mb-4">Payment Method</p>
@@ -472,31 +465,31 @@ const PlaceOrder = () => {
                   type="button"
                   onClick={() => {
                     setPaymentMethod("Prepaid");
-                    setShippingFee(0)
+                    setShippingFee(0);
                   }}
-                  className={`border p-4 rounded flex-1 ${paymentMethod === "Prepaid" ? "border-orange-300" : ""
-                    }`}
+                  className={`border p-4 rounded flex-1 ${
+                    paymentMethod === "Prepaid" ? "border-orange-300" : ""
+                  }`}
                 >
                   Online
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    setPaymentMethod("COD")
-                    setShippingFee(50)
+                    setPaymentMethod("COD");
+                    setShippingFee(50);
                   }}
-                  className={`border p-4 rounded flex-1 ${paymentMethod === "COD" ? "border-orange-300" : ""
-                    }`}
+                  className={`border p-4 rounded flex-1 ${
+                    paymentMethod === "COD" ? "border-orange-300" : ""
+                  }`}
                 >
                   Cash on Delivery
                 </button>
               </div>
             </div>
 
-
             <div className="flex justify-center items-center ">
               <img src={assets.payments_options} alt="" className="h-20 w-40" />
-
             </div>
             <button
               type="submit"
