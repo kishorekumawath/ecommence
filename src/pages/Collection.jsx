@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProductItem } from "../components/ProductItem";
+import { ProductItem, ProductItemDesign2 } from "../components/ProductItem";
 import { useCollections } from "../context/CollectionsContext";
 import { Searchbar } from "../components/Searchbar";
+import { useWishlist } from "../context/WhislistContext";
 
 function Collection() {
   const [showFilter, setShowFilter] = useState(false);
@@ -23,6 +24,11 @@ function Collection() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const { wishlistItems = [], addToWishlist, removeFromWishlist } = useWishlist() || {};
+  // Add this near your other state declarations in Collection
+  const [wishlistError, setWishlistError] = useState(null);
+
 
   useEffect(() => {
     const searchResults = products.filter((product) =>
@@ -59,6 +65,7 @@ function Collection() {
     );
     setIsLoading(false);
   }, [CollectionsData, categoryName]);
+
 
   const onCategoryToggle = (e) => {
     // we need to remove all subcategory if category is unselected
@@ -179,12 +186,40 @@ function Collection() {
     return [categorySlug, subcategorySlug];
   };
 
+
+
+  // Update the like click handler to include error handling
+  const handleLikeClick = async (e, itemId) => {
+    e.preventDefault();
+    if (!wishlistItems) {
+      setWishlistError("Wishlist is not available");
+      return;
+    }
+
+    try {
+      if (wishlistItems.some(wishlistItem => wishlistItem?.product?._id === itemId)) {
+        await removeFromWishlist(itemId);
+      } else {
+        await addToWishlist(itemId);
+      }
+      setWishlistError(null);
+    } catch (error) {
+      console.error('Wishlist operation failed:', error);
+      setWishlistError("Failed to update wishlist");
+    }
+  };
+
+  const isItemInWishlist = (itemId) => {
+    return wishlistItems?.some(wishlistItem => wishlistItem?.product?._id === itemId) || false;
+  };
+
   if (isLoading) {
     return <CollectionSkeleton />;
   }
 
+
   return (
-    <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t p-10">
+    <div className="h-screen flex flex-col sm:flex-row gap-1 sm:gap-10  border-t p-5">
       {/* Filter Options */}
       <div className="min-w-60">
         <p
@@ -202,9 +237,8 @@ function Collection() {
 
         {/* Category Filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">CATEGORIES</p>
 
@@ -227,9 +261,8 @@ function Collection() {
 
         {/* Sub Category filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
@@ -293,18 +326,63 @@ function Collection() {
         </div>
 
         {/* Map Products */}
-        <div className="  grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 place-items-center">
-          {filteredProducts.length == 0
+        <div className=" mt-5  grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 place-items-start">
+          {filteredProducts.length === 0
             ? products.map((item, index) => (
-                <ProductItem
+              <ProductItem
+                key={index}
+                id={item._id}
+                name={item.name}
+                image={item.image}
+                price={item.price}
+                like={isItemInWishlist(item._id)}
+                onLikeClick={(e)=>handleLikeClick(e,item._id)}
+              />
+            ))
+            : filteredProducts.map((item, index) => (
+              <ProductItem
+                key={index}
+                id={item._id}
+                name={item.name}
+                image={item.image}
+                price={item.price}
+                like={isItemInWishlist(item._id)}
+                onLikeClick={(e)=>handleLikeClick(e,item._id)}
+              />
+            ))}
+          {/* {
+
+            filteredProducts.length == 0
+              ? products.map((item, index) => (
+                // <ProductItem
+                //   key={index}
+                //   name={item.name}
+                //   id={item._id}
+                //   price={item.price}
+                //   image={item.image}
+                // />
+                <ProductItemDesign2
                   key={index}
-                  name={item.name}
                   id={item._id}
-                  price={item.price}
+                  name={item.name}
                   image={item.image}
+                  price={item.price}
+                  like={wishlistItems.includes(item._id)}
+                  onLikeClick={
+                    (e) => {
+                      e.preventDefault();
+                      if (!wishlistItems.includes(item._id)) {
+                        console.log("adding from wishlist");
+                        addToWishlist(item._id);
+                      } else {
+                        console.log("removing from wishlist");
+                        removeFromWishlist(item._id);
+                      }
+                    }
+                  }
                 />
               ))
-            : filteredProducts.map((item, index) => (
+              : filteredProducts.map((item, index) => (
                 <ProductItem
                   key={index}
                   name={item.name}
@@ -312,7 +390,7 @@ function Collection() {
                   price={item.price}
                   image={item.image}
                 />
-              ))}
+              ))} */}
         </div>
       </div>
     </div>

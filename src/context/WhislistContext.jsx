@@ -105,16 +105,20 @@ export const WishlistProvider = ({ children }) => {
   const addToWishlist = async (productId) => {
     try {
       setLoading(true);
+      if(!user){
+          console.log("No user found");
+          return;
+      }
       const response = await fetch(`${BASE_URL}/api/v1/wishlist/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify({ productId,userId: user?._id }),
       });
       const data = await response.json();
-
+      
       if (data.success) {
         setWishlistItems(data.data.products);
       } else {

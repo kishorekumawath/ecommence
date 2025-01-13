@@ -29,11 +29,12 @@ import {
   ShippingPolicy,
   TermsOfService,
 } from "./components/PolicyComponents";
-import Signup from "./pages/Signup";
+
 import SuccessPage from "./pages/SuccessPage";
 import ScrollToTop from "./components/ScrollTop";
 import Wishlist from "./pages/Wishlist";
 import { WishlistProvider } from "./context/WhislistContext";
+import Signup from "./pages/signup";
 // import { NewAuthProvider } from "./context/NewAuthContext";
 
 const ProtectedRoute = ({ children }) => {

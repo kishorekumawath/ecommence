@@ -1,15 +1,14 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { ProductTitle, Title } from "./Title";
-import { ProductItemDesign2 } from "../components/ProductItem";
-import { assets } from "../assets/assets";
-import { IconButton } from "./icons";
-import { image } from "framer-motion/client";
+import { ProductItem,} from "../components/ProductItem";
+
 import { products } from "../assets/assets";
+import { useWishlist } from "../context/WhislistContext";
 function LatestCollections() {
   // const { products } = useContext(ShopContext);
   const [LastestProducts, setLatestProducts] = useState([]);
   const carouselRef = useRef(null);
-
+  const { addToWishlist, wishlistItems,removeFromWishlist } = useWishlist();
   const scrollLeft = () => {
     carouselRef.current.scrollBy({
       left: -300, // Adjust this value based on the card width
@@ -64,24 +63,34 @@ function LatestCollections() {
         </p>
       </div>
 
-      <div className="relative w-full ">
-        {/* Carousel */}
-        <div
+      <div
           ref={carouselRef}
           className="flex overflow-x-auto scrollbar-hide space-x-4 px-6"
         >
-          {products.slice(0,10)
+          {products.slice(0, 10)
             .map((product, index) => (
-              <ProductItemDesign2
+              <ProductItem
                 key={index}
                 id={product._id}
                 name={product.name}
                 image={product.image[0]}
                 price={product.price}
+                className="w-52 sm:w-64 "
+                onLikeClick={
+                  (e) => {
+                    e.preventDefault();
+                    if (!wishlistItems.includes(product._id)) {
+                      console.log("adding from wishlist");
+                      addToWishlist(product._id);
+                    } else {
+                      console.log("removing from wishlist");
+                      removeFromWishlist(product._id);
+                    }
+                  }
+                }
               />
             ))}
         </div>
-      </div>
     </div>
   );
 }

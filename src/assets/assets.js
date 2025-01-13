@@ -79,6 +79,7 @@ import arrow_left from './arrowleft.png'
 import arrow_right from './arrowright.png'
 import like from './like.png'
 import unLike from './unlike.png'
+import payments_options from './paymentsOptions.png'
 
 import hero1 from './h1.jpg'
 import hero2 from './h2.jpg'
@@ -113,7 +114,8 @@ export const assets = {
     arrow_left,
     like,
     unLike,
-    p_img1
+    p_img1,
+    payments_options
 }
 
 export const heroImages = [

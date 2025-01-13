@@ -68,7 +68,7 @@ function Collections() {
             categoryData.id || categoryName.toLowerCase().replace(/\s+/g, "-");
 
           return (
-            <div key={index} className="text-center py-8 text-3xl">
+            <div key={index} className="text-center p-5 text-3xl">
               <Title
                 text1={categoryName.split(" ")[0]}
                 text2={` ${categoryName.split(" ")[1] || ""}`}
@@ -76,7 +76,7 @@ function Collections() {
               <p className="w-3/4 m-auto text-sm sm:text-sm md:text-base text-gray-600">
                 {categoryData.description}
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-center mt-6 mx-10">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center  mt-2 ">
                 {categoryData.map((subCategory, subIndex) => {
                   // Ensure subcategory has an id, fallback to generated one if not present
                   // const subCategoryId =
