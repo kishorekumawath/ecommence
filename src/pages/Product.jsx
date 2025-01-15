@@ -5,6 +5,7 @@ import { useCollections } from "../context/CollectionsContext";
 import { useCartContext } from "../context/CartContext";
 import ReviewBox from "../components/ReviewBox";
 import { SizeChartModal } from "../components/SizeChartModal";
+import { ToastContainer, toast } from "react-toastify";
 
 const colorMap = {
   Yl: "bg-yellow-400",
@@ -115,11 +116,13 @@ function Product() {
   const handleBuyNow = () => {
     if (!size) {
       console.log("size is required");
+      toast.warn("Size is required");
       return;
     }
 
     if (!selectedColor) {
       console.log("color is required");
+      toast.warn("Color is required");
       return;
     }
 
@@ -141,7 +144,7 @@ function Product() {
       ],
       summary: {
         totalAmount: itemTotal,
-        itemCount: 1, 
+        itemCount: 1,
         //tax: itemTotal * 0.18, // Assuming 18% tax
         finalTotal: itemTotal, //* 0.18, // Final total including tax + (itemTotal * 0.18)
       },
@@ -349,6 +352,7 @@ function Product() {
             selectedColor={selectedColor}
             onColorSelect={setSelectedColor}
           />
+          <ToastContainer />
 
           <button
             onClick={handleBuyNow} // handleBuyNow function

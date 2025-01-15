@@ -64,6 +64,7 @@ function Collections() {
       {Object.entries(CollectionsData).map(
         ([categoryName, categoryData], index) => {
           // Assuming each category has an id property in the data
+          console.log("Category Data:", categoryData);
           const categoryId =
             categoryData.id || categoryName.toLowerCase().replace(/\s+/g, "-");
 

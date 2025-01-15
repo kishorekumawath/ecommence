@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { assets } from "../assets/assets";
+import { Title } from "./Title";
 
 const PolicyLayout = ({ children }) => {
   return (
@@ -9,26 +9,26 @@ const PolicyLayout = ({ children }) => {
   );
 };
 
-const AccordionSection = ({ title, children, isOpen, onClick }) => {
-  return (
-    <div className="border-b border-gray-200">
-      <button
-        className="w-full py-4 px-2 flex justify-between items-center hover:bg-gray-50"
-        onClick={onClick}
-      >
-        <span className="font-medium text-lg">{title}</span>
-        <span
-          className={`transform transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        >
-          <img src={assets.arrow_right} alt="" className="w-8 h-8 rotate-90"/>
-        </span>
-      </button>
-      {isOpen && <div className="p-4 bg-gray-50">{children}</div>}
+const AccordionSection = ({ title, isOpen, onClick, children }) => (
+  <div className="border-b">
+    <button
+      className="w-full py-4 flex justify-between items-center text-left font-semibold"
+      onClick={onClick}
+    >
+      {title}
+      <span className="transform transition-transform duration-200">
+        {isOpen ? "−" : "+"}
+      </span>
+    </button>
+    <div
+      className={`overflow-hidden transition-all duration-200 ${
+        isOpen ? "max-h-[1000px] pb-6" : "max-h-0"
+      }`}
+    >
+      {children}
     </div>
-  );
-};
+  </div>
+);
 
 const ReturnPolicy = () => {
   const [openSection, setOpenSection] = useState(null);
@@ -40,65 +40,96 @@ const ReturnPolicy = () => {
   return (
     <PolicyLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-6">Return & Exchange Policy</h1>
+        <div className="text-2xl">
+          <Title text1={"Return"} text2={" Policy"} />
+        </div>
+        <p className="text-gray-600 mb-6">
+          At MOONS FLARE, we are committed to providing you with high-quality
+          streetwear clothing. We understand that occasionally, you may need to
+          return an item or seek a refund.
+        </p>
       </div>
 
       <AccordionSection
-        title="Return/Exchange Window"
-        isOpen={openSection === "window"}
-        onClick={() => toggleSection("window")}
+        title="Manufacturing Defects Returns"
+        isOpen={openSection === "defects"}
+        onClick={() => toggleSection("defects")}
       >
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            You can return or exchange your order within 30 days of delivery
-          </li>
-          <li>We offer reverse pickup facility for most pin codes</li>
-          <li>
-            For non-serviceable pin codes, self-shipping option is available
-          </li>
-        </ul>
-      </AccordionSection>
-
-      <AccordionSection
-        title="Return/Exchange Process"
-        isOpen={openSection === "process"}
-        onClick={() => toggleSection("process")}
-      >
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold mb-2">For Returns:</h3>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Pickup will be arranged within 3 business days</li>
-              <li>Refund will be initiated within 24-48 hours after pickup</li>
-              <li>Amount will reflect in your account within 7 days</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">For Exchanges:</h3>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Pickup will be arranged within 2 business days</li>
-              <li>Only same product in different size is allowed</li>
-              <li>No partial returns for combo packs</li>
-            </ul>
-          </div>
+        <div className="space-y-3 text-gray-600">
+          <p>
+            We accept returns for manufacturing defects within 7 days of
+            delivery date.
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Defects include holes, tears, or any product damage</li>
+            <li>
+              Return pickup will be arranged within 24-48 hours after approval
+            </li>
+            <li>Maximum of 2 pickup attempts will be made</li>
+            <li>Products must be returned in original condition</li>
+            <li>Quality check will be performed at our warehouse</li>
+          </ul>
+          <p className="text-sm italic mt-2">
+            Note: Reverse pickup availability depends on your area's pincode
+          </p>
         </div>
       </AccordionSection>
 
       <AccordionSection
-        title="Terms & Conditions"
-        isOpen={openSection === "conditions"}
-        onClick={() => toggleSection("conditions")}
+        title="Size & Fit Policy"
+        isOpen={openSection === "size"}
+        onClick={() => toggleSection("size")}
       >
-        <ul className="list-disc pl-6 space-y-2">
-          <li>Products must be unused and in original condition</li>
-          <li>All tags and packaging must be intact</li>
-          <li>
-            Certain categories are non-returnable (masks, boxers, shorts, etc.)
-          </li>
-          <li>Gift wrapping charges are non-refundable</li>
-          <li>COD/Shipping charges are non-refundable</li>
-        </ul>
+        <div className="space-y-3 text-gray-600">
+          <p>
+            Please note that we do not accept returns or exchanges for size
+            issues.
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Detailed size charts are provided for all products</li>
+            <li>Customers are advised to measure carefully before ordering</li>
+            <li>Compare your measurements with our size chart</li>
+          </ul>
+        </div>
       </AccordionSection>
+
+      <AccordionSection
+        title="Refund Process"
+        isOpen={openSection === "refund"}
+        onClick={() => toggleSection("refund")}
+      >
+        <div className="space-y-3 text-gray-600">
+          <ul className="list-disc pl-6 space-y-2">
+            <li>
+              Refunds are processed within 14 business days after approval
+            </li>
+            <li>Prepaid orders: Refund to original payment method</li>
+            <li>COD orders: Refund to provided bank details</li>
+            <li>Refund initiation after successful quality check</li>
+          </ul>
+        </div>
+      </AccordionSection>
+
+      <AccordionSection
+        title="Order Cancellation"
+        isOpen={openSection === "cancellation"}
+        onClick={() => toggleSection("cancellation")}
+      >
+        <div className="space-y-3 text-gray-600">
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Only available for COD orders before dispatch</li>
+            <li>Prepaid orders are final and non-refundable</li>
+          </ul>
+        </div>
+      </AccordionSection>
+
+      <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+        <p className="text-gray-600">
+          For assistance, email us at support@moonsflare.com with your name and
+          order ID. We're available Monday - Saturday, 11:00 AM to 7:00 PM. All
+          queries will be addressed within 24 hours.
+        </p>
+      </div>
     </PolicyLayout>
   );
 };
@@ -106,39 +137,61 @@ const ReturnPolicy = () => {
 const ShippingPolicy = () => {
   return (
     <PolicyLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-6">Shipping Policy</h1>
+      <div className="mb-2 text-2xl">
+        <Title text1={"Shipping"} text2={" Policy"} />
       </div>
 
       <div className="space-y-8">
         <div>
           <h3 className="text-xl font-semibold mb-3">Shipping Rates</h3>
-          <p>
-            Free shipping across India for all prepaid orders. Additional fee
-            applicable for COD orders.
+          <p className="text-gray-600">
+            We offer free shipping across India for all prepaid orders. For COD
+            (Cash on Delivery) orders, an additional fee is applicable to cover
+            cash handling by the carrier partner.
           </p>
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Delivery Timeline</h3>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Metro cities: 2-3 business days</li>
-            <li>Rest of India: 3-5 business days</li>
-            <li>Order processing time: 1-2 business days</li>
+          <h3 className="text-xl font-semibold mb-3">Order Processing</h3>
+          <p className="text-gray-600">
+            We strive to fulfill orders as soon as you place them. Your order
+            will typically be dispatched within 1-2 business days.
+          </p>
+        </div>
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Delivery Time</h3>
+          <ul className="list-disc pl-6 space-y-2 text-gray-600">
+            <li>Metropolitan Cities: 2-3 working days</li>
+            <li>Rest of India: 3-5 working days</li>
           </ul>
+          <p className="mt-3 text-gray-600">
+            Note: Delivery times are estimates and may vary based on your
+            location and other factors.
+          </p>
         </div>
 
         <div>
           <h3 className="text-xl font-semibold mb-3">Order Tracking</h3>
-          <p>
-            A tracking number will be provided via email/SMS once your order is
-            dispatched.
+          <p className="text-gray-600">
+            Track your package easily with a unique tracking link that will be
+            sent to you via email and SMS once your order is dispatched to our
+            delivery partner.
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 italic mt-6">
+            * Delivery timelines may be affected during peak seasons, sales, or
+            unforeseen circumstances. We appreciate your understanding.
           </p>
         </div>
       </div>
     </PolicyLayout>
   );
 };
+
+export default ShippingPolicy;
 
 const PrivacyPolicy = () => {
   const [openSection, setOpenSection] = useState(null);
@@ -150,7 +203,13 @@ const PrivacyPolicy = () => {
   return (
     <PolicyLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
+        <div className="text-2xl">
+          <Title text1={"Privacy"} text2={" Policy"} />
+        </div>
+        <p className="text-gray-600 mb-6">
+          Your privacy is important to us. This policy outlines how we collect,
+          use, and protect your information.
+        </p>
       </div>
 
       <AccordionSection
@@ -158,12 +217,20 @@ const PrivacyPolicy = () => {
         isOpen={openSection === "collection"}
         onClick={() => toggleSection("collection")}
       >
-        <ul className="list-disc pl-6 space-y-2">
-          <li>We collect only necessary information for business purposes</li>
-          <li>Information collected includes name, address, contact details</li>
-          <li>We do not store credit card information</li>
-          <li>Anonymous cookies are used to improve website functionality</li>
-        </ul>
+        <div className="space-y-3 text-gray-600">
+          <p>We collect and use information for the following purposes:</p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>
+              Only necessary information for business purposes is collected
+            </li>
+            <li>
+              Information collected includes name, address, and contact details
+            </li>
+            <li>Credit card information is not stored on our servers</li>
+            <li>Anonymous cookies are used to improve website functionality</li>
+            <li>Information collected during account creation and orders</li>
+          </ul>
+        </div>
       </AccordionSection>
 
       <AccordionSection
@@ -171,13 +238,15 @@ const PrivacyPolicy = () => {
         isOpen={openSection === "usage"}
         onClick={() => toggleSection("usage")}
       >
-        <ul className="list-disc pl-6 space-y-2">
-          <li>Process orders and provide customer service</li>
-          <li>Respond to queries and complaints</li>
-          <li>Customize offerings and analyze user trends</li>
-          <li>Send important updates about products/services</li>
-          <li>Comply with legal requirements</li>
-        </ul>
+        <div className="space-y-3 text-gray-600">
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Process orders and provide customer service</li>
+            <li>Respond to queries and complaints</li>
+            <li>Customize offerings and analyze user trends</li>
+            <li>Send important updates about products/services</li>
+            <li>Comply with legal requirements</li>
+          </ul>
+        </div>
       </AccordionSection>
 
       <AccordionSection
@@ -185,12 +254,23 @@ const PrivacyPolicy = () => {
         isOpen={openSection === "security"}
         onClick={() => toggleSection("security")}
       >
-        <ul className="list-disc pl-6 space-y-2">
-          <li>Reasonable security measures are implemented</li>
-          <li>Third-party agreements include security standards</li>
-          <li>Regular updates to security practices</li>
-        </ul>
+        <div className="space-y-3 text-gray-600">
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Implementation of reasonable security measures</li>
+            <li>Regular updates to security practices</li>
+            <li>Secure third-party agreements with security standards</li>
+            <li>Encrypted data transmission</li>
+            <li>Regular security audits and updates</li>
+          </ul>
+        </div>
       </AccordionSection>
+
+      <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+        <p className="text-gray-600">
+          For questions about our privacy practices, please contact us at
+          support@moonsflare.com.
+        </p>
+      </div>
     </PolicyLayout>
   );
 };
@@ -205,18 +285,27 @@ const TermsOfService = () => {
   return (
     <PolicyLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-6">Terms of Service</h1>
+        <div className="text-2xl">
+          <Title text1={"Terms"} text2={" of Service"} />
+        </div>
+
+        <p className="text-gray-600 mb-6">
+          By accessing and using our website, you agree to these terms and
+          conditions. Please read them carefully.
+        </p>
       </div>
 
       <AccordionSection
-        title="Overview"
-        isOpen={openSection === "overview"}
-        onClick={() => toggleSection("overview")}
+        title="Policy Applicability"
+        isOpen={openSection === "applicability"}
+        onClick={() => toggleSection("applicability")}
       >
-        <p className="mb-4">
-          By accessing and using this website, you agree to these terms and
-          conditions. If you do not agree, please do not use our services.
-        </p>
+        <div className="space-y-3 text-gray-600">
+          <p>
+            Welcome to MOONS FLARE. By using our exchange portal or placing any
+            orders, you agree to adhere to these terms without modifications.
+          </p>
+        </div>
       </AccordionSection>
 
       <AccordionSection
@@ -224,13 +313,15 @@ const TermsOfService = () => {
         isOpen={openSection === "prohibited"}
         onClick={() => toggleSection("prohibited")}
       >
-        <ul className="list-disc pl-6 space-y-2">
-          <li>Posting defamatory or offensive content</li>
-          <li>Violating intellectual property rights</li>
-          <li>Spreading misinformation</li>
-          <li>Using the service for illegal activities</li>
-          <li>Attempting to compromise website security</li>
-        </ul>
+        <div className="space-y-3 text-gray-600">
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Posting defamatory or offensive content</li>
+            <li>Violating intellectual property rights</li>
+            <li>Spreading misinformation</li>
+            <li>Using the service for illegal activities</li>
+            <li>Attempting to compromise website security</li>
+          </ul>
+        </div>
       </AccordionSection>
 
       <AccordionSection
@@ -238,11 +329,13 @@ const TermsOfService = () => {
         isOpen={openSection === "liability"}
         onClick={() => toggleSection("liability")}
       >
-        <p>
-          We are not liable for any direct, indirect, incidental, or
-          consequential damages arising from your use of our service or
-          products.
-        </p>
+        <div className="space-y-3 text-gray-600">
+          <p>
+            We are not liable for any direct, indirect, incidental, or
+            consequential damages arising from your use of our service or
+            products.
+          </p>
+        </div>
       </AccordionSection>
 
       <AccordionSection
@@ -250,11 +343,17 @@ const TermsOfService = () => {
         isOpen={openSection === "jurisdiction"}
         onClick={() => toggleSection("jurisdiction")}
       >
-        <p>
-          These terms are governed by the laws of India, and disputes shall be
-          subject to the exclusive jurisdiction of courts in Bangalore.
-        </p>
+        <div className="space-y-3 text-gray-600">
+          <p>These terms are governed by the laws of India.</p>
+        </div>
       </AccordionSection>
+
+      <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+        <p className="text-gray-600">
+          For any questions about our terms of service, please contact our
+          support team at support@moonsflare.com.
+        </p>
+      </div>
     </PolicyLayout>
   );
 };

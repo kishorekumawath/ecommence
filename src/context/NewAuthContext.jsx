@@ -142,12 +142,6 @@ export function NewAuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    console.log(
-      "Login function called with email:",
-      email,
-      "and password:",
-      password
-    );
     if (!email?.trim() || !password?.trim()) {
       throw new Error("Email and password are required");
     }

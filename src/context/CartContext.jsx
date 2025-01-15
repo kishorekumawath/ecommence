@@ -4,16 +4,16 @@ import { useAuth } from "./NewAuthContext";
 
 const CartContext = createContext({
   cart: {},
-  setCart: () => { },
-  addToCart: () => { },
+  setCart: () => {},
+  addToCart: () => {},
   isLoading: false,
   error: null,
   getCartCount: 0,
-  updateQuantity: () => { },
-  navigate: () => { },
+  updateQuantity: () => {},
+  navigate: () => {},
   getCartAmount: () => 0,
-  removeCartItem: () => { },
-  clearCart: () => { },
+  removeCartItem: () => {},
+  clearCart: () => {},
 });
 
 // Helper function to get storage key for a user
@@ -63,8 +63,6 @@ export const CartProvider = ({ children }) => {
       setIsLoading(false);
     }
   }, []);
-
-  console.log("cart", cart);
 
   // Switch cart when user changes
   useEffect(() => {
@@ -127,8 +125,7 @@ export const CartProvider = ({ children }) => {
 
       setCart(copyCart);
       saveCart(copyCart);
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error adding to cart:", error);
       setError(error.message || "Failed to add item to cart");
       return false;
@@ -165,7 +162,6 @@ export const CartProvider = ({ children }) => {
       setError(error.message || "Failed to update quantity");
       return false;
     }
-
   };
 
   const removeCartItem = (id, size, color) => {
@@ -188,7 +184,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const getCartAmount = async() => {
+  const getCartAmount = async () => {
     return Object.values(cart).reduce((total, items) => {
       return (
         total +

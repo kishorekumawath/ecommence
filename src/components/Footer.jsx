@@ -9,10 +9,11 @@ function Footer() {
         <div>
           <img src={assets.logo} alt="" className="mb-5 w-32" />
           <p className="w-full md:w-2/3 text-gray-600">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
-            assumenda ea perspiciatis voluptatem quae vel illo nesciunt officia
-            id, obcaecati veniam vero nihil corporis a recusandae quia iure ab
-            eligendi?
+            Your go-to destination for trendy t-shirts and streetwear designed
+            for comfort, affordability, and self-expression. From classic fits
+            to oversized and acid-washed styles, we bring unique designs
+            inspired by anime, Marvel, DC, and urban culture. Starting at just
+            ₹800, Moonsflare is where fashion meets individuality.
           </p>
         </div>
 
@@ -20,9 +21,6 @@ function Footer() {
           <p className="text-xl font-medium mb-5">COMPANY</p>
           <ul className="flex flex-col gap-1 text-gray-600">
             <Link to="/">Home</Link>
-            <Link to="/collection/men's-clothing/unisex-t-shirt-classic">
-              Shop
-            </Link>
             <Link to="/contact">Contact Us</Link>
             <Link to="/about">About Us</Link>
           </ul>
@@ -41,8 +39,8 @@ function Footer() {
         <div>
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>+91 1112223334</li>
-            <li>contact@gmail.com</li>
+            <li>+91 7569795229</li>
+            <li>support@moonsflare.com</li>
           </ul>
         </div>
       </div>
@@ -50,7 +48,7 @@ function Footer() {
         <hr />
         <p className=" py-5 text-sm text-center">
           {" "}
-          Copyrightt 2024@ kishore.com - All Right Reserved.{" "}
+          © 2025 moonsflare.com - All Right Reserved.{" "}
         </p>
       </div>
     </div>

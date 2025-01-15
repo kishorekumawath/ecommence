@@ -1,6 +1,7 @@
 // src/context/WishlistContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./NewAuthContext"; // Assuming you have AuthContext
+import { th } from "framer-motion/client";
 
 const WishlistContext = createContext();
 
@@ -15,37 +16,7 @@ export const WishlistProvider = ({ children }) => {
   const { user } = useAuth();
 
   // Fetch wishlist items
-  //   const fetchWishlist = async (userData) => {
-  //     console.log("Fetching wishlist");
-  //     console.log("Token", token);
-  //     if (!token) return;
 
-  //     // console.log("user --->---", JSON.stringify({ userId: userData._id }));
-  //     try {
-  //       setLoading(true);
-  //       const response = await fetch(`http://localhost:9000/api/v1/wishlist`, {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ userId: userData._id }),
-  //       });
-  //       const data = await response.json();
-
-  //       console.log("Whislist", data);
-  //       if (data.success) {
-  //         setWishlistItems(data.data.products || []);
-  //       } else {
-  //         setError(data.message);
-  //       }
-  //     } catch (err) {
-  //       console.log("Error", err);
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
   const fetchWishlist = async (userData = null) => {
     // Use provided userData or fall back to user from context
     const currentUser = userData || user;
@@ -105,9 +76,8 @@ export const WishlistProvider = ({ children }) => {
   const addToWishlist = async (productId) => {
     try {
       setLoading(true);
-      if(!user){
-          console.log("No user found");
-          return;
+      if (!user) {
+        throw new Error("Please log in to add to wishlist");
       }
       const response = await fetch(`${BASE_URL}/api/v1/wishlist/add`, {
         method: "POST",
@@ -115,10 +85,10 @@ export const WishlistProvider = ({ children }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ productId,userId: user?._id }),
+        body: JSON.stringify({ productId, userId: user?._id }),
       });
       const data = await response.json();
-      
+
       if (data.success) {
         setWishlistItems(data.data.products);
       } else {
@@ -133,39 +103,55 @@ export const WishlistProvider = ({ children }) => {
   };
 
   // Remove item from wishlist
-  //   const removeFromWishlist = async (productId) => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await fetch(
-  //         `${BASE_URL}/api/v1/wishlist/remove/${productId}`,
-  //         {
-  //           method: "DELETE",
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-  //       const data = await response.json();
-
-  //       if (data.success) {
-  //         setWishlistItems(data.data.products);
-  //       } else {
-  //         throw new Error(data.message);
+  // const removeFromWishlist = async (productId) => {
+  //   if (!user?._id) {
+  //     throw new Error("User must be logged in");
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     console.log("user", user._id, "productId", productId);
+  //     const response = await fetch(
+  //       `${BASE_URL}/api/v1/wishlist/remove/${productId}`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify({
+  //           userId: user._id,
+  //         }),
   //       }
-  //     } catch (err) {
-  //       setError(err.message);
-  //       throw err;
-  //     } finally {
-  //       setLoading(false);
+  //     );
+  //     const data = await response.json();
+  //     console.log("data", data);
+  //     if (data.success) {
+  //       setWishlistItems(data.data.products);
+  //     } else {
+  //       throw new Error(data.message);
   //     }
-  //   };
+  //   } catch (err) {
+  //     setError(err.message);
+  //     throw err;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const removeFromWishlist = async (productId) => {
     if (!user?._id) {
-      throw new Error("User must be logged in");
+      throw new Error("Please log in to remove from wishlist");
     }
+
+    // Store current items for rollback
+    const previousItems = [...wishlistItems];
+
+    // Optimistic update
+    setWishlistItems((items) =>
+      items.filter((item) => item.product._id !== productId)
+    );
+
     try {
-      setLoading(true);
-      console.log("user", user._id, "productId", productId);
       const response = await fetch(
         `${BASE_URL}/api/v1/wishlist/remove/${productId}`,
         {
@@ -180,13 +166,15 @@ export const WishlistProvider = ({ children }) => {
         }
       );
       const data = await response.json();
-      console.log("data", data);
-      if (data.success) {
-        setWishlistItems(data.data.products);
-      } else {
+
+      if (!data.success) {
+        // Revert on error
+        setWishlistItems(previousItems);
         throw new Error(data.message);
       }
     } catch (err) {
+      // Revert on error
+      setWishlistItems(previousItems);
       setError(err.message);
       throw err;
     } finally {

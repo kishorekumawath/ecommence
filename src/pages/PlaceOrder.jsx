@@ -301,7 +301,7 @@ const PlaceOrder = () => {
         )}
 
         <div className="bg-white rounded-lg border border-gray-200 p-5">
-          <Title text1="Contact" text2={"Information"} />
+          <Title text1="Contact" text2={" Information"} />
           {/* Contact form fields */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4">
@@ -347,7 +347,7 @@ const PlaceOrder = () => {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-5">
-          <Title text1={"Shipping"} text2={"Address"} />
+          <Title text1={"Shipping"} text2={" Address"} />
           {/* Address form fields */}
           <div className="flex  flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4">
@@ -412,7 +412,7 @@ const PlaceOrder = () => {
       <div className="w-full lg:w-2/5">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="text-xl">
-            <Title text1={"Order"} text2={"Summary"} />
+            <Title text1={"Order"} text2={" Summary"} />
           </div>
           <div className="flex flex-col gap-4">
             <div className="max-h-60 overflow-y-auto">

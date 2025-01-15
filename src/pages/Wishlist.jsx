@@ -1,17 +1,24 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Title } from "../components/Title";
-import { ProductItemDesign2 } from "../components/ProductItem";
+import { ProductItem } from "../components/ProductItem";
 import { useWishlist } from "../context/WhislistContext";
 import { useAuth } from "../context/NewAuthContext";
+import { ToastContainer, toast } from "react-toastify";
 
-function Wishlist() {
-  const {
-    wishlistItems = [],
-    loading,
-    error,
-    removeFromWishlist,
-  } = useWishlist();
+const Wishlist = () => {
+  const { wishlistItems, loading, error, removeFromWishlist, fetchWishlist } =
+    useWishlist();
   const { user } = useAuth();
+
+  // Local state to handle optimistic updates
+  const [removingItems, setRemovingItems] = useState(new Set());
+
+  // Get current valid items excluding ones being removed
+  const getCurrentItems = useCallback(() => {
+    return (wishlistItems || []).filter(
+      (item) => item?.product?._id && !removingItems.has(item.product._id)
+    );
+  }, [wishlistItems, removingItems]);
 
   if (loading) {
     return (
@@ -43,20 +50,37 @@ function Wishlist() {
       </div>
     );
   }
-  if (!wishlistItems) {
-    return (
-      <div className="px-10 min-h-[400px] flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl font-semibold">Loading wishlist...</p>
-        </div>
-      </div>
-    );
-  }
-  if (wishlistItems.length === 0) {
+
+  const currentItems = getCurrentItems();
+
+  const handleLikeClick = async (e, productId) => {
+    e.preventDefault();
+
+    // Optimistically update UI
+    setRemovingItems((prev) => new Set([...prev, productId]));
+
+    try {
+      await removeFromWishlist(productId);
+      toast.success("Item removed from wishlist");
+      // On success, refresh the wishlist
+      // await fetchWishlist(user);
+      // toast.success("Wishlist updated");
+    } catch (error) {
+      console.error("Failed to remove item from wishlist:", error);
+      // On error, revert the optimistic update
+      setRemovingItems((prev) => {
+        const newSet = new Set([...prev]);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
+  };
+
+  if (currentItems.length === 0) {
     return (
       <div className="px-10 min-h-[400px]">
-        <div className="flex justify-between items-center mb-8">
-          <Title text1="WISH" text2="LIST" />
+        <div className="flex justify-between items-center mb-8 text-2xl">
+          <Title text1="Wish" text2=" List" />
           <div className="w-8 h-8 bg-black rounded-full text-white text-sm flex items-center justify-center">
             <p>0</p>
           </div>
@@ -68,46 +92,30 @@ function Wishlist() {
     );
   }
 
-  // Handle clicking the like button
-  const handleLikeClick = async (e, productId) => {
-    e.preventDefault(); // Prevent navigation from Link component
-    try {
-      await removeFromWishlist(productId);
-    } catch (error) {
-      console.error("Failed to remove item from wishlist:", error);
-    }
-  };
-
   return (
     <div className="px-10">
-      <div className="flex justify-between items-center mb-8">
-        <Title text1="WISH" text2="LIST" />
+      <div className="flex justify-between items-center mb-8 text-2xl">
+        <Title text1="Wish" text2=" List" />
         <div className="w-8 h-8 bg-black rounded-full text-white text-sm flex items-center justify-center">
-          <p>{wishlistItems.length}</p>
+          <p>{currentItems.length}</p>
         </div>
       </div>
-
+      <ToastContainer />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
-        {(wishlistItems || []).map((item) => {
-          // Ensure we have all required product data
-          const product = item?.product || {};
-          if (!product._id) return null; // Skip rendering if no valid product
-
-          return (
-            <ProductItemDesign2
-              key={product._id}
-              id={product._id}
-              name={product.name || ""}
-              image={product.image || ""}
-              price={product.price || 0}
-              like={true}
-              onLikeClick={(e) => handleLikeClick(e, product._id)}
-            />
-          );
-        })}
+        {currentItems.map((item) => (
+          <ProductItem
+            key={item.product._id}
+            id={item.product._id}
+            name={item.product.name || ""}
+            image={item.product.image || ""}
+            price={item.product.price || 0}
+            like={true}
+            onLikeClick={(e) => handleLikeClick(e, item.product._id)}
+          />
+        ))}
       </div>
     </div>
   );
-}
+};
 
 export default Wishlist;
