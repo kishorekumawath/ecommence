@@ -35,8 +35,7 @@ import ScrollToTop from "./components/ScrollTop";
 import Wishlist from "./pages/Wishlist";
 import { WishlistProvider } from "./context/WhislistContext";
 import Signup from "./pages/signup";
-// import { NewAuthProvider } from "./context/NewAuthContext";
-
+import NotFound from "./pages/NotFound";
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
   const location = useLocation();
@@ -111,6 +110,9 @@ function App() {
                 <Route path="/return" element={<ReturnPolicy />} />
                 <Route path="/shipping" element={<ShippingPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
+                {/* Define other routes here */}
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>
               <Footer />
             </CartProvider>

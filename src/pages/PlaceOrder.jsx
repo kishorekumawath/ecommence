@@ -79,7 +79,7 @@ const PlaceOrder = () => {
 
   useEffect(() => {
     if (!cartSummary) {
-      navigate("/cart");
+      navigate("/");
       return;
     }
 

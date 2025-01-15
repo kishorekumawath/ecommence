@@ -9,10 +9,9 @@ function Home() {
   return (
     <div>
       <Hero />
-      <LatestCollections />
+      {/* <LatestCollections /> */}
       <Collections />
       <OurPolicy />
-      {/* <NewsletterBox/> */}
     </div>
   );
 }

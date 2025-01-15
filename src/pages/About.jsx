@@ -16,7 +16,7 @@ function About() {
           src={assets.about_img}
           alt="Moonsflare Fashion"
         />
-        <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600">
+        <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600 text-justify">
           <p>
             Welcome to Moonsflare, where style meets comfort and affordability.
             We're thrilled to have you here! At Moonsflare, we believe that
@@ -49,7 +49,7 @@ function About() {
       <div className="flex flex-col md:flex-row text-sm mb-20">
         <div className="border px-5 md:px-8 py-5 sm:py-10 flex flex-col gap-5">
           <b className="text-lg">Quality Assurance</b>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-justify">
             We take pride in our streetwear designs that combine urban vibes
             with contemporary aesthetics, ensuring you look effortlessly cool
             wherever you go. Each piece is carefully crafted to meet our high
@@ -58,7 +58,7 @@ function About() {
         </div>
         <div className="border px-5 md:px-8 py-5 sm:py-10 flex flex-col gap-5">
           <b className="text-lg">Our Story</b>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-justify">
             Moonsflare was founded by a team of four passionate individuals who
             wear many hats – designers, developers, and dreamers. United by a
             shared vision, we set out to create a brand that resonates with
@@ -68,7 +68,7 @@ function About() {
         </div>
         <div className="border px-5 md:px-8 py-5 sm:py-10 flex flex-col gap-5">
           <b className="text-lg">Looking Ahead</b>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-justify">
             While we currently focus on delivering the best in t-shirt fashion
             and streetwear, we're excited about the possibilities the future
             holds. Collaborations with talented artists and designers are on the

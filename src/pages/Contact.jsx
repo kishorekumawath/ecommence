@@ -36,7 +36,7 @@ function Contact() {
             <p className="text-sm italic">
               (WhatsApp messages only, no calls please)
             </p>
-            <p className="mt-2">Email: support@moonsflare.com</p>
+            <p className="mt-2">Email: contact@moonsflare.com</p>
           </div>
           <p className="font-semibold text-xl text-gray-600 mt-4">
             Join Our Team

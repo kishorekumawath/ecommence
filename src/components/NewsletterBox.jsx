@@ -12,7 +12,7 @@ function NewsletterBox() {
       <p className="text-2xl font-medium text-gray-800 mb-2">
         Stay Tuned for <span className="text-orange-300">Exclusive Offers</span>
       </p>
-      <p className="text-gray-500">
+      <p className="text-gray-500 text-justify">
         Our newsletter subscription feature is coming soon! Subscribe to get
         special discounts, early access to new designs, and stay updated with
         the latest drops from Moonsflare. Be among the first to receive our{" "}
