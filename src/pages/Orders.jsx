@@ -4,7 +4,7 @@ import { Package, ChevronDown, ChevronUp, MapPin, Truck } from "lucide-react";
 import { Title } from "../components/Title";
 
 const Orders = () => {
-  const { user } = useAuth();
+  const { user, apiCall, logout } = useAuth();
   const [orders, setOrders] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -12,27 +12,36 @@ const Orders = () => {
 
   React.useEffect(() => {
     const fetchOrders = async () => {
-      if (!user?._id) return;
+      if (!user?._id) {
+        setError("No user data available");
+        return;
+      }
 
       try {
-        const response = await fetch(
-          `http://localhost:9000/api/v1/orders/${user._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = await response.json();
+        setLoading(true);
+        setError(null);
 
-        if (data.success) {
-          setOrders(data.orders);
+        const response = await apiCall(`/api/v1/orders/${user._id}`, {
+          method: "GET",
+        });
+
+        if (response.success) {
+          setOrders(response.orders);
         } else {
-          setError(data.message || "Failed to fetch orders");
+          throw new Error(response.message || "Failed to fetch orders");
         }
       } catch (err) {
-        setError("Error connecting to server");
+        console.error("Orders fetch error:", err);
+
+        // Handle specific error cases
+        if (err.message.includes("token")) {
+          setError("Session expired. Please login again.");
+          logout(); // Assuming you have access to the logout function
+        } else {
+          setError(err.message || "Error connecting to server");
+        }
+
+        setOrders([]);
       } finally {
         setLoading(false);
       }

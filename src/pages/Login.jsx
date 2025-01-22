@@ -88,7 +88,6 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    console.log(isSubmitting);
     e.preventDefault();
 
     if (isBlocked) {

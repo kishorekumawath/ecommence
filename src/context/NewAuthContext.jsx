@@ -261,6 +261,7 @@ export function NewAuthProvider({ children }) {
   };
 
   const value = {
+    apiCall,
     user,
     login,
     signup,

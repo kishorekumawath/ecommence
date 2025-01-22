@@ -22,10 +22,10 @@ function Navbar() {
     navigate("/login");
   }, [logout, navigate]);
   return (
-    <div className=" flex items-center justify-between py-5 font-medium px-10 sticky top-0 bg-white z-50">
+    <div className=" flex items-center justify-between py-4 font-medium px-10 sticky top-0 bg-white z-50">
       {/* LOGO Icon */}
       <Link to={"/"}>
-        <img src={assets.logo} className="w-36" />
+        <img src={assets.logo} className="h-10" />
       </Link>
 
       {/* Top Menu Items */}

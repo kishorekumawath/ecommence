@@ -75,7 +75,7 @@ function Footer() {
         <div>
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-3 text-gray-600">
-            <li>+91 7569795229</li>
+            <li>Moonsflare</li>
             <li>contact@moonsflare.com</li>
             <li className="pt-2">Follow Us</li>
             <li className="flex gap-4">

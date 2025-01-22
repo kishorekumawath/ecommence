@@ -1,7 +1,6 @@
 // src/context/WishlistContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./NewAuthContext"; // Assuming you have AuthContext
-import { th } from "framer-motion/client";
 
 const WishlistContext = createContext();
 
@@ -13,18 +12,13 @@ export const WishlistProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("accessToken");
 
-  const { user } = useAuth();
+  const { user, apiCall, logout } = useAuth();
 
   // Fetch wishlist items
 
   const fetchWishlist = async (userData = null) => {
     // Use provided userData or fall back to user from context
     const currentUser = userData || user;
-
-    if (!token) {
-      console.log("No authentication token available");
-      return;
-    }
 
     if (!currentUser?._id) {
       console.log("No user data available");
@@ -34,29 +28,27 @@ export const WishlistProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`http://localhost:9000/api/v1/wishlist`, {
+
+      const response = await apiCall("/api/v1/wishlist", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ userId: currentUser._id }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setWishlistItems(data.data.products || []);
+      if (response.success) {
+        setWishlistItems(response.data.products || []);
       } else {
-        throw new Error(data.message || "Failed to fetch wishlist");
+        throw new Error(response.message || "Failed to fetch wishlist");
       }
     } catch (err) {
       console.error("Wishlist fetch error:", err);
-      setError(err.message);
+      // Handle specific error cases
+      if (err.message.includes("token")) {
+        // If it's a token error, you might want to trigger a re-login
+        setError("Session expired. Please login again.");
+        logout(); // Assuming you have access to the logout function
+      } else {
+        setError(err.message);
+      }
       setWishlistItems([]);
     } finally {
       setLoading(false);
@@ -68,6 +60,7 @@ export const WishlistProvider = ({ children }) => {
     if (user?._id && token) {
       fetchWishlist(user);
     } else {
+      setError("User not authenticated");
       setWishlistItems([]); // Clear items if no user or token
     }
   }, [user, token]);
