@@ -55,7 +55,6 @@ import p_img51 from "./p_img51.png";
 import p_img52 from "./p_img52.png";
 
 import logo from "./logo.png";
-import hero_img from "./hero_img.png";
 import cart_icon from "./cart_icon.png";
 import bin_icon from "./bin_icon.png";
 import dropdown_icon from "./dropdown_icon.png";
@@ -80,12 +79,6 @@ import like from "./like.png";
 import unLike from "./unlike.png";
 import payments_options from "./paymentsOptions.png";
 
-import hero1 from "./h1.jpg";
-import hero2 from "./h2.jpg";
-import hero3 from "./h3.jpg";
-import hero4 from "./h4.jpg";
-import hero5 from "./h5.jpg";
-import hero6 from "./h6.png";
 import bannerD1 from "./bannerD1.png";
 import bannerD2 from "./bannerD2.png";
 import bannerD3 from "./bannerD3.png";
@@ -110,11 +103,9 @@ import bannerM9 from "./bannerM9.png";
 import bannerM10 from "./bannerM10.png";
 import bannerM11 from "./bannerM11.png";
 import bannerM12 from "./bannerM12.png";
-import { b } from "framer-motion/client";
 
 export const assets = {
   logo,
-  hero_img,
   cart_icon,
   dropdown_icon,
   exchange_icon,
@@ -140,8 +131,6 @@ export const assets = {
   p_img1,
   payments_options,
 };
-
-export const heroImages = [hero2, hero3, hero5, hero1, hero4, hero6];
 
 export const desktopBanners = [
   bannerD1,
