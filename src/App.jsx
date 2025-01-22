@@ -34,7 +34,7 @@ import SuccessPage from "./pages/SuccessPage";
 import ScrollToTop from "./components/ScrollTop";
 import Wishlist from "./pages/Wishlist";
 import { WishlistProvider } from "./context/WhislistContext";
-import Signup from "./pages/signup";
+import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
