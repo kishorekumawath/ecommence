@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-
+import { BASE_URL } from "../server/server";
 const NewAuthContext = createContext({
   user: null,
   login: async () => {},
@@ -17,9 +17,6 @@ const NewAuthContext = createContext({
   accessToken: null,
   isAuthenticated: false,
 });
-
-// Update this based on your environment
-const BASE_URL = "http://localhost:9000";
 
 // Secure storage wrapper
 const SecureStorage = {

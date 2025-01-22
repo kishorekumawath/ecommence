@@ -7,6 +7,7 @@ import ProfileInputField from "../components/ProfileInputField";
 import { Loader2 } from "lucide-react";
 import { Title } from "../components/Title";
 import { assets } from "../assets/assets";
+import { BASE_URL } from "../server/server";
 
 const PlaceOrder = () => {
   const location = useLocation();
@@ -139,17 +140,14 @@ const PlaceOrder = () => {
 
   const handleCODPayment = async (orderPayload) => {
     try {
-      const response = await fetch(
-        "http://localhost:9000/api/v1/qikink/order",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(orderPayload),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/v1/qikink/order`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderPayload),
+      });
 
       const data = await response.json();
 
@@ -182,7 +180,7 @@ const PlaceOrder = () => {
       }
       //step 1 initiate payment
       const initResponse = await fetch(
-        "http://localhost:9000/api/v1/razorpay/initiate-payment",
+        `${BASE_URL}/api/v1/razorpay/initiate-payment`,
         {
           method: "POST",
           headers: {
@@ -207,7 +205,7 @@ const PlaceOrder = () => {
           try {
             // console.log("Inside handler Razorpay response:", response);
             const paymentCompleteResponse = await fetch(
-              "http://localhost:9000/api/v1/razorpay/process-order",
+              `${BASE_URL}/api/v1/razorpay/process-order`,
               {
                 method: "POST",
                 headers: {

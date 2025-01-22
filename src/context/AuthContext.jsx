@@ -1,6 +1,5 @@
-import { use } from "framer-motion/client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-
+import { BASE_URL } from "../server/server";
 const AuthContext = createContext({
   user: null,
   login: () => {},
@@ -11,8 +10,6 @@ const AuthContext = createContext({
   accessToken: null,
   refreshToken: null,
 });
-
-const BASE_URL = "http://localhost:9000";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -32,10 +29,6 @@ export function AuthProvider({ children }) {
     }
     setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    console.log("user->>>>>>>>>>>>>>>", user);
-  });
 
   const login = async (email, password) => {
     try {

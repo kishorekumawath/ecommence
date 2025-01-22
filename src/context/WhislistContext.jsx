@@ -1,10 +1,8 @@
 // src/context/WishlistContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./NewAuthContext"; // Assuming you have AuthContext
-
+import { BASE_URL } from "../server/server";
 const WishlistContext = createContext();
-
-const BASE_URL = "http://localhost:9000";
 
 export const WishlistProvider = ({ children }) => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -94,42 +92,6 @@ export const WishlistProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
-  // Remove item from wishlist
-  // const removeFromWishlist = async (productId) => {
-  //   if (!user?._id) {
-  //     throw new Error("User must be logged in");
-  //   }
-  //   try {
-  //     setLoading(true);
-  //     console.log("user", user._id, "productId", productId);
-  //     const response = await fetch(
-  //       `${BASE_URL}/api/v1/wishlist/remove/${productId}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify({
-  //           userId: user._id,
-  //         }),
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     console.log("data", data);
-  //     if (data.success) {
-  //       setWishlistItems(data.data.products);
-  //     } else {
-  //       throw new Error(data.message);
-  //     }
-  //   } catch (err) {
-  //     setError(err.message);
-  //     throw err;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const removeFromWishlist = async (productId) => {
     if (!user?._id) {

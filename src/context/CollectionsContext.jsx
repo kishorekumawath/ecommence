@@ -1,5 +1,6 @@
 // CollectionsContext.js
 import React, { createContext, useState, useContext, useCallback } from "react";
+import { BASE_URL } from "../server/server";
 
 const CollectionsContext = createContext({
   CollectionsData: {},
@@ -67,23 +68,20 @@ export const CollectionsProvider = ({ children }) => {
     // console.log("Fetching collections started...");
     if (CollectionsData && Object.keys(CollectionsData).length > 0) {
       // console.log("CollectionsData already exists:", CollectionsData);
-      console.log("CollectionsData already exists: ------>>");
+      // console.log("CollectionsData already exists: ------>>");
       return;
     }
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        "http://localhost:9000/api/v1/subcategories",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/v1/subcategories`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch collections");
@@ -111,7 +109,7 @@ export const CollectionsProvider = ({ children }) => {
   const fetchProducts = useCallback(async (category, subCategory) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/api/v1/products/${category}/${subCategory}`
+        `${BASE_URL}/api/v1/products/${category}/${subCategory}`
       );
       const data = await response.json();
       return data.products;
@@ -122,9 +120,7 @@ export const CollectionsProvider = ({ children }) => {
 
   const fetchSpecificProduct = async (productID) => {
     try {
-      const response = await fetch(
-        `http://localhost:9000/api/v1/product/${productID}`
-      );
+      const response = await fetch(`${BASE_URL}/api/v1/product/${productID}`);
       const data = await response.json();
       return data.product;
     } catch (error) {
@@ -134,7 +130,7 @@ export const CollectionsProvider = ({ children }) => {
 
   const fetchAllProducts = async () => {
     try {
-      const response = await fetch("http://localhost:9000/api/v1/products");
+      const response = await fetch(`${BASE_URL}/api/v1/products`);
       const data = await response.json();
       return data.products;
     } catch (error) {
