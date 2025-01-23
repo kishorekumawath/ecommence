@@ -3,11 +3,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/NewAuthContext";
 import { useCartContext } from "../context/CartContext";
 import { colorMap } from "../context/CollectionsContext";
-import ProfileInputField from "../components/ProfileInputField";
+
 import { Loader2 } from "lucide-react";
 import { Title } from "../components/Title";
 import { assets } from "../assets/assets";
 import { BASE_URL } from "../server/server";
+import ProfileInputTile from "../components/ProfileInputTile";
 
 const PlaceOrder = () => {
   const location = useLocation();
@@ -303,7 +304,7 @@ const PlaceOrder = () => {
           {/* Contact form fields */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <ProfileInputField
+              <ProfileInputTile
                 name="firstName"
                 value={formData.firstName}
                 handleInputChange={handleInputChange}
@@ -312,7 +313,7 @@ const PlaceOrder = () => {
                 required
               />
 
-              <ProfileInputField
+              <ProfileInputTile
                 title="Last Name"
                 name="lastName"
                 value={formData.lastName}
@@ -322,7 +323,7 @@ const PlaceOrder = () => {
               />
             </div>
             <div className="flex flex-col md:flex-row gap-4">
-              <ProfileInputField
+              <ProfileInputTile
                 title="Email"
                 name="email"
                 value={formData.email}
@@ -331,7 +332,7 @@ const PlaceOrder = () => {
                 placeholder="Email"
                 required
               />
-              <ProfileInputField
+              <ProfileInputTile
                 title={"Phone"}
                 name="phone"
                 value={formData.phone}
@@ -349,7 +350,7 @@ const PlaceOrder = () => {
           {/* Address form fields */}
           <div className="flex  flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <ProfileInputField
+              <ProfileInputTile
                 title="Door No"
                 name="doorNo"
                 value={formData.doorNo}
@@ -357,7 +358,7 @@ const PlaceOrder = () => {
                 placeholder="Door No"
                 required
               />
-              <ProfileInputField
+              <ProfileInputTile
                 title={"Address"}
                 name="address"
                 value={formData.address}
@@ -368,7 +369,7 @@ const PlaceOrder = () => {
             </div>
 
             <div className="flex flex-col md:flex-row gap-4">
-              <ProfileInputField
+              <ProfileInputTile
                 title={"City"}
                 name="city"
                 value={formData.city}
@@ -376,7 +377,7 @@ const PlaceOrder = () => {
                 placeholder="City"
                 required
               />
-              <ProfileInputField
+              <ProfileInputTile
                 title={"State"}
                 name="state"
                 value={formData.state}
@@ -386,7 +387,7 @@ const PlaceOrder = () => {
               />
             </div>
             <div className="flex flex-col md:flex-row gap-4">
-              <ProfileInputField
+              <ProfileInputTile
                 title={"PIN Code"}
                 name="pincode"
                 value={formData.pincode}
@@ -394,7 +395,7 @@ const PlaceOrder = () => {
                 placeholder="PIN Code"
                 required
               />
-              <ProfileInputField
+              <ProfileInputTile
                 title={"Country"}
                 name="country"
                 value={formData.country}

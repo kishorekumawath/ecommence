@@ -7,6 +7,7 @@ import { CollectionCategoryItem } from "./ProductItem";
 
 // Skeleton components remain the same
 const CategorySkeleton = () => (
+  
   <div className="animate-pulse">
     <div className="relative aspect-square bg-gray-200 rounded-lg"></div>
     <div className="h-4 bg-gray-200 rounded w-3/4 mt-2"></div>
@@ -29,7 +30,7 @@ const CategorySectionSkeleton = () => (
   </div>
 );
 
-function Collections() {
+function CollectionsView() {
   const { CollectionsData, isLoading, error, fetchCollections } =
     useCollections();
   const navigate = useNavigate();
@@ -106,4 +107,4 @@ function Collections() {
   );
 }
 
-export default Collections;
+export default CollectionsView;

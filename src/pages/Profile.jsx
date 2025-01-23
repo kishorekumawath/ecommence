@@ -3,7 +3,8 @@ import { useAuth } from "../context/NewAuthContext";
 import Orders from "./Orders";
 import { Title } from "../components/Title";
 import { Pencil, PencilOff, Loader2 } from "lucide-react";
-import ProfileInputField from "../components/ProfileInputField";
+import ProfileInputTile from "../components/ProfileInputTile";
+
 
 const Profile = () => {
   const { user, isLoading, updateUser, logout } = useAuth();
@@ -205,7 +206,7 @@ const Profile = () => {
 
             <div className="flex flex-col-reverse md:flex-col w-full gap-2">
               <div className="flex gap-5 justify-center items-center w-full">
-                <ProfileInputField
+                <ProfileInputTile
                   isDisable={isEditing}
                   title="First Name"
                   name="firstName"
@@ -213,7 +214,7 @@ const Profile = () => {
                   handleInputChange={handleInputChange}
                   required
                 />
-                <ProfileInputField
+                <ProfileInputTile
                   isDisable={isEditing}
                   title="Last Name"
                   name="lastName"
@@ -223,7 +224,7 @@ const Profile = () => {
                 />
               </div>
               {isEditing && (
-                <ProfileInputField
+                <ProfileInputTile
                   isDisable={isEditing}
                   title="Avatar URL"
                   name="avatar"
@@ -236,7 +237,7 @@ const Profile = () => {
           </div>
 
           {/* Read-only Fields */}
-          <ProfileInputField
+          <ProfileInputTile
             isDisable={false}
             title="Email"
             name="email"
@@ -244,7 +245,7 @@ const Profile = () => {
             handleInputChange={() => {}}
             readOnly
           />
-          <ProfileInputField
+          <ProfileInputTile
             isDisable={false}
             title="Phone Number"
             name="phone"
@@ -263,7 +264,7 @@ const Profile = () => {
               { title: "Zip Code", name: "address.pincode" },
               { title: "Door No.", name: "address.doorNo" },
             ].map((field) => (
-              <ProfileInputField
+              <ProfileInputTile
                 key={field.name}
                 isDisable={isEditing}
                 title={field.title}
