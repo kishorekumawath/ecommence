@@ -3,7 +3,7 @@ import { useAuth } from "../context/NewAuthContext";
 import Orders from "./Orders";
 import { Title } from "../components/Title";
 import { Pencil, PencilOff, Loader2 } from "lucide-react";
-import ProfileInputField from "../components/ProfileInputField";
+import ProfileInputField from "../components/profileInputField";
 
 const Profile = () => {
   const { user, isLoading, updateUser, logout } = useAuth();
