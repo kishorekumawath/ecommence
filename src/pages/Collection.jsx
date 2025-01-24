@@ -877,7 +877,7 @@
 
 // export default Collection;
 
-//present working code
+//present working code with sepearate loading  skeleton components
 
 import React, { useEffect, useState } from "react";
 import { assets } from "../assets/assets";
