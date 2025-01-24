@@ -879,7 +879,7 @@
 
 //present working code with sepearate loading  skeleton components
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProductItem } from "../components/ProductItem";
@@ -928,7 +928,6 @@ function Collection() {
   const [availablesSubCategory, setAvailablesSubCategory] = useState([]);
 
   const [products, setProducts] = useState([]);
-
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
@@ -942,6 +941,37 @@ function Collection() {
     addToWishlist,
     removeFromWishlist,
   } = useWishlist() || {};
+
+  // Caching mechanism for products
+  const getCachedProducts = useCallback((categorySlug, subCategorySlug) => {
+    const cacheKey = `products_${categorySlug}_${subCategorySlug}`;
+    const cachedData = localStorage.getItem(cacheKey);
+
+    if (cachedData) {
+      const { products: cachedProducts, timestamp } = JSON.parse(cachedData);
+      // Optional: Add cache expiration (e.g., 1 hour)
+      const isExpired = Date.now() - timestamp > 3600000;
+
+      if (!isExpired) {
+        return cachedProducts;
+      }
+    }
+
+    return null;
+  }, []);
+
+  const cacheProducts = useCallback(
+    (categorySlug, subCategorySlug, productsToCache) => {
+      const cacheKey = `products_${categorySlug}_${subCategorySlug}`;
+      const cacheData = {
+        products: productsToCache,
+        timestamp: Date.now(),
+      };
+
+      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    },
+    []
+  );
 
   useEffect(() => {
     const searchResults = products.filter((product) =>
@@ -980,16 +1010,33 @@ function Collection() {
     ]);
     setIsCategoriesLoading(false);
     setIsProductsLoading(true);
-    fetchProducts(categoryName, subCategoryName, setProducts)
-      .then((products) => {
-        setProducts(products);
-        setIsProductsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-        setIsProductsLoading(false);
-      });
-  }, [CollectionsData, categoryName, subCategoryName]);
+
+    // Check cache first
+    const cachedProducts = getCachedProducts(categoryName, subCategoryName);
+
+    if (cachedProducts) {
+      setProducts(cachedProducts);
+      setIsProductsLoading(false);
+    } else {
+      // Fetch and cache products if not in cache
+      fetchProducts(categoryName, subCategoryName, setProducts)
+        .then((fetchedProducts) => {
+          setProducts(fetchedProducts);
+          cacheProducts(categoryName, subCategoryName, fetchedProducts);
+          setIsProductsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching products:", error);
+          setIsProductsLoading(false);
+        });
+    }
+  }, [
+    CollectionsData,
+    categoryName,
+    subCategoryName,
+    getCachedProducts,
+    cacheProducts,
+  ]);
 
   // Rest of the component methods remain the same as in the original code...
 
@@ -1057,9 +1104,18 @@ function Collection() {
         subCat.parentCategory,
         subCat.name
       );
-      fetchProducts(catSlug, subCatSlug).then((productData) =>
-        setProducts((prev) => [...prev, ...productData])
-      );
+
+      // Check cache first
+      const cachedProducts = getCachedProducts(catSlug, subCatSlug);
+      // If cached products are found, add them to the products state
+      if (cachedProducts) {
+        setProducts((prev) => [...prev, ...cachedProducts]);
+      } else {
+        fetchProducts(catSlug, subCatSlug).then((productData) => {
+          cacheProducts(catSlug, subCatSlug, productData);
+          setProducts((prev) => [...prev, ...productData]);
+        });
+      }
     }
   };
 
