@@ -320,7 +320,7 @@ function Product() {
             {renderStars(overAllReview[0])}
             <p className="pl-2">{product?.reviews?.length || 0}</p>
           </div>
-          <p className="mt-5 text-3xl font-medium">{`$ ${product?.price}`}</p>
+          <p className="mt-5 text-3xl font-medium">{`₹ ${product?.price}`}</p>
           <p className="mt-2 text-gray-500">
             MRP:{" "}
             <span className="line-through text-gray-700 font-semibold">

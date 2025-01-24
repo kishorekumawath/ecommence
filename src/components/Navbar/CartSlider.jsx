@@ -6,18 +6,17 @@ import { colorMap } from "../../context/CollectionsContext";
 import CartTotal from "../CartTotal";
 
 function CartSlider({ cartVisible, setCartVisible }) {
-  const { 
-    cart, 
-    updateQuantity, 
-    navigate, 
-    removeCartItem, 
-    getCartAmount, 
-    isLoading, 
-    error 
+  const {
+    cart,
+    updateQuantity,
+    navigate,
+    removeCartItem,
+    getCartAmount,
+    isLoading,
+    error,
   } = useCartContext();
 
   const [total, setTotal] = useState(0);
-
 
   useEffect(() => {
     getCartAmount()
@@ -26,6 +25,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
   }, [getCartAmount]);
 
   const handleCheckout = () => {
+    // if (Object.keys(cart).length === 0) return; // Prevent checkout if cart is empty
     if (isLoading || error) return; // Prevent checkout if loading or error exists
 
     const cartItems = Object.keys(cart).flatMap((key) => cart[key]);
@@ -124,7 +124,9 @@ function CartSlider({ cartVisible, setCartVisible }) {
                     />
 
                     <div className="flex flex-col flex-grow gap-1 px-4">
-                      <p className="text-md font-semibold">{item.product.name}</p>
+                      <p className="text-md font-semibold">
+                        {item.product.name}
+                      </p>
                       <p className="text-sm text-gray-500">
                         Price: ₹{item.product.price}
                       </p>
@@ -204,14 +206,18 @@ function CartSlider({ cartVisible, setCartVisible }) {
           <div className="w-full text-end mt-5">
             <button
               onClick={handleCheckout}
-              disabled={isLoading || error}
+              disabled={Object.keys(cart).length === 0 || isLoading || error}
               className={`px-10 py-3 text-sm ${
-                isLoading || error
+                Object.keys(cart).length === 0 || isLoading || error
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-black text-white"
               }`}
             >
-              {isLoading ? "Processing..." : "Checkout"}
+              {Object.keys(cart).length === 0
+                ? "Cart Empty"
+                : isLoading
+                ? "Processing..."
+                : "Checkout"}
             </button>
           </div>
         </div>

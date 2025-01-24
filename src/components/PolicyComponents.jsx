@@ -162,12 +162,13 @@ const ShippingPolicy = () => {
         <div>
           <h3 className="text-xl font-semibold mb-3">Delivery Time</h3>
           <ul className="list-disc pl-6 space-y-2 text-gray-600">
-            <li>Metropolitan Cities: 2-3 working days</li>
-            <li>Rest of India: 3-5 working days</li>
+            <li>Metropolitan Cities: 3-5 working days</li>
+            <li>Rest of India: 3-7 working days</li>
           </ul>
           <p className="mt-3 text-gray-600">
             Note: Delivery times are estimates and may vary based on your
-            location and other factors.
+            location and other factors , We will inform you once your order is
+            placed.
           </p>
         </div>
 
