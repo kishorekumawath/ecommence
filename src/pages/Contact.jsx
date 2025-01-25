@@ -25,7 +25,7 @@ function Contact() {
         <div className="flex flex-col justify-center items-start gap-6">
           <p className="font-semibold text-xl text-gray-600">Get in Touch</p>
           <p className="text-gray-500">
-            Moonsflare Headquarters
+            Moonsflare
             <br />
             Tirupati, Andhra Pradesh
             <br />
@@ -36,7 +36,7 @@ function Contact() {
             <p className="text-sm italic">
               (WhatsApp messages only, no calls please)
             </p>
-            <p className="mt-2">Email: contact@moonsflare.com</p>
+            <p className="mt-2">Email: store.moonsflare@gmail.com</p>
           </div>
           <p className="font-semibold text-xl text-gray-600 mt-4">
             Join Our Team
