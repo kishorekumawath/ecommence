@@ -9,6 +9,7 @@ function LatestCollections() {
   const [LastestProducts, setLatestProducts] = useState([]);
   const carouselRef = useRef(null);
   const { addToWishlist, wishlistItems, removeFromWishlist } = useWishlist();
+
   const scrollLeft = () => {
     carouselRef.current.scrollBy({
       left: -300, // Adjust this value based on the card width

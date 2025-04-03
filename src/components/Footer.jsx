@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Instagram, Facebook } from "lucide-react";
 
 function Footer() {
+  // Get the current year dynamically
+  const currentYear = new Date().getFullYear();
   return (
     <div>
       <div className="m-5 pt-10 flex flex-col sm:grid grid-cols-[3fr_1fr_1fr_1fr] gap-14 my-10 text-sm">
@@ -104,7 +106,7 @@ function Footer() {
       <div>
         <hr />
         <p className="py-5 text-sm text-center text-gray-600">
-          © 2025 moonsflare.com - All Right Reserved.
+          © {currentYear} moonsflare.com - All Right Reserved.
         </p>
       </div>
     </div>

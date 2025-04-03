@@ -328,12 +328,15 @@ function Product() {
             </span>{" "}
             Inclusive of all Taxes
           </p>
-          <button
+          {/* <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
           >
             Size Chart
-          </button>
+          </button> */}
+          <p className="mt-2 mb-3 py-2 text-sm text-gray-500 italic">
+            Please refer to size chart from images for accurate measurements
+          </p>
           <div className="flex  gap-4 my-2">
             {product?.size?.map((item, index) => (
               <button
