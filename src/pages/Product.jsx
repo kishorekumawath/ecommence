@@ -57,6 +57,8 @@ function Product() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const extraCharge = 500;
+
   const [selectedBottomSection, setSelectedBottomSection] = useState(
     bottomSection[0]
   );
@@ -320,14 +322,22 @@ function Product() {
             {renderStars(overAllReview[0])}
             <p className="pl-2">{product?.reviews?.length || 0}</p>
           </div>
-          <p className="mt-5 text-3xl font-medium">{`₹ ${product?.price}`}</p>
-          <p className="mt-2 text-gray-500">
-            MRP:{" "}
-            <span className="line-through text-gray-700 font-semibold">
-              {product?.price + 500}
-            </span>{" "}
-            Inclusive of all Taxes
-          </p>
+          <div className="mt-4">
+            <div className="flex items-center gap-2">
+              <p className="text-4xl font-medium text-gray-800">{`₹ ${product?.price}`}</p>
+              <p className="text-sm text-gray-500">
+                MRP:{" "}
+                <span className="line-through text-gray-600 font-medium">
+                  {`₹ ${product?.price + extraCharge}`}
+                </span>
+              </p>
+            </div>
+            <p className="mt-1 text-green-600 font-semibold text-sm">
+              You save {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}%!
+            </p>
+            <p className="mt-1 text-gray-500 text-xs">Inclusive of all Taxes</p>
+          </div>
+          
           {/* <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
