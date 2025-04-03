@@ -7,6 +7,7 @@ const CartContext = createContext({
   setCart: () => {},
   addToCart: () => {},
   isLoading: false,
+  extraCharge:0,
   error: null,
   getCartCount: 0,
   updateQuantity: () => {},
@@ -14,6 +15,7 @@ const CartContext = createContext({
   getCartAmount: () => 0,
   removeCartItem: () => {},
   clearCart: () => {},
+
 });
 
 // Helper function to get storage key for a user
@@ -240,6 +242,7 @@ export const CartProvider = ({ children }) => {
     getCartAmount,
     removeCartItem,
     cart,
+    extraCharge:300,
     clearCart,
   };
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

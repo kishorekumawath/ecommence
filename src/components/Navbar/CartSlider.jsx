@@ -14,6 +14,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
     getCartAmount,
     isLoading,
     error,
+    extraCharge
   } = useCartContext();
 
   const [total, setTotal] = useState(0);
@@ -24,16 +25,24 @@ function CartSlider({ cartVisible, setCartVisible }) {
       .catch((err) => console.error("Error fetching cart amount:", err));
   }, [getCartAmount]);
 
+
+  const noOfItems = Object.keys(cart).flatMap((key) => cart[key]).reduce((subLen, item) => {
+    return subLen + item.quantity;
+  }, 0);
+
+
   const handleCheckout = () => {
     // if (Object.keys(cart).length === 0) return; // Prevent checkout if cart is empty
     if (isLoading || error) return; // Prevent checkout if loading or error exists
 
     const cartItems = Object.keys(cart).flatMap((key) => cart[key]);
 
+
     const itemsTotal = cartItems.reduce((total, item) => {
       return total + item.product.price * item.quantity;
     }, 0);
 
+  
     const formattedItems = cartItems.map((item) => ({
       id: item.product._id,
       name: item.product.name,
@@ -47,12 +56,15 @@ function CartSlider({ cartVisible, setCartVisible }) {
     }));
 
     const cartSummary = {
+    
       items: formattedItems,
       summary: {
+        noOfItems:noOfItems,
         totalAmount: itemsTotal,
         itemCount: cartItems.length,
         finalTotal: itemsTotal,
       },
+    
       orderDetails: {
         createdAt: new Date().toISOString(),
         currency: "INR",
@@ -202,8 +214,9 @@ function CartSlider({ cartVisible, setCartVisible }) {
       {/* Bottom Section */}
       {!isLoading && !error && (
         <div className="p-5">
-          <CartTotal total={total} />
+          <CartTotal total={total} extraCharge={extraCharge} totalNoOfItems={noOfItems}/>
           <div className="w-full text-end mt-5">
+         
             <button
               onClick={handleCheckout}
               disabled={Object.keys(cart).length === 0 || isLoading || error}

@@ -49,15 +49,13 @@ function Product() {
   const navigate = useNavigate();
   const { productId } = useParams();
   const { fetchSpecificProduct, calculateReview } = useCollections();
-  const { addToCart } = useCartContext();
+  const { addToCart,extraCharge} = useCartContext();
   const [product, setProduct] = useState({});
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const extraCharge = 500;
 
   const [selectedBottomSection, setSelectedBottomSection] = useState(
     bottomSection[0]
@@ -66,6 +64,7 @@ function Product() {
   const fetchProductData = async () => {
     setIsLoading(true);
     await fetchSpecificProduct(productId).then((data) => {
+      console.log(data);
       setProduct(data);
       setImage(data.image);
       const reviewScore = calculateReview(data);
@@ -106,15 +105,26 @@ function Product() {
           <button
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
-              selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
-            }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
+              }`}
           />
         ))}
       </div>
     </div>
   );
 
+
+  function getStockStatus(stock) {
+    if (stock <= 0) {
+      return <span className="text-red-500">Out of Stock</span>;
+    } else if (stock > 0 && stock <= 10) {
+      return <span className="text-yellow-500"> Only {stock} Left</span>;
+    } else if (stock > 10 && stock <= 20) {
+      return <span className="text-orange-500">Hurry Up</span>;
+    } else {
+      return <span className="text-green-500">In Stock</span>;
+    }
+  }
   const handleBuyNow = () => {
     if (!size) {
       console.log("size is required");
@@ -323,6 +333,7 @@ function Product() {
             <p className="pl-2">{product?.reviews?.length || 0}</p>
           </div>
           <div className="mt-4">
+            <p>{getStockStatus(product?.stock)}</p>
             <div className="flex items-center gap-2">
               <p className="text-4xl font-medium text-gray-800">{`₹ ${product?.price}`}</p>
               <p className="text-sm text-gray-500">
@@ -332,12 +343,12 @@ function Product() {
                 </span>
               </p>
             </div>
-            <p className="mt-1 text-green-600 font-semibold text-sm">
+            <p className="mt-1 text-green-600 font-semibold ">
               You save {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}%!
             </p>
             <p className="mt-1 text-gray-500 text-xs">Inclusive of all Taxes</p>
           </div>
-          
+
           {/* <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
@@ -352,9 +363,8 @@ function Product() {
               <button
                 onClick={() => setSize(item)}
                 key={index}
-                className={`border bg-gray-100 py-2 px-4 rounded-md ${
-                  item === size ? "ring-2 ring-orange-300 text-black" : ""
-                }`}
+                className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
+                  }`}
               >
                 {item}
               </button>
@@ -395,31 +405,28 @@ function Product() {
         <div className="flex w-full sm:w-auto overflow-hidden">
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={` w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[0]
+            className={` w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Description
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[1]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Additional Information
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[2])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[2]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[2]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Reviews
           </p>
