@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { assets, products } from "../assets/assets";
-import { useCollections } from "../context/CollectionsContext";
+import { colorMap, useCollections } from "../context/CollectionsContext";
 import { useCartContext } from "../context/CartContext";
 import ReviewBox from "../components/ReviewBox";
 import { SizeChartModal } from "../components/SizeChartModal";
 import { ToastContainer, toast } from "react-toastify";
-import { colorMap } from "../../context/CollectionsContext";
 
 const bottomSection = ["Description", "Additional Information", "Reviews"];
 
