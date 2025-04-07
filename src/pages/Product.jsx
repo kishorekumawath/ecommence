@@ -6,42 +6,7 @@ import { useCartContext } from "../context/CartContext";
 import ReviewBox from "../components/ReviewBox";
 import { SizeChartModal } from "../components/SizeChartModal";
 import { ToastContainer, toast } from "react-toastify";
-
-const colorMap = {
-  Yl: "bg-yellow-400",
-  Wh: "bg-white",
-  BB: "bg-blue-200",
-  SG: "bg-gray-400",
-  Sb: "bg-sky-400",
-  Rb: "bg-blue-600",
-  Rd: "bg-red-500",
-  Pu: "bg-purple-500",
-  Pb: "bg-blue-800",
-  Ph: "bg-orange-200",
-  Or: "bg-orange-500",
-  OG: "bg-olive-600",
-  NYl: "bg-yellow-300",
-  Nb: "bg-navy-800",
-  MYl: "bg-yellow-600",
-  Mh: "bg-stone-400",
-  Mnt: "bg-green-200",
-  Mn: "bg-red-800",
-  LBp: "bg-pink-200",
-  Lv: "bg-purple-200",
-  Jd: "bg-emerald-400",
-  Gm: "bg-gray-300",
-  GYl: "bg-yellow-500",
-  Fgn: "bg-green-600",
-  Cor: "bg-orange-400",
-  Cop: "bg-amber-600",
-  Bn: "bg-brown-700",
-  Cm: "bg-gray-600",
-  BRd: "bg-red-700",
-  Gn: "bg-green-800",
-  Bk: "bg-black",
-  Be: "bg-amber-100",
-  Fl: "bg-pink-500",
-};
+import { colorMap } from "../../context/CollectionsContext";
 
 const bottomSection = ["Description", "Additional Information", "Reviews"];
 
@@ -49,7 +14,7 @@ function Product() {
   const navigate = useNavigate();
   const { productId } = useParams();
   const { fetchSpecificProduct, calculateReview } = useCollections();
-  const { addToCart,extraCharge} = useCartContext();
+  const { addToCart, extraCharge } = useCartContext();
   const [product, setProduct] = useState({});
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
@@ -105,14 +70,14 @@ function Product() {
           <button
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
-              }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
+              selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
+            }`}
           />
         ))}
       </div>
     </div>
   );
-
 
   function getStockStatus(stock) {
     if (stock <= 0) {
@@ -344,7 +309,9 @@ function Product() {
               </p>
             </div>
             <p className="mt-1 text-green-600 font-semibold ">
-              You save {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}%!
+              You save{" "}
+              {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}
+              %!
             </p>
             <p className="mt-1 text-gray-500 text-xs">Inclusive of all Taxes</p>
           </div>
@@ -363,8 +330,9 @@ function Product() {
               <button
                 onClick={() => setSize(item)}
                 key={index}
-                className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
-                  }`}
+                className={`border bg-gray-100 py-2 px-4 rounded-md ${
+                  item === size ? "ring-2 ring-orange-300 text-black" : ""
+                }`}
               >
                 {item}
               </button>
@@ -405,28 +373,31 @@ function Product() {
         <div className="flex w-full sm:w-auto overflow-hidden">
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={` w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
+            className={` w-full sm:w-auto border px-2 py-2 text-sm ${
+              selectedBottomSection === bottomSection[0]
                 ? "font-semibold"
                 : "font-light"
-              } cursor-pointer`}
+            } cursor-pointer`}
           >
             Description
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
+              selectedBottomSection === bottomSection[1]
                 ? "font-semibold"
                 : "font-light"
-              } cursor-pointer`}
+            } cursor-pointer`}
           >
             Additional Information
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[2])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[2]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
+              selectedBottomSection === bottomSection[2]
                 ? "font-semibold"
                 : "font-light"
-              } cursor-pointer`}
+            } cursor-pointer`}
           >
             Reviews
           </p>

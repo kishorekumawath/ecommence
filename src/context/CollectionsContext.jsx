@@ -44,7 +44,7 @@ export const colorMap = {
   Lv: "bg-purple-200",
   Jd: "bg-emerald-400",
   Gm: "bg-gray-300",
-  GYl: "bg-yellow-500",
+  GYI: "bg-yellow-500",
   Fgn: "bg-green-600",
   Cor: "bg-orange-400",
   Cop: "bg-amber-600",
@@ -157,6 +157,7 @@ export const CollectionsProvider = ({ children }) => {
     fetchAllProducts,
     fetchSpecificProduct,
     calculateReview,
+    colorMap,
   };
 
   return (
