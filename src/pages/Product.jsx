@@ -264,9 +264,9 @@ function Product() {
         <span className="text-gray-900 line-clamp-1">{product?.name}</span>
       </div>
       {/* ---------------- product info ----------------- */}
-      <div className="flex-1 flex flex-col gap-3 sm:flex-row ">
+      <div className="flex-1 flex flex-col gap-2 sm:flex-row ">
         {/* Mobile layout: Main image first, then additional images */}
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-1/2">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-[50%] lg:w-[40%]">
           {/* Main Image */}
           <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] lg:h-full overflow-hidden order-1 sm:order-2">
             <img
