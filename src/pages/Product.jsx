@@ -268,7 +268,7 @@ function Product() {
         {/* Mobile layout: Main image first, then additional images */}
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-1/2">
           {/* Main Image */}
-          <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] overflow-hidden order-1 sm:order-2">
+          <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] lg:h-full overflow-hidden order-1 sm:order-2">
             <img
               className="w-full object-cover rounded-md"
               src={image}

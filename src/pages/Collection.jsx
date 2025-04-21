@@ -67,7 +67,6 @@ function Collection() {
     const cachedData = localStorage.getItem(cacheKey);
 
     if (cachedData) {
-
       const { products: cachedProducts, timestamp } = JSON.parse(cachedData);
       // Check cache expiration (1 hour = 3600000 ms)
       const isExpired = Date.now() - timestamp > 3600000;
@@ -173,9 +172,7 @@ function Collection() {
     // we need to remove all subcategory if category is unselected
     if (selectedCategory.includes(category)) {
       // unchecking category
-      setSelectedCategory((prev) =>
-        prev.filter((item) => item !== category)
-      );
+      setSelectedCategory((prev) => prev.filter((item) => item !== category));
       // remove all subcategory
       setAvailablesSubCategory((prev) =>
         prev.filter(
@@ -384,12 +381,16 @@ function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesCategory.map((category, index) => {
               return (
-                <p className="flex gap-2 cursor-pointer select-none" onClick={()=>onCategoryToggle(category)} key={index}>
+                <p
+                  className="flex gap-2 cursor-pointer select-none"
+                  onClick={() => onCategoryToggle(category)}
+                  key={index}
+                >
                   <input
                     type="checkbox"
                     checked={selectedCategory.some((Cat) => Cat === category)}
                     value={category}
-                    onChange={()=>onCategoryToggle(category)}
+                    onChange={() => onCategoryToggle(category)}
                   />{" "}
                   {category}
                 </p>
@@ -408,7 +409,11 @@ function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesSubCategory.map((subCategory, index) => {
               return (
-                <p className="flex gap-2 cursor-pointer select-none" onClick={()=>onSubCategoryToggle(subCategory)} key={index}>
+                <p
+                  className="flex gap-2 cursor-pointer select-none"
+                  onClick={() => onSubCategoryToggle(subCategory)}
+                  key={index}
+                >
                   <input
                     type="checkbox"
                     value={subCategory.name}

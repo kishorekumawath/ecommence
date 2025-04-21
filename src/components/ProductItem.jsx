@@ -1,20 +1,24 @@
-
-import { Link,  } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ProductTitle } from "./Title";
 import { IconButton } from "./icons";
 import { assets } from "../assets/assets";
 
-
-export function ProductItem({ id, name, image, price, like, onLikeClick ,className=""}) {
-
+export function ProductItem({
+  id,
+  name,
+  image,
+  price,
+  like,
+  onLikeClick,
+  className = "",
+}) {
   const currency = "₹";
   return (
     <Link className="text-gray-700 cursor-pointer" to={`/product/${id} `}>
       <div className={`relative ${className}`}>
-       
         <div className="w-full rounded-md  overflow-hidden">
           <img
-            className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-80 object-cover "
+            className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover "
             src={image}
             alt=""
           />
@@ -25,8 +29,6 @@ export function ProductItem({ id, name, image, price, like, onLikeClick ,classNa
           {currency}
           {price}
         </p>
-     
-       
 
         <div className="flex justify-between absolute top-2 right-2 ">
           <IconButton
@@ -39,15 +41,20 @@ export function ProductItem({ id, name, image, price, like, onLikeClick ,classNa
           />
         </div>
       </div>
-      
     </Link>
   );
 }
 
-
-export function ProductItemDesign2({ id, name, image, price, like, onLikeClick }) {
+export function ProductItemDesign2({
+  id,
+  name,
+  image,
+  price,
+  like,
+  onLikeClick,
+}) {
   // Remove the local liked state - we'll use the prop directly
-  
+
   return (
     <Link to={`/product/${id}`}>
       <div className="w-52 sm:w-64 lg:w-72 rounded-lg group relative flex-shrink-1 overflow-hidden">
