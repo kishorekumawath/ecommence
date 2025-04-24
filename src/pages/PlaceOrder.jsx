@@ -14,7 +14,7 @@ const PlaceOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { clearCart ,extraCharge} = useCartContext();
+  const { clearCart, extraCharge } = useCartContext();
   const cartSummary = location.state?.cartSummary;
   const isBuyNow = location.state?.isBuyNow;
 
@@ -29,7 +29,7 @@ const PlaceOrder = () => {
   const totalDiscount = extraCharge * totalNoOfItems;
   const originalPrice = total + totalDiscount;
   const discountPercentage =
-  originalPrice > 0 ? Math.round((totalDiscount / originalPrice) * 100) : 0;
+    originalPrice > 0 ? Math.round((totalDiscount / originalPrice) * 100) : 0;
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -184,7 +184,6 @@ const PlaceOrder = () => {
       );
       if (!razorpayScriptLoaded) {
         throw new Error("Failed to load Razorpay script");
-        return;
       }
       //step 1 initiate payment
       const initResponse = await fetch(
@@ -226,7 +225,7 @@ const PlaceOrder = () => {
                   ...orderPayload,
                   paymentId: response.razorpay_payment_id,
                   razorpayOrderId: razorpayOrderId,
-                  // signature: response.razorpay_signature,
+                  razorpaySignature: response.razorpay_signature,
                 }),
               }
             );
@@ -446,8 +445,9 @@ const PlaceOrder = () => {
                     <div className="flex items-center gap-2">
                       <p className="text-sm text-gray-500">Color:</p>
                       <div
-                        className={`w-5 h-5 rounded-full border border-gray-300 ${colorMap[item.color]
-                          }`}
+                        className={`w-5 h-5 rounded-full border border-gray-300 ${
+                          colorMap[item.color]
+                        }`}
                       ></div>
                     </div>
                   </div>
@@ -456,15 +456,14 @@ const PlaceOrder = () => {
             </div>
 
             <div className="flex flex-col gap-2 mt-4">
-
-
               {totalDiscount > 0 && (
                 <div className="flex justify-between">
                   <p className="font-medium">Original Price</p>
-                  <p className="line-through text-gray-500">{formatCurrency(originalPrice)}</p>
+                  <p className="line-through text-gray-500">
+                    {formatCurrency(originalPrice)}
+                  </p>
                 </div>
               )}
-
 
               {totalDiscount > 0 && (
                 <div className="flex justify-between">
@@ -474,7 +473,9 @@ const PlaceOrder = () => {
                       ({discountPercentage}%)
                     </span>
                   </p>
-                  <p className="text-green-600">-{formatCurrency(totalDiscount)}</p>
+                  <p className="text-green-600">
+                    -{formatCurrency(totalDiscount)}
+                  </p>
                 </div>
               )}
               <div className="flex justify-between">
@@ -500,8 +501,9 @@ const PlaceOrder = () => {
                     setPaymentMethod("Prepaid");
                     setShippingFee(0);
                   }}
-                  className={`border p-4 rounded flex-1 ${paymentMethod === "Prepaid" ? "border-orange-300" : ""
-                    }`}
+                  className={`border p-4 rounded flex-1 ${
+                    paymentMethod === "Prepaid" ? "border-orange-300" : ""
+                  }`}
                 >
                   Online
                 </button>
@@ -511,8 +513,9 @@ const PlaceOrder = () => {
                     setPaymentMethod("COD");
                     setShippingFee(50);
                   }}
-                  className={`border p-4 rounded flex-1 ${paymentMethod === "COD" ? "border-orange-300" : ""
-                    }`}
+                  className={`border p-4 rounded flex-1 ${
+                    paymentMethod === "COD" ? "border-orange-300" : ""
+                  }`}
                 >
                   Cash on Delivery
                 </button>
