@@ -1,3 +1,5 @@
+//present working code with sepearate loading  skeleton components
+
 // import React, { useCallback, useEffect, useState } from "react";
 // import { assets } from "../assets/assets";
 // import { useNavigate, useParams } from "react-router-dom";
@@ -7,7 +9,7 @@
 // import { useWishlist } from "../context/WhislistContext";
 // import { ToastContainer, toast } from "react-toastify";
 
-// Skeleton Components
+// // Skeleton Components
 // const CategorySkeleton = () => (
 //   <div className="animate-pulse space-y-2">
 //     {[1, 2, 3, 4].map((i) => (
@@ -68,16 +70,15 @@
 
 //     if (cachedData) {
 //       const { products: cachedProducts, timestamp } = JSON.parse(cachedData);
-//       // Check cache expiration (1 hour = 3600000 ms)
+//       // Optional: Add cache expiration (e.g., 1 hour)
 //       const isExpired = Date.now() - timestamp > 3600000;
 
 //       if (!isExpired) {
-//         return { products: cachedProducts, isExpired: false };
+//         return cachedProducts;
 //       }
-//       return { products: cachedProducts, isExpired: true };
 //     }
 
-//     return { products: null, isExpired: true };
+//     return null;
 //   }, []);
 
 //   const cacheProducts = useCallback(
@@ -132,30 +133,21 @@
 //     setIsProductsLoading(true);
 
 //     // Check cache first
-//     const { products: cachedProducts, isExpired } = getCachedProducts(
-//       categoryName,
-//       subCategoryName
-//     );
+//     const cachedProducts = getCachedProducts(categoryName, subCategoryName);
 
-//     if (cachedProducts && !isExpired) {
-//       // Use cache if it's not expired
+//     if (cachedProducts) {
 //       setProducts(cachedProducts);
 //       setIsProductsLoading(false);
 //     } else {
-//       // Fetch new products if cache is expired or doesn't exist
-//       fetchProducts(categoryName, subCategoryName)
+//       // Fetch and cache products if not in cache
+//       fetchProducts(categoryName, subCategoryName, setProducts)
 //         .then((fetchedProducts) => {
 //           setProducts(fetchedProducts);
-//           // Update cache with fresh data
 //           cacheProducts(categoryName, subCategoryName, fetchedProducts);
 //           setIsProductsLoading(false);
 //         })
 //         .catch((error) => {
 //           console.error("Error fetching products:", error);
-//           // If we have expired cache data, use it as fallback
-//           if (cachedProducts) {
-//             setProducts(cachedProducts);
-//           }
 //           setIsProductsLoading(false);
 //         });
 //     }
@@ -165,26 +157,29 @@
 //     subCategoryName,
 //     getCachedProducts,
 //     cacheProducts,
-//     fetchProducts,
 //   ]);
 
-//   const onCategoryToggle = (category) => {
+//   // Rest of the component methods remain the same as in the original code...
+
+//   const onCategoryToggle = (e) => {
 //     // we need to remove all subcategory if category is unselected
-//     if (selectedCategory.includes(category)) {
+//     if (selectedCategory.includes(e.target.value)) {
 //       // unchecking category
-//       setSelectedCategory((prev) => prev.filter((item) => item !== category));
+//       setSelectedCategory((prev) =>
+//         prev.filter((item) => item !== e.target.value)
+//       );
 //       // remove all subcategory
 //       setAvailablesSubCategory((prev) =>
 //         prev.filter(
 //           (item) =>
-//             !CollectionsData[category].some(
+//             !CollectionsData[e.target.value].some(
 //               (subCat) => subCat.name === item.name
 //             )
 //         )
 //       );
 
 //       // removing products when subcategory is already has in selected state
-//       CollectionsData[category].map((sc) => {
+//       CollectionsData[e.target.value].map((sc) => {
 //         setProducts((prev) =>
 //           prev.filter((product) => product.category.name !== sc.name)
 //         );
@@ -196,11 +191,11 @@
 //     // we need to add subcategory if category is selected
 //     else {
 //       // checking category
-//       setSelectedCategory((prev) => [...prev, category]);
+//       setSelectedCategory((prev) => [...prev, e.target.value]);
 //       // add all subcategory which are belong to this category
 //       setAvailablesSubCategory((prev) => [
 //         ...prev,
-//         ...CollectionsData[category].map((item) => item),
+//         ...CollectionsData[e.target.value].map((item) => item),
 //       ]);
 //     }
 //   };
@@ -232,18 +227,12 @@
 //       );
 
 //       // Check cache first
-//       const { products: cachedProducts, isExpired } = getCachedProducts(
-//         catSlug,
-//         subCatSlug
-//       );
-
-//       // If cached products are found and not expired, add them to the products state
-//       if (cachedProducts && !isExpired) {
+//       const cachedProducts = getCachedProducts(catSlug, subCatSlug);
+//       // If cached products are found, add them to the products state
+//       if (cachedProducts) {
 //         setProducts((prev) => [...prev, ...cachedProducts]);
 //       } else {
-//         // Otherwise fetch fresh data
 //         fetchProducts(catSlug, subCatSlug).then((productData) => {
-//           // Cache the fresh data
 //           cacheProducts(catSlug, subCatSlug, productData);
 //           setProducts((prev) => [...prev, ...productData]);
 //         });
@@ -381,16 +370,12 @@
 //           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
 //             {availablesCategory.map((category, index) => {
 //               return (
-//                 <p
-//                   className="flex gap-2 cursor-pointer select-none"
-//                   onClick={() => onCategoryToggle(category)}
-//                   key={index}
-//                 >
+//                 <p className="flex gap-2" key={index}>
 //                   <input
 //                     type="checkbox"
 //                     checked={selectedCategory.some((Cat) => Cat === category)}
 //                     value={category}
-//                     onChange={() => onCategoryToggle(category)}
+//                     onChange={onCategoryToggle}
 //                   />{" "}
 //                   {category}
 //                 </p>
@@ -409,11 +394,7 @@
 //           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
 //             {availablesSubCategory.map((subCategory, index) => {
 //               return (
-//                 <p
-//                   className="flex gap-2 cursor-pointer select-none"
-//                   onClick={() => onSubCategoryToggle(subCategory)}
-//                   key={index}
-//                 >
+//                 <p className="flex gap-2" key={index}>
 //                   <input
 //                     type="checkbox"
 //                     value={subCategory.name}
@@ -577,7 +558,7 @@ function Collection() {
     if (cachedData) {
       const { products: cachedProducts, timestamp } = JSON.parse(cachedData);
       // Check cache expiration (1 hour = 3600000 ms)
-      const isExpired = Date.now() - timestamp > 3600000;
+      const isExpired = Date.now() - timestamp > 360;
 
       if (!isExpired) {
         return { products: cachedProducts, isExpired: false };
@@ -604,7 +585,7 @@ function Collection() {
   // Helper function to deduplicate products based on ID
   const deduplicateProducts = useCallback((productArray) => {
     const uniqueProducts = {};
-    productArray.forEach(product => {
+    productArray.forEach((product) => {
       uniqueProducts[product._id] = product;
     });
     return Object.values(uniqueProducts);
@@ -720,7 +701,7 @@ function Collection() {
         // Deduplicate subcategories
         const combinedSubCategories = [...prev, ...newSubCategories];
         const uniqueSubCategories = {};
-        combinedSubCategories.forEach(subCat => {
+        combinedSubCategories.forEach((subCat) => {
           uniqueSubCategories[subCat.name] = subCat;
         });
         return Object.values(uniqueSubCategories);

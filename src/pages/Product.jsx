@@ -141,11 +141,13 @@ function Product() {
   const handleAddToCart = () => {
     if (!size) {
       console.log("size is required");
+      toast.warn("Size is required");
       return;
     }
 
     if (!selectedColor) {
       console.log("color is required");
+      toast.warn("Color is required");
       return;
     }
 
