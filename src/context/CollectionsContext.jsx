@@ -24,13 +24,13 @@ export const useCollections = () => {
 export const colorMap = {
   Yl: "bg-[#facc15]",
   Wh: "bg-[#ffffff]",
-  BB: "bg-[#bfdbfe]",
+  BB: "bg-[#87CEEB]",
   SG: "bg-[#9ca3af]",
   Sb: "bg-[#38bdf8]",
   Rb: "bg-[#2563eb]",
   Rd: "bg-[#ef4444]",
   Pu: "bg-[#a855f7]",
-  pb: "bg-[#005F6A]",
+  pb: "bg-[#0C5678]",
   Ph: "bg-[#fed7aa]",
   or: "bg-[#f97316]",
   OG: "bg-[#3d550c]", // olive alternative

@@ -1,5 +1,3 @@
-//present working code with sepearate loading  skeleton components
-
 // import React, { useCallback, useEffect, useState } from "react";
 // import { assets } from "../assets/assets";
 // import { useNavigate, useParams } from "react-router-dom";
@@ -70,8 +68,8 @@
 
 //     if (cachedData) {
 //       const { products: cachedProducts, timestamp } = JSON.parse(cachedData);
-//       // Optional: Add cache expiration (e.g., 1 hour)
-//       const isExpired = Date.now() - timestamp > 3600000;
+//       // Optional: Add cache expiration (e.g., 10 min)
+//       const isExpired = Date.now() - timestamp > 60000;
 
 //       if (!isExpired) {
 //         return cachedProducts;
@@ -489,7 +487,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ProductItem } from "../components/ProductItem";
 import { useCollections } from "../context/CollectionsContext";
 import { Searchbar } from "../components/Searchbar";
@@ -528,6 +526,7 @@ const ProductItemSkeleton = () => (
 function Collection() {
   const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { CollectionsData, fetchProducts } = useCollections();
   const { categoryName, subCategoryName } = useParams();
@@ -543,12 +542,50 @@ function Collection() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [comeBackFromProductPage, setComeBackFromProductPage] = useState(false);
 
   const {
     wishlistItems = [],
     addToWishlist,
     removeFromWishlist,
   } = useWishlist() || {};
+
+  // Get session storage key for this collection page
+  const getCollectionStateKey = useCallback(() => {
+    return "collectionPageState";
+  }, []);
+
+  // Function to detect if we're coming back from product page
+  const detectBackFromProductPage = useCallback(() => {
+    const previousPath = sessionStorage.getItem("previousPath");
+    const currentPath = location.pathname;
+
+    if (
+      previousPath &&
+      previousPath.includes("/product/") &&
+      currentPath.includes("/collection")
+    ) {
+      return true;
+    }
+
+    // Update previous path for next navigation
+    sessionStorage.setItem("previousPath", currentPath);
+    return false;
+  }, [location.pathname]);
+
+  // Save state to session storage
+  const persistState = useCallback(
+    (state) => {
+      sessionStorage.setItem(getCollectionStateKey(), JSON.stringify(state));
+    },
+    [getCollectionStateKey]
+  );
+
+  // Load state from session storage
+  const loadPersistedState = useCallback(() => {
+    const savedState = sessionStorage.getItem(getCollectionStateKey());
+    return savedState ? JSON.parse(savedState) : null;
+  }, [getCollectionStateKey]);
 
   // Caching mechanism for products
   const getCachedProducts = useCallback((categorySlug, subCategorySlug) => {
@@ -557,16 +594,15 @@ function Collection() {
 
     if (cachedData) {
       const { products: cachedProducts, timestamp } = JSON.parse(cachedData);
-      // Check cache expiration (1 hour = 3600000 ms)
-      const isExpired = Date.now() - timestamp > 360;
+      // Optional: Add cache expiration (e.g., 10 min)
+      const isExpired = Date.now() - timestamp > 600000;
 
       if (!isExpired) {
-        return { products: cachedProducts, isExpired: false };
+        return cachedProducts;
       }
-      return { products: cachedProducts, isExpired: true };
     }
 
-    return { products: null, isExpired: true };
+    return null;
   }, []);
 
   const cacheProducts = useCallback(
@@ -582,14 +618,11 @@ function Collection() {
     []
   );
 
-  // Helper function to deduplicate products based on ID
-  const deduplicateProducts = useCallback((productArray) => {
-    const uniqueProducts = {};
-    productArray.forEach((product) => {
-      uniqueProducts[product._id] = product;
-    });
-    return Object.values(uniqueProducts);
-  }, []);
+  // Check if we're coming back from a product page
+  useEffect(() => {
+    const isBackFromProduct = detectBackFromProductPage();
+    setComeBackFromProductPage(isBackFromProduct);
+  }, [detectBackFromProductPage]);
 
   useEffect(() => {
     const searchResults = products.filter((product) =>
@@ -599,11 +632,36 @@ function Collection() {
   }, [searchQuery, products]);
 
   useEffect(() => {
-    if (!CollectionsData || !categoryName) {
+    if (!CollectionsData) {
       setIsCategoriesLoading(false);
       return;
     }
 
+    // First check if we're coming back from a product page
+    const persistedState = loadPersistedState();
+    const shouldUsePersistedState = comeBackFromProductPage && persistedState;
+
+    if (shouldUsePersistedState) {
+      console.log("Restoring from persisted state after product page visit");
+      setAvailablesCategory(persistedState.availablesCategory || []);
+      setAvailablesSubCategory(persistedState.availablesSubCategory || []);
+      setSelectedCategory(persistedState.selectedCategory || []);
+      setSelectedSubCategory(persistedState.selectedSubCategory || []);
+      setProducts(persistedState.products || []);
+      setIsCategoriesLoading(false);
+      setIsProductsLoading(false);
+      return;
+    }
+
+    if (!categoryName) {
+      // No specific category selected and no persisted state to use
+      setAvailablesCategory(Object.keys(CollectionsData));
+      setIsCategoriesLoading(false);
+      setIsProductsLoading(false);
+      return;
+    }
+
+    // We have URL parameters, set up state based on them
     let [SelectedCategoryName, SelectedSubCategoryName] =
       reverseSlugToOriginal();
 
@@ -619,41 +677,35 @@ function Collection() {
     );
 
     setAvailablesSubCategory([...availableSubCategory]);
-
     setSelectedCategory([SelectedCategoryName]);
-    setSelectedSubCategory([
-      availableSubCategory.find(
-        (item) => item.name === SelectedSubCategoryName
-      ),
-    ]);
+
+    const matchingSubCategory = availableSubCategory.find(
+      (item) => item.name === SelectedSubCategoryName
+    );
+
+    if (matchingSubCategory) {
+      setSelectedSubCategory([matchingSubCategory]);
+    }
+
     setIsCategoriesLoading(false);
     setIsProductsLoading(true);
 
     // Check cache first
-    const { products: cachedProducts, isExpired } = getCachedProducts(
-      categoryName,
-      subCategoryName
-    );
+    const cachedProducts = getCachedProducts(categoryName, subCategoryName);
 
-    if (cachedProducts && !isExpired) {
-      // Use cache if it's not expired
+    if (cachedProducts) {
       setProducts(cachedProducts);
       setIsProductsLoading(false);
     } else {
-      // Fetch new products if cache is expired or doesn't exist
+      // Fetch and cache products if not in cache
       fetchProducts(categoryName, subCategoryName)
         .then((fetchedProducts) => {
           setProducts(fetchedProducts);
-          // Update cache with fresh data
           cacheProducts(categoryName, subCategoryName, fetchedProducts);
           setIsProductsLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching products:", error);
-          // If we have expired cache data, use it as fallback
-          if (cachedProducts) {
-            setProducts(cachedProducts);
-          }
           setIsProductsLoading(false);
         });
     }
@@ -663,26 +715,53 @@ function Collection() {
     subCategoryName,
     getCachedProducts,
     cacheProducts,
+    loadPersistedState,
+    comeBackFromProductPage,
     fetchProducts,
   ]);
 
-  const onCategoryToggle = (category) => {
+  // Save state when it changes
+  useEffect(() => {
+    // Only save when the initial loading is done
+    if (!isCategoriesLoading && !isProductsLoading) {
+      persistState({
+        availablesCategory,
+        availablesSubCategory,
+        selectedCategory,
+        selectedSubCategory,
+        products,
+      });
+    }
+  }, [
+    availablesCategory,
+    availablesSubCategory,
+    selectedCategory,
+    selectedSubCategory,
+    products,
+    isCategoriesLoading,
+    isProductsLoading,
+    persistState,
+  ]);
+
+  const onCategoryToggle = (e) => {
     // we need to remove all subcategory if category is unselected
-    if (selectedCategory.includes(category)) {
+    if (selectedCategory.includes(e.target.value)) {
       // unchecking category
-      setSelectedCategory((prev) => prev.filter((item) => item !== category));
+      setSelectedCategory((prev) =>
+        prev.filter((item) => item !== e.target.value)
+      );
       // remove all subcategory
       setAvailablesSubCategory((prev) =>
         prev.filter(
           (item) =>
-            !CollectionsData[category].some(
+            !CollectionsData[e.target.value].some(
               (subCat) => subCat.name === item.name
             )
         )
       );
 
       // removing products when subcategory is already has in selected state
-      CollectionsData[category].forEach((sc) => {
+      CollectionsData[e.target.value].forEach((sc) => {
         setProducts((prev) =>
           prev.filter((product) => product.category.name !== sc.name)
         );
@@ -694,18 +773,12 @@ function Collection() {
     // we need to add subcategory if category is selected
     else {
       // checking category
-      setSelectedCategory((prev) => [...prev, category]);
+      setSelectedCategory((prev) => [...prev, e.target.value]);
       // add all subcategory which are belong to this category
-      setAvailablesSubCategory((prev) => {
-        const newSubCategories = CollectionsData[category].map((item) => item);
-        // Deduplicate subcategories
-        const combinedSubCategories = [...prev, ...newSubCategories];
-        const uniqueSubCategories = {};
-        combinedSubCategories.forEach((subCat) => {
-          uniqueSubCategories[subCat.name] = subCat;
-        });
-        return Object.values(uniqueSubCategories);
-      });
+      setAvailablesSubCategory((prev) => [
+        ...prev,
+        ...CollectionsData[e.target.value].map((item) => item),
+      ]);
     }
   };
 
@@ -721,7 +794,7 @@ function Collection() {
         prev.filter((item) => item.name !== subCat.name)
       );
 
-      // remove products related to this subcategory
+      // remove products for this subcategory
       setProducts((prev) =>
         prev.filter((product) => product.category.name !== subCat.name)
       );
@@ -736,26 +809,14 @@ function Collection() {
       );
 
       // Check cache first
-      const { products: cachedProducts, isExpired } = getCachedProducts(
-        catSlug,
-        subCatSlug
-      );
-
-      // If cached products are found and not expired, add them to the products state
-      if (cachedProducts && !isExpired) {
-        setProducts((prev) => {
-          // Combine existing products with new ones and deduplicate
-          return deduplicateProducts([...prev, ...cachedProducts]);
-        });
+      const cachedProducts = getCachedProducts(catSlug, subCatSlug);
+      // If cached products are found, add them to the products state
+      if (cachedProducts) {
+        setProducts((prev) => [...prev, ...cachedProducts]);
       } else {
-        // Otherwise fetch fresh data
         fetchProducts(catSlug, subCatSlug).then((productData) => {
-          // Cache the fresh data
           cacheProducts(catSlug, subCatSlug, productData);
-          // Add new products and deduplicate
-          setProducts((prev) => {
-            return deduplicateProducts([...prev, ...productData]);
-          });
+          setProducts((prev) => [...prev, ...productData]);
         });
       }
     }
@@ -843,6 +904,14 @@ function Collection() {
     );
   };
 
+  const handleProductClick = (productId) => {
+    // Save current path before navigation
+    console.log("Current path:", location.pathname);
+    sessionStorage.setItem("previousPath", "/product/");
+    navigate(`/product/${productId}`);
+    // Our current state is already saved in sessionStorage, so we can safely navigate
+  };
+
   if (isCategoriesLoading) {
     return (
       <div className="min-h-screen flex flex-col sm:flex-row gap-1 sm:gap-10 border-t p-5">
@@ -891,16 +960,12 @@ function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesCategory.map((category, index) => {
               return (
-                <p
-                  className="flex gap-2 cursor-pointer select-none"
-                  onClick={() => onCategoryToggle(category)}
-                  key={index}
-                >
+                <p className="flex gap-2" key={index}>
                   <input
                     type="checkbox"
                     checked={selectedCategory.some((Cat) => Cat === category)}
                     value={category}
-                    readOnly
+                    onChange={onCategoryToggle}
                   />{" "}
                   {category}
                 </p>
@@ -919,18 +984,14 @@ function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesSubCategory.map((subCategory, index) => {
               return (
-                <p
-                  className="flex gap-2 cursor-pointer select-none"
-                  onClick={() => onSubCategoryToggle(subCategory)}
-                  key={index}
-                >
+                <p className="flex gap-2" key={index}>
                   <input
                     type="checkbox"
                     value={subCategory.name}
                     checked={selectedSubCategory.some(
                       (subCat) => subCat.name === subCategory.name
                     )}
-                    readOnly
+                    onChange={() => onSubCategoryToggle(subCategory)}
                   />{" "}
                   {subCategory.name}
                 </p>
@@ -974,7 +1035,7 @@ function Collection() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 place-items-start">
               {filteredProducts.length === 0 ? (
                 products.length === 0 ? (
-                  <div className="flex items-center justify-center h-64 w-full">
+                  <div className="flex items-center justify-center h-64 w-full col-span-full">
                     <p className="text-gray-500 text-lg">
                       No products for selected category. Please select a
                       category.
@@ -990,6 +1051,7 @@ function Collection() {
                       price={item.price}
                       like={isItemInWishlist(item._id)}
                       onLikeClick={(e) => handleLikeClick(e, item._id)}
+                      onClick={() => handleProductClick(item._id)}
                     />
                   ))
                 )
@@ -1003,6 +1065,7 @@ function Collection() {
                     price={item.price}
                     like={isItemInWishlist(item._id)}
                     onLikeClick={(e) => handleLikeClick(e, item._id)}
+                    onClick={() => handleProductClick(item._id)}
                   />
                 ))
               )}

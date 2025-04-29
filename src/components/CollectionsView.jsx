@@ -50,6 +50,7 @@ function CollectionsView() {
 
   // Update cache when CollectionsData changes
   useEffect(() => {
+    sessionStorage.setItem("previousPath", location.pathname);
     if (CollectionsData) {
       sessionStorage.setItem(
         "collectionsData",

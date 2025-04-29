@@ -11,37 +11,38 @@ export function ProductItem({
   like,
   onLikeClick,
   className = "",
+  onClick,
 }) {
   const currency = "₹";
   return (
-    <Link className="text-gray-700 cursor-pointer" to={`/product/${id} `}>
-      <div className={`relative ${className}`}>
-        <div className="w-full rounded-md  overflow-hidden">
-          <img
-            className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover "
-            src={image}
-            alt=""
-          />
-        </div>
-
-        <p className="pt-3 pb-1 text-md">{name}</p>
-        <p className="text-lg font-semibold">
-          {currency}
-          {price}
-        </p>
-
-        <div className="flex justify-between absolute top-2 right-2 ">
-          <IconButton
-            iconPath={like ? assets.like : assets.unLike}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onLikeClick(e);
-            }}
-          />
-        </div>
+    // <Link className="text-gray-700 cursor-pointer" to={`/product/${id} `}>
+    <div className={`relative ${className}`} onClick={onClick} id={id}>
+      <div className="w-full rounded-md  overflow-hidden">
+        <img
+          className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover "
+          src={image}
+          alt=""
+        />
       </div>
-    </Link>
+
+      <p className="pt-3 pb-1 text-md">{name}</p>
+      <p className="text-lg font-semibold">
+        {currency}
+        {price}
+      </p>
+
+      <div className="flex justify-between absolute top-2 right-2 ">
+        <IconButton
+          iconPath={like ? assets.like : assets.unLike}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onLikeClick(e);
+          }}
+        />
+      </div>
+    </div>
+    // </Link>
   );
 }
 
