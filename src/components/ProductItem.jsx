@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { ProductTitle } from "./Title";
 import { IconButton } from "./icons";
 import { assets } from "../assets/assets";
-
+import { useCartContext } from "../context/CartContext";
+import { colorMap } from "../context/CollectionsContext";
 export function ProductItem({
   id,
   name,
@@ -12,25 +13,48 @@ export function ProductItem({
   onLikeClick,
   className = "",
   onClick,
+  colors,
 }) {
-  const currency = "₹";
+  const { extraCharge } = useCartContext();
+
   return (
-    // <Link className="text-gray-700 cursor-pointer" to={`/product/${id} `}>
     <div className={`relative ${className}`} onClick={onClick} id={id}>
-      <div className="w-full rounded-md  overflow-hidden">
+      <div className="w-full rounded-md overflow-hidden relative">
         <img
-          className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover "
+          className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover"
           src={image}
           alt=""
         />
+        {colors?.length > 0 && (
+          <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-white/80 px-2 py-1 rounded-full shadow-sm">
+            {colors.slice(0, 2).map((code, index) => (
+              <div
+                key={index}
+                className={`w-4 h-4 rounded-full border border-gray-300 ${colorMap[code]}`}
+              />
+            ))}
+            {colors.length > 2 && (
+              <span className="text-xs text-gray-700 font-medium pl-1">
+                +{colors.length - 2}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <p className="pt-3 pb-1 text-md">{name}</p>
-      <p className="text-lg font-semibold">
-        {currency}
-        {price}
+      <div className="flex items-center gap-2">
+        <p className="text-lg font-semibold text-black">₹{price}</p>
+        <p className="text-sm text-gray-500">
+          MRP:{" "}
+          <span className="line-through text-gray-600 font-medium">
+            {`₹ ${price + extraCharge}`}
+          </span>
+        </p>
+      </div>
+      <p className="text-md text-green-600 font-semibold mt-1">
+        You save {Math.round((extraCharge / (price + extraCharge)) * 100)}%!
       </p>
-
       <div className="flex justify-between absolute top-2 right-2 ">
         <IconButton
           iconPath={like ? assets.like : assets.unLike}
@@ -42,7 +66,6 @@ export function ProductItem({
         />
       </div>
     </div>
-    // </Link>
   );
 }
 

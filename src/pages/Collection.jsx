@@ -1063,6 +1063,7 @@ function Collection() {
                     name={item.name}
                     image={item.image}
                     price={item.price}
+                    colors={item.color || []}
                     like={isItemInWishlist(item._id)}
                     onLikeClick={(e) => handleLikeClick(e, item._id)}
                     onClick={() => handleProductClick(item._id)}

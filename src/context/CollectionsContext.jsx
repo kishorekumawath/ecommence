@@ -46,7 +46,7 @@ export const colorMap = {
   Gm: "bg-[#d1d5db]",
   GYI: "bg-[#f59e0b]",
   Fgn: "bg-[#16a34a]",
-  Cor: "bg-[#fb923c]",
+  Cor: "bg-[#ed7364]",
   Cop: "bg-[#d97706]",
   bn: "bg-[#431407]", // brown alternative
   Cm: "bg-[#4b5563]",
