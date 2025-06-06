@@ -18,7 +18,8 @@ const SuccessPage = () => {
               viewBox="0 0 24 24"
               strokeWidth="2"
               stroke="currentColor"
-              className="w-12 h-12"
+              width="48"
+              height="48"
             >
               <path
                 strokeLinecap="round"

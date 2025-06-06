@@ -201,12 +201,13 @@ const PlaceOrder = () => {
       // console.log("Razorpay Order ID:", razorpayOrderId);
       //step 2 open razorpay payment window
       const options = {
-        key: "rzp_test_Slq72fvAZ1MoLJ",
+        key: "rzp_test_p8QC4dYgeOwM4f",
         amount: (orderPayload.totalAmount * 100).toString(),
         currency: "INR",
         name: "Moons Flare",
         description: "Order Payment",
-        // image: "https://i.ibb.co/k6780Jr/logo.png",
+        image:
+          "https://res.cloudinary.com/dra8tbz4z/image/upload/v1749202863/MF/L_pqzxzz.png",
         order_id: razorpayOrderId,
         handler: async (response) => {
           try {
@@ -257,7 +258,7 @@ const PlaceOrder = () => {
           address: `${formData.doorNo}, ${formData.address}, ${formData.city}, ${formData.state}, ${formData.pincode}`,
         },
         theme: {
-          color: "#3399cc",
+          color: "#FDBA74",
         },
       };
       const razorpayInstance = new window.Razorpay(options);
