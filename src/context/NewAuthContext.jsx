@@ -6,9 +6,12 @@ import React, {
   useCallback,
 } from "react";
 import { BASE_URL } from "../server/server";
+import { useGoogleLogin } from "@react-oauth/google";
+
 const NewAuthContext = createContext({
   user: null,
   login: async () => {},
+  googleLogin: () => {},
   signup: async () => {},
   logout: () => {},
   isLoading: false,
@@ -164,6 +167,44 @@ export function NewAuthProvider({ children }) {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const access_token = tokenResponse.access_token;
+        // Send token to backend
+        const response = await fetch(`${BASE_URL}/api/v1/google-login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ access_token }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to authenticate with Google");
+        }
+
+        const data = await response.json();
+
+        setAccessToken(data.accessToken);
+        setRefreshToken(data.refreshToken);
+        setUser(data.user);
+
+        SecureStorage.setItem("accessToken", data.accessToken);
+        SecureStorage.setItem("refreshToken", data.refreshToken);
+        SecureStorage.setItem("user", data.user);
+
+        return data.user;
+      } catch (err) {
+        console.error("Google login error:", err);
+        throw err;
+      }
+    },
+    onError: (error) => {
+      console.error("Google login error:", error);
+    },
+  });
+
   const signup = async (firstName, lastName, email, password, phone) => {
     // Basic validation
     if (
@@ -261,6 +302,7 @@ export function NewAuthProvider({ children }) {
     apiCall,
     user,
     login,
+    googleLogin,
     signup,
     logout,
     isLoading,

@@ -36,6 +36,9 @@ import Wishlist from "./pages/Wishlist";
 import { WishlistProvider } from "./context/WhislistContext";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
   const location = useLocation();
@@ -58,67 +61,77 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // Render the protected content if user exists
   return children;
+};
+
+const GoogleAuthWrapper = ({ children }) => {
+  return (
+    <GoogleOAuthProvider clientId={`${import.meta.env.VITE_OAUTH_CLIENT_ID}`}>
+      {children}
+    </GoogleOAuthProvider>
+  );
 };
 
 function App() {
   return (
     <BrowserRouter>
-      <NewAuthProvider>
-        <WishlistProvider>
-          <CollectionsProvider>
-            <CartProvider>
-              <ScrollToTop /> {/* Scroll restoration feature */}
-              <Navbar />
-              <SearchBar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route
-                  path="/collection/:categoryName/:subCategoryName"
-                  element={<Collection />}
-                />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route
-                  path="/successPage/:qiKinkOrderId"
-                  element={<SuccessPage />}
-                />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route
-                  path="/place-order"
-                  element={
-                    <ProtectedRoute>
-                      <PlaceOrder />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/product/:productId" element={<Product />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/return" element={<ReturnPolicy />} />
-                <Route path="/shipping" element={<ShippingPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                {/* Define other routes here */}
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
-              <Footer />
-            </CartProvider>
-          </CollectionsProvider>
-        </WishlistProvider>
-      </NewAuthProvider>
+      <GoogleAuthWrapper>
+        <NewAuthProvider>
+          <WishlistProvider>
+            <CollectionsProvider>
+              <CartProvider>
+                <ScrollToTop /> {/* Scroll restoration feature */}
+                <Navbar />
+                <SearchBar />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route
+                    path="/collection/:categoryName/:subCategoryName"
+                    element={<Collection />}
+                  />
+                  <Route path="/contact" element={<Contact />} />
+
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route
+                    path="/successPage/:qiKinkOrderId"
+                    element={<SuccessPage />}
+                  />
+                  <Route path="/wishlist" element={<Wishlist />} />
+                  <Route
+                    path="/place-order"
+                    element={
+                      <ProtectedRoute>
+                        <PlaceOrder />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/product/:productId" element={<Product />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/return" element={<ReturnPolicy />} />
+                  <Route path="/shipping" element={<ShippingPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  {/* Define other routes here */}
+                  <Route path="/404" element={<NotFound />} />
+                  <Route path="*" element={<Navigate to="/404" replace />} />
+                </Routes>
+                <Footer />
+              </CartProvider>
+            </CollectionsProvider>
+          </WishlistProvider>
+        </NewAuthProvider>
+      </GoogleAuthWrapper>
     </BrowserRouter>
   );
 }

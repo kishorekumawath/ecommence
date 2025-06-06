@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/NewAuthContext";
 import { Title } from "../components/Title";
 import { Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ function Login() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [blockTimer, setBlockTimer] = useState(0);
 
-  const { login, isLoading, isAuthenticated } = useAuth();
+  const { login, isLoading, isAuthenticated, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -84,6 +85,14 @@ function Login() {
         [name]: undefined,
         form: undefined,
       }));
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      googleLogin();
+    } catch (error) {
+      console.error("Google login error:", error);
     }
   };
 
@@ -229,6 +238,11 @@ function Login() {
             </Link>
           </div>
         </form>
+        {/* Google Sign-In Button */}
+        <div className="mt-4 flex items-center justify-center gap-2 bg-slate-300 rounded-lg p-2 hover:bg-slate-400">
+          <FcGoogle size={22} />
+          <button onClick={handleGoogleLogin}>Sign in with Google</button>
+        </div>
       </div>
     </div>
   );

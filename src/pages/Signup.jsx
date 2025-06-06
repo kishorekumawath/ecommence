@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/NewAuthContext";
 import { Title } from "../components/Title";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ export default function Signup() {
     feedback: "",
   });
 
-  const { signup } = useAuth();
+  const { signup, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
@@ -92,6 +93,14 @@ export default function Signup() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      googleLogin();
+    } catch (error) {
+      console.error("Google login error:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -274,6 +283,11 @@ export default function Signup() {
             </Link>
           </div>
         </form>
+        {/* Google Sign-In Button */}
+        <div className="mt-4 flex items-center justify-center gap-2 bg-slate-300 rounded-lg p-2 hover:bg-slate-400">
+          <FcGoogle size={22} />
+          <button onClick={handleGoogleLogin}>Sign up with Google</button>
+        </div>
       </div>
     </div>
   );
