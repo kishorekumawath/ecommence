@@ -5,7 +5,6 @@ import { Title } from "../components/Title";
 import { Pencil, PencilOff, Loader2 } from "lucide-react";
 import ProfileInputTile from "../components/ProfileInputTile";
 
-
 const Profile = () => {
   const { user, isLoading, updateUser, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -107,6 +106,7 @@ const Profile = () => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         avatar: formData.avatar,
+        phone: formData.phone,
         address: {
           country: formData.address.country,
           state: formData.address.state,
@@ -116,7 +116,6 @@ const Profile = () => {
           doorNo: formData.address.doorNo,
         },
       };
-
       await updateUser(updatePayload);
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
@@ -246,12 +245,12 @@ const Profile = () => {
             readOnly
           />
           <ProfileInputTile
-            isDisable={false}
+            isDisable={isEditing}
             title="Phone Number"
             name="phone"
             value={formData.phone}
-            handleInputChange={() => {}}
-            readOnly
+            handleInputChange={handleInputChange}
+            placeholder="+91 9999999999"
           />
 
           {/* Address Fields */}

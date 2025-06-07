@@ -30,7 +30,7 @@ export function ProductItem({
             {colors.slice(0, 2).map((code, index) => (
               <div
                 key={index}
-                className={`w-4 h-4 rounded-full border border-gray-300 ${colorMap[code]}`}
+                className={`w-4 h-4 rounded-full border border-white ${colorMap[code]}`}
               />
             ))}
             {colors.length > 2 && (
