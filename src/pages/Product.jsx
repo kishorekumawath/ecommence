@@ -25,12 +25,62 @@ function Product() {
     bottomSection[0]
   );
   const [overAllReview, setOverAllReview] = useState([0, 0]);
+
+  // Helper function to extract color code from image URL
+  const extractColorFromImageUrl = (imageUrl) => {
+    try {
+      // Extract filename from URL
+      const filename = imageUrl.split("/").pop().split("_")[0]; // Get part before underscore
+      // Split by dash and get the 4th element (index 3)
+      const parts = filename.split("-");
+      return parts.length > 3 ? parts[3] : null;
+    } catch (error) {
+      console.error("Error extracting color from URL:", error);
+      return null;
+    }
+  };
+  // Helper function to find image by color code
+  const findImageByColor = (colorCode) => {
+    if (!product.addImages || product.addImages.length === 0) {
+      return product.image; // fallback to main image
+    }
+
+    const matchingImage = product.addImages.find((imageUrl) => {
+      const extractedColor = extractColorFromImageUrl(imageUrl);
+      return extractedColor && extractedColor === colorCode;
+    });
+
+    return matchingImage || product.image; // fallback to main image if no match
+  };
+  // Handle color selection with auto image switching
+  const handleColorSelect = (colorCode) => {
+    setSelectedColor(colorCode);
+    const newImage = findImageByColor(colorCode);
+    setImage(newImage);
+  };
+
   const fetchProductData = async () => {
     setIsLoading(true);
     await fetchSpecificProduct(productId).then((data) => {
       console.log(data);
       setProduct(data);
       setImage(data.image);
+      // Auto-select first available color if colors exist
+      if (data.color && data.color.length > 0) {
+        const firstColor = data.color[0];
+        setSelectedColor(firstColor);
+        // Try to find matching image, but ensure we have the product data first
+        if (data.addImages && data.addImages.length > 0) {
+          const matchingImage = data.addImages.find((imageUrl) => {
+            const extractedColor = extractColorFromImageUrl(imageUrl);
+            return extractedColor && extractedColor === firstColor;
+          });
+          // Only update image if we found a valid match, otherwise keep data.image
+          if (matchingImage) {
+            setImage(matchingImage);
+          }
+        }
+      }
       const reviewScore = calculateReview(data);
       // Ensure we have valid numbers for the star display
       setOverAllReview([
@@ -342,7 +392,7 @@ function Product() {
           <ColorSelector
             colors={product?.color || []}
             selectedColor={selectedColor}
-            onColorSelect={setSelectedColor}
+            onColorSelect={handleColorSelect}
           />
           <ToastContainer />
 
