@@ -78,6 +78,7 @@ import arrow_right from "./arrowright.png";
 import like from "./like.png";
 import unLike from "./unlike.png";
 import payments_options from "./paymentsOptions.png";
+import DefaultUser from "./DefaultUser.png";
 
 import bannerD1 from "./bannerD1.png";
 import bannerD2 from "./bannerD2.png";
@@ -130,6 +131,7 @@ export const assets = {
   unLike,
   p_img1,
   payments_options,
+  DefaultUser,
 };
 
 export const desktopBanners = [

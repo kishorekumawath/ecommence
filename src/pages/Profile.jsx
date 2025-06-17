@@ -4,6 +4,7 @@ import Orders from "./Orders";
 import { Title } from "../components/Title";
 import { Pencil, PencilOff, Loader2 } from "lucide-react";
 import ProfileInputTile from "../components/ProfileInputTile";
+import { assets } from "../assets/assets";
 
 const Profile = () => {
   const { user, isLoading, updateUser, logout } = useAuth();
@@ -194,11 +195,11 @@ const Profile = () => {
           <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
             <div className="relative">
               <img
-                src={formData.avatar || "/api/placeholder/96/96"}
+                src={formData.avatar || assets.DefaultUser}
                 alt="Profile"
                 className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
                 onError={(e) => {
-                  e.target.src = "/api/placeholder/96/96";
+                  e.target.src = assets.DefaultUser;
                 }}
               />
             </div>

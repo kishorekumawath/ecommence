@@ -46,7 +46,7 @@ export const colorMap = {
   Gm: "bg-[#d1d5db]",
   GYI: "bg-[#f59e0b]",
   Fgn: "bg-[#16a34a]",
-  Cor: "bg-[#ed7364]",
+  Cor: "bg-[#f08080]",
   Cop: "bg-[#d97706]",
   bn: "bg-[#431407]", // brown alternative
   Cm: "bg-[#4b5563]",
@@ -144,7 +144,7 @@ export const CollectionsProvider = ({ children }) => {
       totalReviews += product.reviews[i].rating;
     }
 
-    const review = Math.floor(Number(totalReviews / product.reviews.length));
+    const review = Number(totalReviews / product.reviews.length);
     return [review, 5 - review];
   };
 

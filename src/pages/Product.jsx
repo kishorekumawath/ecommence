@@ -84,8 +84,8 @@ function Product() {
       const reviewScore = calculateReview(data);
       // Ensure we have valid numbers for the star display
       setOverAllReview([
-        Math.max(0, Math.min(5, Math.floor(reviewScore[0] || 0))),
-        Math.max(0, Math.min(5, Math.floor(reviewScore[1] || 0))),
+        Math.max(0, Math.min(5, reviewScore[0] || 0)),
+        Math.max(0, Math.min(5, reviewScore[1] || 0)),
       ]);
 
       setIsLoading(false);
@@ -96,8 +96,12 @@ function Product() {
     return Array.from({ length: totalStars }, (_, index) => (
       <img
         key={index}
-        src={index < filledStars ? assets.star_icon : assets.star_dull_icon}
-        alt={index < filledStars ? "filled star" : "empty star"}
+        src={
+          index < Math.floor(filledStars)
+            ? assets.star_icon
+            : assets.star_dull_icon
+        }
+        alt={index < Math.floor(filledStars) ? "filled star" : "empty star"}
         className="w-3"
       />
     ));
@@ -442,16 +446,25 @@ function Product() {
           >
             Additional Information
           </p>
-          <p
+          <div
             onClick={() => setSelectedBottomSection(bottomSection[2])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[2]
-                ? "font-semibold"
-                : "font-light"
-            } cursor-pointer`}
+            className={`sm:flex-row flex-col w-full inline-flex items-center justify-center cursor-pointer sm:w-auto border px-2 py-2`}
           >
-            Reviews
-          </p>
+            <p
+              className={`px-2 text-sm ${
+                selectedBottomSection === bottomSection[2]
+                  ? "font-semibold"
+                  : "font-light"
+              }`}
+            >
+              {" "}
+              Reviews{" "}
+            </p>
+            <div className="flex items-center">
+              <img className="mr-2 h-4 w-4" src={assets.star_icon} alt="star" />{" "}
+              {overAllReview[0]}
+            </div>
+          </div>
         </div>
         {/* Content container */}
         <div className="w-full">

@@ -66,10 +66,6 @@ const ProtectedRoute = ({ children }) => {
 
 const GoogleAuthWrapper = ({ children }) => {
   const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
-
-  // Temporary debug - remove after fixing
-  console.log("Client ID loaded:", clientId ? "Yes" : "No");
-  console.log("Client ID value:", clientId);
   return (
     <GoogleOAuthProvider clientId={clientId}>{children}</GoogleOAuthProvider>
   );

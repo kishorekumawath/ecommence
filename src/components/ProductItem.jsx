@@ -44,17 +44,18 @@ export function ProductItem({
 
       <p className="pt-3 pb-1 text-md">{name}</p>
       <div className="flex items-center gap-2">
-        <p className="text-lg font-semibold text-black">₹{price}</p>
+        <p className="text-xl font-semibold text-black">₹{price}</p>
         <p className="text-sm text-gray-500">
           MRP:{" "}
           <span className="line-through text-gray-600 font-medium">
             {`₹ ${price + extraCharge}`}
           </span>
         </p>
+        <p className="text-sm text-green-600 font-semibold ">
+          {Math.round((extraCharge / (price + extraCharge)) * 100)}% OFF
+        </p>
       </div>
-      <p className="text-md text-green-600 font-semibold mt-1">
-        You save {Math.round((extraCharge / (price + extraCharge)) * 100)}%!
-      </p>
+
       <div className="flex justify-between absolute top-2 right-2 ">
         <IconButton
           iconPath={like ? assets.like : assets.unLike}
