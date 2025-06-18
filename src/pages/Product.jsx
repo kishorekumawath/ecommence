@@ -6,6 +6,8 @@ import { useCartContext } from "../context/CartContext";
 import ReviewBox from "../components/ReviewBox";
 import { SizeChartModal } from "../components/SizeChartModal";
 import { ToastContainer, toast } from "react-toastify";
+import { LikeButton } from "../components/icons";
+import { useWishlist } from "../context/WhislistContext";
 
 const bottomSection = ["Description", "Additional Information", "Reviews"];
 
@@ -25,6 +27,11 @@ function Product() {
     bottomSection[0]
   );
   const [overAllReview, setOverAllReview] = useState([0, 0]);
+  const {
+    wishlistItems = [],
+    addToWishlist,
+    removeFromWishlist,
+  } = useWishlist() || {};
 
   // Helper function to extract color code from image URL
   const extractColorFromImageUrl = (imageUrl) => {
@@ -204,8 +211,40 @@ function Product() {
       toast.warn("Color is required");
       return;
     }
-
+    toast.info("Item added to Cart");
     addToCart(product._id, size, selectedColor, product);
+  };
+
+  const isItemInWishlist = (itemId) => {
+    return (
+      wishlistItems?.some(
+        (wishlistItem) => wishlistItem?.product?._id === itemId
+      ) || false
+    );
+  };
+  const handleLikeClick = async (e, itemId) => {
+    e.preventDefault();
+    if (!wishlistItems) {
+      toast.error("Wishlist is not available");
+      return;
+    }
+
+    try {
+      if (
+        wishlistItems.some(
+          (wishlistItem) => wishlistItem?.product?._id === itemId
+        )
+      ) {
+        await removeFromWishlist(itemId);
+        toast.success("Item removed from wishlist");
+      } else {
+        await addToWishlist(itemId);
+        toast.success("Item added to wishlist");
+      }
+    } catch (error) {
+      console.error("Wishlist operation failed:", error);
+      toast.error("Please check if you are logged in.");
+    }
   };
 
   const ProductSkeleton = () => (
@@ -400,19 +439,66 @@ function Product() {
           />
           <ToastContainer />
 
-          <button
-            onClick={handleBuyNow} // handleBuyNow function
-            className=" text-black w-full px-8 py-3 mb-2 sm:w-auto text-sm active:bg-gray-700 mr-5 bg-orange-300 rounded-md"
-          >
-            BUY NOW
-          </button>
+          <div className="space-y-4 mt-6">
+            {/* Primary Action Buttons - Buy Now and Add to Cart */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleBuyNow}
+                className="text-black w-full sm:w-auto px-8 py-3 text-sm active:bg-gray-700 bg-orange-300 rounded-md hover:bg-orange-400 transition-colors"
+              >
+                BUY NOW
+              </button>
 
-          <button
-            onClick={handleAddToCart} // handleAddToCart function
-            className="bg-black w-full sm:w-auto text-white px-8 py-3 text-sm active:bg-gray-700 rounded-md"
-          >
-            ADD TO CART
-          </button>
+              <button
+                onClick={handleAddToCart}
+                className="bg-black w-full sm:w-auto text-white px-8 py-3 text-sm active:bg-gray-700 rounded-md hover:bg-gray-800 transition-colors"
+              >
+                ADD TO CART
+              </button>
+            </div>
+
+            {/* Secondary Action Buttons - Like and Share */}
+            <div className="flex justify-center sm:justify-start items-center gap-4">
+              <LikeButton
+                like={isItemInWishlist(product._id)}
+                onLikeClick={(e) => handleLikeClick(e, product._id)}
+              />
+
+              {/* Share Button */}
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: product?.name,
+                      text: `Check out this product: ${product?.name}`,
+                      url: window.location.href,
+                    });
+                  } else {
+                    // Fallback for browsers that don't support Web Share API
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Product link copied to clipboard!");
+                  }
+                }}
+                className="flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                title="Share this product"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.935-2.186 2.25 2.25 0 00-3.935 2.186z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
 
           <hr className="mt-8 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
