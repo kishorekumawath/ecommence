@@ -18,7 +18,11 @@ export function ProductItem({
   const { extraCharge } = useCartContext();
 
   return (
-    <div className={`relative ${className}`} onClick={onClick} id={id}>
+    <div
+      className={`relative ${className} cursor-pointer`}
+      onClick={onClick}
+      id={id}
+    >
       <div className="w-full rounded-md overflow-hidden relative">
         <img
           className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover"

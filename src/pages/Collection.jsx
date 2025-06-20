@@ -642,7 +642,7 @@ function Collection() {
     const shouldUsePersistedState = comeBackFromProductPage && persistedState;
 
     if (shouldUsePersistedState) {
-      console.log("Restoring from persisted state after product page visit");
+      // console.log("Restoring from persisted state after product page visit");
       setAvailablesCategory(persistedState.availablesCategory || []);
       setAvailablesSubCategory(persistedState.availablesSubCategory || []);
       setSelectedCategory(persistedState.selectedCategory || []);
@@ -906,7 +906,7 @@ function Collection() {
 
   const handleProductClick = (productId) => {
     // Save current path before navigation
-    console.log("Current path:", location.pathname);
+    // console.log("Current path:", location.pathname);
     sessionStorage.setItem("previousPath", "/product/");
     navigate(`/product/${productId}`);
     // Our current state is already saved in sessionStorage, so we can safely navigate

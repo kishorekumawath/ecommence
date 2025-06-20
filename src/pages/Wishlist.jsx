@@ -4,11 +4,13 @@ import { ProductItem } from "../components/ProductItem";
 import { useWishlist } from "../context/WhislistContext";
 import { useAuth } from "../context/NewAuthContext";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Wishlist = () => {
   const { wishlistItems, loading, error, removeFromWishlist, fetchWishlist } =
     useWishlist();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Local state to handle optimistic updates
   const [removingItems, setRemovingItems] = useState(new Set());
@@ -75,7 +77,13 @@ const Wishlist = () => {
       });
     }
   };
-
+  const handleProductClick = (productId) => {
+    // Save current path before navigation
+    // console.log("Current path:", location.pathname);
+    sessionStorage.setItem("previousPath", "/product/");
+    navigate(`/product/${productId}`);
+    // Our current state is already saved in sessionStorage, so we can safely navigate
+  };
   if (currentItems.length === 0) {
     return (
       <div className="px-10 min-h-[400px]">
@@ -111,6 +119,7 @@ const Wishlist = () => {
             price={item.product.price || 0}
             like={true}
             onLikeClick={(e) => handleLikeClick(e, item.product._id)}
+            onClick={() => handleProductClick(item.product._id)}
           />
         ))}
       </div>

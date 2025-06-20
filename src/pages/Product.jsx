@@ -8,6 +8,7 @@ import { SizeChartModal } from "../components/SizeChartModal";
 import { ToastContainer, toast } from "react-toastify";
 import { LikeButton } from "../components/icons";
 import { useWishlist } from "../context/WhislistContext";
+import ImageViewModal from "../components/ImageViewModal";
 
 const bottomSection = ["Description", "Additional Information", "Reviews"];
 
@@ -32,6 +33,18 @@ function Product() {
     addToWishlist,
     removeFromWishlist,
   } = useWishlist() || {};
+
+  //image view modal
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleImageClick = (clickedImage) => {
+    // Find the index of the clicked image in the images array
+    const allImages = [product.image, ...(product.addImages || [])];
+    const imageIndex = allImages.findIndex((img) => img === clickedImage);
+    setCurrentImageIndex(imageIndex >= 0 ? imageIndex : 0);
+    setIsImageModalOpen(true);
+  };
 
   // Helper function to extract color code from image URL
   const extractColorFromImageUrl = (imageUrl) => {
@@ -362,26 +375,36 @@ function Product() {
       <div className="flex-1 flex flex-col gap-2 sm:flex-row ">
         {/* Mobile layout: Main image first, then additional images */}
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-[50%] lg:w-[40%]">
-          {/* Main Image */}
-          <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] lg:h-full overflow-hidden order-1 sm:order-2">
+          {/* Main Image -  clickable */}
+          <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] lg:h-full overflow-hidden order-1 sm:order-2 cursor-pointer">
             <img
-              className="w-full object-cover rounded-md"
+              className="w-full object-cover rounded-md hover:opacity-90 transition-opacity"
               src={image}
               alt={product?.name || "Product image"}
+              onClick={() => handleImageClick(image)}
             />
           </div>
 
-          {/* Additional Images - Now below main image on mobile */}
+          {/* Additional Images - clickable */}
           <div className="flex sm:flex-col gap-2 sm:gap-3 overflow-x-auto sm:overflow-y-auto sm:h-[600px] w-full sm:w-[20%] pb-4 sm:pb-0 order-2 sm:order-1">
             {product?.addImages?.map((img, index) => (
               <img
-                onClick={() => setImage(img)}
+                onClick={() => {
+                  setImage(img);
+                  handleImageClick(img);
+                }}
                 src={img}
                 key={index}
                 className="w-[80px] sm:w-full h-[80px] sm:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-opacity"
               />
             ))}
           </div>
+          <ImageViewModal
+            isOpen={isImageModalOpen}
+            onClose={() => setIsImageModalOpen(false)}
+            images={[product.image, ...(product.addImages || [])]}
+            currentImageIndex={currentImageIndex}
+          />
         </div>
 
         {/* ---------------- product information ------------------ */}
@@ -464,19 +487,82 @@ function Product() {
                 onLikeClick={(e) => handleLikeClick(e, product._id)}
               />
 
-              {/* Share Button */}
+              {/* Enhanced Share Button */}
               <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({
-                      title: product?.name,
-                      text: `Check out this product: ${product?.name}`,
-                      url: window.location.href,
-                    });
-                  } else {
-                    // Fallback for browsers that don't support Web Share API
-                    navigator.clipboard.writeText(window.location.href);
-                    toast.success("Product link copied to clipboard!");
+                onClick={async () => {
+                  const shareData = {
+                    title: product?.name || "Check out this product",
+                    text: `Check out this amazing product: ${
+                      product?.name || "Product"
+                    }\n\n${product?.description || ""}\n\n`,
+                    url: window.location.href,
+                  };
+
+                  try {
+                    // Check if Web Share API is supported and can share
+                    if (
+                      navigator.share &&
+                      navigator.canShare &&
+                      navigator.canShare(shareData)
+                    ) {
+                      await navigator.share(shareData);
+                    } else if (navigator.share) {
+                      // Fallback for older Web Share API without canShare
+                      await navigator.share(shareData);
+                    } else {
+                      // Create a more comprehensive share text for manual sharing
+                      const shareText = `${shareData.title}\n\n${shareData.text}${shareData.url}`;
+
+                      // Try to copy to clipboard
+                      if (
+                        navigator.clipboard &&
+                        navigator.clipboard.writeText
+                      ) {
+                        await navigator.clipboard.writeText(shareText);
+                        toast.success(
+                          "Product details copied! You can now paste and share in any app."
+                        );
+                      } else {
+                        // Fallback for older browsers
+                        const textArea = document.createElement("textarea");
+                        textArea.value = shareText;
+                        textArea.style.position = "fixed";
+                        textArea.style.left = "-999999px";
+                        textArea.style.top = "-999999px";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+
+                        try {
+                          document.execCommand("copy");
+                          toast.success(
+                            "Product details copied! You can now paste and share in any app."
+                          );
+                        } catch (err) {
+                          // If all else fails, show the share text in an alert
+                          alert(`Share this product:\n\n${shareText}`);
+                        } finally {
+                          document.body.removeChild(textArea);
+                        }
+                      }
+                    }
+                  } catch (error) {
+                    // Handle user cancellation or other errors
+                    if (error.name !== "AbortError") {
+                      console.error("Error sharing:", error);
+                      // Fallback to clipboard copy
+                      try {
+                        const shareText = `${shareData.title}\n\n${shareData.text}${shareData.url}`;
+                        await navigator.clipboard.writeText(shareText);
+                        toast.success(
+                          "Product details copied! You can now paste and share in any app."
+                        );
+                      } catch (clipboardError) {
+                        toast.error(
+                          "Unable to share. Please copy the URL manually."
+                        );
+                      }
+                    }
                   }
                 }}
                 className="flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
