@@ -1408,11 +1408,11 @@ function Product() {
       </div>
 
       {/* ---------------- Product Information and Images Section ----------------- */}
-      <div className="flex-1 flex flex-col gap-2 lg:flex-row">
+      <div className="flex-1  flex flex-col gap-2 md:flex-row ">
         {/* Enhanced Image Gallery Section */}
-        <div className="flex flex-col lg:flex-row gap-3 w-full lg:w-[50%]">
+        <div className="flex flex-col md:flex-row gap-3 w-full md:w-[60vw] xl:w-[50vw] ">
           {/* Main Product Image with Navigation */}
-          <div className="relative w-full lg:w-[70%] h-[90%] lg:h-[600px] lg:h-full overflow-hidden order-1 lg:order-2 cursor-pointer group">
+          <div className="relative w-full md:w-[70%]   md:h-[50vh] lg:h-[90vh] overflow-hidden order-1 md:order-2 cursor-pointer group">
             <img
               className="w-full h-full object-cover rounded-md hover:opacity-90 transition-opacity"
               src={image}
@@ -1495,7 +1495,7 @@ function Product() {
           </div>
 
           {/* Thumbnail Images Section */}
-          <div className="flex p-2 lg:flex-col gap-2 lg:gap-3 overflow-x-auto lg:overflow-y-auto lg:h-[600px] w-full lg:w-[30%] pb-4 lg:pb-0 order-2 lg:order-1">
+          <div className="flex p-2 md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-y-auto md:h-[50vh] lg:h-[90vh] w-full md:w-[30%] pb-4 lg:pb-0 order-2 md:order-1">
             {/* Main image thumbnail */}
             <img
               onClick={() => {
@@ -1504,12 +1504,12 @@ function Product() {
                 handleImageClick(product.image);
               }}
               src={product.image}
-              className={`w-[80px] lg:w-full h-[80px] lg:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${
+              className={`w-[80px] md:w-full h-[80px] md:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${
                 currentImageIndex === 0 ? "ring-2 ring-orange-300" : ""
               }`}
               alt="Main product thumbnail"
             />
-
+            
             {/* Additional image thumbnails */}
             {product?.addImages?.map((img, index) => (
               <img
@@ -1522,7 +1522,7 @@ function Product() {
                 }}
                 loading="lazy"
                 alt={`Thumbnail ${index + 2} of product`}
-                className={`w-[80px] h-[80px] lg:w-full lg:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${
+                className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${
                   currentImageIndex === index + 1 ? "ring-2 ring-orange-300" : ""
                 }`}
               />
@@ -1539,7 +1539,7 @@ function Product() {
         </div>
 
         {/* ---------------- Product Details and Actions ------------------ */}
-        <div className="flex-1">
+        <div className="flex-1 ml-5">
           <h1 className="font-medium text-2xl mt-2">{product?.name}</h1>
           <div className="flex items-center gap-1 mt-2">
             {renderStars(overAllReview[0])}
