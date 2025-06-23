@@ -61,6 +61,7 @@ export const CollectionsProvider = ({ children }) => {
   const [CollectionsData, setCollectionsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
   // const [search, setSearch] = useState("");
   // const [showSearch, setShowSearch] = useState(false);
 
@@ -120,9 +121,9 @@ export const CollectionsProvider = ({ children }) => {
 
   const fetchSpecificProduct = async (productID) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/product/${productID}`);
+      const response = await fetch(`${BASE_URL}/api/v1/product/${productID}?includeRecommendations=true`);
       const data = await response.json();
-      return data.product;
+      return data;
     } catch (error) {
       console.log("error while fetching product data");
     }

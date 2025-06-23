@@ -21,13 +21,13 @@ export function ProductItem({
 
   return (
     <div
-      className={`relative ${className} cursor-pointer w-full border border-gray-300 rounded-md overflow-hidden `}
+      className={`relative ${className} cursor-pointer w-full border border-gray-300 rounded-md overflow-hidden sh`}
       onClick={onClick}
       id={id}
     >
-      <div className="w-full rounded-t-md overflow-hidden relative">
+      <div className="w-full  rounded-t-md overflow-hidden relative">
         <img
-          className="hover:scale-105 w-full rounded-t-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-80 object-cover"
+          className="hover:scale-105 w-full rounded-t-md transition ease-in-out  object-cover"
           src={image}
           alt=""
         />

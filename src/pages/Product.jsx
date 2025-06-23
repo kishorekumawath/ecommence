@@ -863,6 +863,7 @@ import { SizeChartModal } from "../components/SizeChartModal"; // Note: This com
 import { ToastContainer, toast } from "react-toastify";
 import { LikeButton } from "../components/icons";
 import ImageViewModal from "../components/ImageViewModal";
+import { ProductItem } from "../components/ProductItem";
 
 // Defines the sections for the product's bottom panel (Description, Additional Information, Reviews)
 const bottomSection = ["Description", "Additional Information", "Reviews"];
@@ -894,6 +895,7 @@ function Product() {
   const [selectedColor, setSelectedColor] = useState(""); // Selected product color
   const [isLoading, setIsLoading] = useState(true); // Manages loading state for product data
   const [isModalOpen, setIsModalOpen] = useState(false); // Controls visibility of the SizeChartModal
+  const [relatedProducts, setRelatedProducts] = useState([]); // Stores related products
 
   const [selectedBottomSection, setSelectedBottomSection] = useState(
     bottomSection[0]
@@ -973,9 +975,11 @@ function Product() {
   const fetchProductData = async () => {
     setIsLoading(true); // Set loading to true before fetching
     try {
-      const data = await fetchSpecificProduct(productId);
+      const response =  await fetchSpecificProduct(productId);
+      const data = await response.product;
       setProduct(data);
       setImage(data.image); // Set initial main image
+      setRelatedProducts(response.recommendations);
 
       // Auto-select the first available color and try to find a matching image
       if (data.color && data.color.length > 0) {
@@ -1801,6 +1805,29 @@ function Product() {
           )}
         </div>
       </div>
+
+{/* ------------------ Related Products Section --------------------*/}
+<div className="mt-10">
+  <h1 className="text-2xl font-semibold mb-4">Related Products</h1>
+
+  <div className="flex   overflow-x-auto space-x-4 scrollbar-hide scroll-smooth snap-x snap-mandatory px-1">
+    {relatedProducts.map((item) => (
+      <div key={item._id} className="snap-start shrink-0 w-60">
+        <ProductItem
+          id={item._id}
+          name={item.name}
+          image={item.image}
+          price={item.price}
+          colors={item.color || []}
+          // like={isItemInWishlist(item._id)}
+          // onLikeClick={(e) => handleLikeClick(e, item._id)}
+          // onClick={() => handleProductClick(item._id)}
+        />
+      </div>
+    ))}
+  </div>
+
+    </div>
     </div>
   );
 }
