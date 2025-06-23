@@ -21,13 +21,13 @@ export function ProductItem({
 
   return (
     <div
-      className={`relative ${className} cursor-pointer`}
+      className={`relative ${className} cursor-pointer w-full border border-gray-300 rounded-md overflow-hidden `}
       onClick={onClick}
       id={id}
     >
-      <div className="w-full rounded-md overflow-hidden relative">
+      <div className="w-full rounded-t-md overflow-hidden relative">
         <img
-          className="hover:scale-105 w-full rounded-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-96 object-cover"
+          className="hover:scale-105 w-full rounded-t-md transition ease-in-out h-60 md:h-52 lg:h-60 xl:h-80 object-cover"
           src={image}
           alt=""
         />
@@ -47,25 +47,32 @@ export function ProductItem({
           </div>
         )}
       </div>
-
-      <p className="pt-3 pb-1 text-md">{name}</p>
+      <div className="px-2">
+        <p className="pt-2 pb-1 text-sm truncate">{name}</p>
       <div className="flex items-center gap-2">
         <p className="text-xl font-semibold text-black">₹{price}</p>
-        <p className="text-sm text-gray-500">
-          MRP:{" "}
-          <span className="line-through text-gray-600 font-medium">
-            {`₹ ${price + extraCharge}`}
-          </span>
-        </p>
-        <p className="text-sm text-green-600 font-semibold ">
-          {Math.round((extraCharge / (price + extraCharge)) * 100)}% OFF
-        </p>
+        <div className="flex-col">
+          <p className="text-xs text-gray-500">
+            MRP:{" "}
+            <span className="line-through text-gray-600 font-medium">
+              {`₹ ${price + extraCharge}`}
+            </span>
+          </p>
+          <p className="text-xs text-green-600 font-semibold ">
+            {Math.round((extraCharge / (price + extraCharge)) * 100)}% OFF
+          </p>
+        </div>
+
       </div>
+
+      </div>
+
+      
 
       <div className="flex justify-between absolute top-2 right-2 ">
         <IconButton
           reduceIconSize={reduceIconSize}
-          iconPath={like ?fromWishlist?assets.cancel: assets.like : assets.unLike}
+          iconPath={like ? fromWishlist ? assets.cancel : assets.like : assets.unLike}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
