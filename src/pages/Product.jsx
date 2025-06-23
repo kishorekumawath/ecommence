@@ -861,7 +861,7 @@ import { useWishlist } from "../context/WhislistContext";
 import ReviewBox from "../components/ReviewBox";
 import { SizeChartModal } from "../components/SizeChartModal"; // Note: This component is currently commented out in the JSX
 import { ToastContainer, toast } from "react-toastify";
-import { LikeButton } from "../components/icons";
+import { LikeButton, ShareButton } from "../components/icons";
 import ImageViewModal from "../components/ImageViewModal";
 import { ProductItem } from "../components/ProductItem";
 
@@ -975,7 +975,7 @@ function Product() {
   const fetchProductData = async () => {
     setIsLoading(true); // Set loading to true before fetching
     try {
-      const response =  await fetchSpecificProduct(productId);
+      const response = await fetchSpecificProduct(productId);
       const data = await response.product;
       setProduct(data);
       setImage(data.image); // Set initial main image
@@ -1057,9 +1057,8 @@ function Product() {
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
             // Dynamically apply background color and ring based on selection
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
-              selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
-            }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
+              }`}
             aria-label={`Select color ${colorCode}`}
           />
         ))}
@@ -1482,11 +1481,10 @@ function Product() {
                   <button
                     key={index}
                     onClick={() => goToImage(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentImageIndex
+                    className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
                         ? "bg-white"
                         : "bg-white bg-opacity-50 hover:bg-opacity-75"
-                    }`}
+                      }`}
                     aria-label={`Go to image ${index + 1}`}
                   />
                 ))}
@@ -1504,12 +1502,11 @@ function Product() {
                 handleImageClick(product.image);
               }}
               src={product.image}
-              className={`w-[80px] md:w-full h-[80px] md:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${
-                currentImageIndex === 0 ? "ring-2 ring-orange-300" : ""
-              }`}
+              className={`w-[80px] md:w-full h-[80px] md:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${currentImageIndex === 0 ? "ring-2 ring-orange-300" : ""
+                }`}
               alt="Main product thumbnail"
             />
-            
+
             {/* Additional image thumbnails */}
             {product?.addImages?.map((img, index) => (
               <img
@@ -1522,9 +1519,8 @@ function Product() {
                 }}
                 loading="lazy"
                 alt={`Thumbnail ${index + 2} of product`}
-                className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${
-                  currentImageIndex === index + 1 ? "ring-2 ring-orange-300" : ""
-                }`}
+                className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${currentImageIndex === index + 1 ? "ring-2 ring-orange-300" : ""
+                  }`}
               />
             ))}
           </div>
@@ -1537,195 +1533,106 @@ function Product() {
             currentImageIndex={currentImageIndex}
           />
         </div>
-
-        {/* ---------------- Product Details and Actions ------------------ */}
-        <div className="flex-1 ml-5">
-          <h1 className="font-medium text-2xl mt-2">{product?.name}</h1>
-          <div className="flex items-center gap-1 mt-2">
-            {renderStars(overAllReview[0])}
-            <p className="pl-2">{product?.reviews?.length || 0}</p>
-          </div>
-          <div className="mt-4">
-            <p>{getStockStatus(product?.stock)}</p>
-            <div className="flex items-center gap-2">
-              <p className="text-4xl font-medium text-gray-800">{`₹ ${product?.price}`}</p>
-              <p className="text-sm text-gray-500">
-                MRP:{" "}
-                <span className="line-through text-gray-600 font-medium">
-                  {`₹ ${product?.price + extraCharge}`}
-                </span>
-              </p>
+        <div className="flex items-start lg:w-[50vw] justify-between">
+          {/* ---------------- Product Details and Actions ------------------ */}
+          <div className="flex-1 ml-5">
+            <h1 className="font-medium text-2xl mt-2">{product?.name}</h1>
+            <div className="flex items-center gap-1 mt-2">
+              {renderStars(overAllReview[0])}
+              <p className="pl-2">{product?.reviews?.length || 0}</p>
             </div>
-            <p className="mt-1 text-green-600 font-semibold ">
-              You save{" "}
-              {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}
-              %!
-            </p>
-            <p className="mt-1 text-gray-500 text-xs">Inclusive of all Taxes</p>
-          </div>
+            <div className="mt-4">
+              <p>{getStockStatus(product?.stock)}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-4xl font-medium text-gray-800">{`₹ ${product?.price}`}</p>
+                <p className="text-sm text-gray-500">
+                  MRP:{" "}
+                  <span className="line-through text-gray-600 font-medium">
+                    {`₹ ${product?.price + extraCharge}`}
+                  </span>
+                </p>
+              </div>
+              <p className="mt-1 text-green-600 font-semibold ">
+                You save{" "}
+                {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}
+                %!
+              </p>
+              <p className="mt-1 text-gray-500 text-xs">Inclusive of all Taxes</p>
+            </div>
 
-          {/* Size selection */}
-          {/* Size Chart Modal Toggle (currently commented out but kept for future use) */}
-          {/* <button
+            {/* Size selection */}
+            {/* Size Chart Modal Toggle (currently commented out but kept for future use) */}
+            {/* <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
           >
             Size Chart
           </button> */}
-          <p className="mt-2 mb-3 py-2 text-sm text-gray-500 italic">
-            Please refer to size chart from images for accurate measurements
-          </p>
-          <div className="flex gap-4 my-2">
-            {product?.size?.map((item, index) => (
-              <button
-                onClick={() => setSize(item)}
-                key={index}
-                className={`border bg-gray-100 py-2 px-4 rounded-md ${
-                  item === size ? "ring-2 ring-orange-300 text-black" : ""
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-
-          {/* Color selection using the reusable ColorSelector component */}
-          <ColorSelector
-            colors={product?.color || []}
-            selectedColor={selectedColor}
-            onColorSelect={handleColorSelect}
-          />
-          <ToastContainer />
-
-          <div className="space-y-4 mt-6">
-            {/* Primary Action Buttons: Buy Now and Add to Cart */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleBuyNow}
-                className="text-black w-full sm:w-auto px-8 py-3 text-sm active:bg-gray-700 bg-orange-300 rounded-md hover:bg-orange-400 transition-colors"
-              >
-                BUY NOW
-              </button>
-
-              <button
-                onClick={handleAddToCart}
-                className="bg-black w-full sm:w-auto text-white px-8 py-3 text-sm active:bg-gray-700 rounded-md hover:bg-gray-800 transition-colors"
-              >
-                ADD TO CART
-              </button>
-            </div>
-
-            {/* Secondary Action Buttons: Like (Wishlist) and Share */}
-            <div className="flex justify-center sm:justify-start items-center gap-4">
-              <LikeButton
-                like={isItemInWishlist(product._id)}
-                onLikeClick={(e) => handleLikeClick(e, product._id)}
-              />
-
-              {/* Share Button with Web Share API and Clipboard Fallback */}
-              <button
-                onClick={async () => {
-                  const shareData = {
-                    title: product?.name || "Check out this product",
-                    text: `Check out this amazing product: ${
-                      product?.name || "Product"
-                    }\n\n${product?.description || ""}\n\n`,
-                    url: window.location.href,
-                  };
-
-                  try {
-                    // Attempt to use Web Share API
-                    if (
-                      navigator.share &&
-                      navigator.canShare &&
-                      navigator.canShare(shareData)
-                    ) {
-                      await navigator.share(shareData);
-                    } else if (navigator.share) {
-                      // Fallback for older Web Share API without canShare
-                      await navigator.share(shareData);
-                    } else {
-                      // Fallback to Clipboard API if Web Share is not available
-                      const shareText = `${shareData.title}\n\n${shareData.text}${shareData.url}`;
-                      if (
-                        navigator.clipboard &&
-                        navigator.clipboard.writeText
-                      ) {
-                        await navigator.clipboard.writeText(shareText);
-                        toast.success(
-                          "Product details copied! You can now paste and share in any app."
-                        );
-                      } else {
-                        // Fallback for very old browsers (using document.execCommand)
-                        const textArea = document.createElement("textarea");
-                        textArea.value = shareText;
-                        textArea.style.position = "fixed";
-                        textArea.style.left = "-999999px";
-                        textArea.style.top = "-999999px";
-                        document.body.appendChild(textArea);
-                        textArea.focus();
-                        textArea.select();
-
-                        try {
-                          document.execCommand("copy");
-                          toast.success(
-                            "Product details copied! You can now paste and share in any app."
-                          );
-                        } catch (err) {
-                          alert(`Share this product:\n\n${shareText}`); // Last resort: alert
-                        } finally {
-                          document.body.removeChild(textArea);
-                        }
-                      }
-                    }
-                  } catch (error) {
-                    // Handle user cancellation or other sharing errors
-                    if (error.name !== "AbortError") {
-                      console.error("Error sharing:", error);
-                      // Attempt clipboard copy as a robust fallback
-                      try {
-                        const shareText = `${shareData.title}\n\n${shareData.text}${shareData.url}`;
-                        await navigator.clipboard.writeText(shareText);
-                        toast.success(
-                          "Product details copied! You can now paste and share in any app."
-                        );
-                      } catch (clipboardError) {
-                        toast.error(
-                          "Unable to share. Please copy the URL manually."
-                        );
-                      }
-                    }
-                  }
-                }}
-                className="flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-                title="Share this product"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+            <p className="mt-2 mb-3 py-2 text-sm text-gray-500 italic">
+              Please refer to size chart from images for accurate measurements
+            </p>
+            <div className="flex gap-4 my-2">
+              {product?.size?.map((item, index) => (
+                <button
+                  onClick={() => setSize(item)}
+                  key={index}
+                  className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
+                    }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.935-2.186 2.25 2.25 0 00-3.935 2.186z"
-                  />
-                </svg>
-              </button>
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            {/* Color selection using the reusable ColorSelector component */}
+            <ColorSelector
+              colors={product?.color || []}
+              selectedColor={selectedColor}
+              onColorSelect={handleColorSelect}
+            />
+            <ToastContainer />
+
+            <div className="space-y-4 mt-6">
+              {/* Primary Action Buttons: Buy Now and Add to Cart */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleBuyNow}
+                  className="text-black w-full sm:w-auto px-8 py-3 text-sm active:bg-gray-700 bg-orange-300 rounded-md hover:bg-orange-400 transition-colors"
+                >
+                  BUY NOW
+                </button>
+
+                <button
+                  onClick={handleAddToCart}
+                  className="bg-black w-full sm:w-auto text-white px-8 py-3 text-sm active:bg-gray-700 rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  ADD TO CART
+                </button>
+              </div>
+
+
+            </div>
+
+            <hr className="mt-8 sm:w-4/5" />
+            {/* Product features/details list */}
+            <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
+              {product?.details?.map((item, index) => (
+                <p key={index}>{item}</p>
+              ))}
             </div>
           </div>
+          {/* Secondary Action Buttons: Like (Wishlist) and Share */}
+          <div className="flex flex-col lg:flex-row justify-center items-end gap-4">
+            <LikeButton
+              like={isItemInWishlist(product._id)}
+              onLikeClick={(e) => handleLikeClick(e, product._id)}
+            />
 
-          <hr className="mt-8 sm:w-4/5" />
-          {/* Product features/details list */}
-          <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
-            {product?.details?.map((item, index) => (
-              <p key={index}>{item}</p>
-            ))}
+            {/* Share Button with Web Share API and Clipboard Fallback */}
+            <ShareButton product={product} />
           </div>
         </div>
+
       </div>
       {/* Size Chart Modal - Rendered conditionally */}
       {isModalOpen && <SizeChartModal setIsModalOpen={setIsModalOpen} />}
@@ -1737,22 +1644,20 @@ function Product() {
           {/* Description Tab */}
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[0]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Description
           </p>
           {/* Additional Information Tab */}
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[1]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Additional Information
           </p>
@@ -1762,11 +1667,10 @@ function Product() {
             className={`sm:flex-row flex-col w-full inline-flex items-center justify-center cursor-pointer sm:w-auto border px-2 py-2`}
           >
             <p
-              className={`px-2 text-sm ${
-                selectedBottomSection === bottomSection[2]
+              className={`px-2 text-sm ${selectedBottomSection === bottomSection[2]
                   ? "font-semibold"
                   : "font-light"
-              }`}
+                }`}
             >
               Reviews
             </p>
@@ -1806,28 +1710,28 @@ function Product() {
         </div>
       </div>
 
-{/* ------------------ Related Products Section --------------------*/}
-<div className="mt-10">
-  <h1 className="text-2xl font-semibold mb-4">Related Products</h1>
+      {/* ------------------ Related Products Section --------------------*/}
+      <div className="mt-10">
+        <h1 className="text-2xl font-semibold mb-4">Related Products</h1>
 
-  <div className="flex   overflow-x-auto space-x-4 scrollbar-hide scroll-smooth snap-x snap-mandatory px-1">
-    {relatedProducts.map((item) => (
-      <div key={item._id} className="snap-start shrink-0 w-60">
-        <ProductItem
-          id={item._id}
-          name={item.name}
-          image={item.image}
-          price={item.price}
-          colors={item.color || []}
-          // like={isItemInWishlist(item._id)}
-          // onLikeClick={(e) => handleLikeClick(e, item._id)}
-          // onClick={() => handleProductClick(item._id)}
-        />
+        <div className="flex   overflow-x-auto space-x-4 scrollbar-hide scroll-smooth snap-x snap-mandatory px-1">
+          {relatedProducts.map((item) => (
+            <div key={item._id} className="snap-start shrink-0 w-60">
+              <ProductItem
+                id={item._id}
+                name={item.name}
+                image={item.image}
+                price={item.price}
+                colors={item.color || []}
+                like={isItemInWishlist(item._id)}
+                onLikeClick={(e) => handleLikeClick(e, item._id)}
+              // onClick={() => handleProductClick(item._id)}
+              />
+            </div>
+          ))}
+        </div>
+
       </div>
-    ))}
-  </div>
-
-    </div>
     </div>
   );
 }
