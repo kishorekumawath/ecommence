@@ -118,6 +118,8 @@ const Wishlist = () => {
             image={item.product.image || ""}
             price={item.product.price || 0}
             like={true}
+            fromWishlist={true}
+            reduceIconSize={true}
             onLikeClick={(e) => handleLikeClick(e, item.product._id)}
             onClick={() => handleProductClick(item.product._id)}
           />

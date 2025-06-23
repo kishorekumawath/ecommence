@@ -1,10 +1,14 @@
-export function IconButton({ iconPath, onClick }) {
+export function IconButton({ iconPath, onClick, reduceIconSize = false }) {
+  const iconSizeClass = reduceIconSize
+    ? "h-2 w-2 md:h-3 md:w-3"
+    : "h-3 w-3 md:h-5 md:w-5";
+
   return (
     <div
       onClick={onClick}
-      className="bg-white p-2 md:p-3 rounded-full transition-transform duration-300 transform hover:scale-125"
+      className="bg-white backdrop-blur-md border border-white p-2 md:p-3 rounded-full transition-transform duration-300 transform hover:scale-125"
     >
-      <img src={iconPath} alt="" className="h-3 w-3 md:h-5 md:w-5 " />
+      <img src={iconPath} alt="" className={iconSizeClass} />
     </div>
   );
 }

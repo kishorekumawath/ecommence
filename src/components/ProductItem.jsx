@@ -14,6 +14,8 @@ export function ProductItem({
   className = "",
   onClick,
   colors,
+  reduceIconSize = false,
+  fromWishlist = false,
 }) {
   const { extraCharge } = useCartContext();
 
@@ -62,7 +64,8 @@ export function ProductItem({
 
       <div className="flex justify-between absolute top-2 right-2 ">
         <IconButton
-          iconPath={like ? assets.like : assets.unLike}
+          reduceIconSize={reduceIconSize}
+          iconPath={like ?fromWishlist?assets.cancel: assets.like : assets.unLike}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
