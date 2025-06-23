@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { assets, products } from "../assets/assets";
 import { colorMap, useCollections } from "../context/CollectionsContext";
@@ -37,6 +37,10 @@ function Product() {
   //image view modal
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [allImages, setAllImages] = useState([]);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
 
   const handleImageClick = (clickedImage) => {
     // Find the index of the clicked image in the images array
@@ -130,6 +134,81 @@ function Product() {
     fetchProductData();
   }, [productId]);
 
+
+  // Initialize all images array when product loads
+  useEffect(() => {
+    if (product.image && product.addImages) {
+      const images = [product.image, ...product.addImages];
+      setAllImages(images);
+
+      // Find current image index when image changes
+      const currentIndex = images.findIndex(img => img === image);
+      if (currentIndex !== -1) {
+        setCurrentImageIndex(currentIndex);
+      }
+    }
+  }, [product, image]);
+
+  // Navigation functions
+  const goToNextImage = () => {
+    if (allImages.length > 0) {
+      const nextIndex = (currentImageIndex + 1) % allImages.length;
+      setCurrentImageIndex(nextIndex);
+      setImage(allImages[nextIndex]);
+    }
+  };
+
+  const goToPreviousImage = () => {
+    if (allImages.length > 0) {
+      const prevIndex = currentImageIndex === 0 ? allImages.length - 1 : currentImageIndex - 1;
+      setCurrentImageIndex(prevIndex);
+      setImage(allImages[prevIndex]);
+    }
+  };
+
+  const goToImage = (index) => {
+    if (allImages.length > 0 && index >= 0 && index < allImages.length) {
+      setCurrentImageIndex(index);
+      setImage(allImages[index]);
+    }
+  };
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      goToNextImage();
+    }
+    if (isRightSwipe) {
+      goToPreviousImage();
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft') {
+        goToPreviousImage();
+      } else if (e.key === 'ArrowRight') {
+        goToNextImage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentImageIndex, allImages]);
+
   const OriginalToSlug = (subcategory) => {
     // const categorySlug = category.toLowerCase().replace(/\s+/g, "-");
     const subcategorySlug = subcategory.toLowerCase().replace(/\s+/g, "-");
@@ -143,9 +222,8 @@ function Product() {
           <button
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
-              selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
-            }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2  ring-orange-300" : ""
+              }`}
           />
         ))}
       </div>
@@ -372,10 +450,13 @@ function Product() {
         <span className="text-gray-900 line-clamp-1">{product?.name}</span>
       </div>
       {/* ---------------- product info ----------------- */}
-      <div className="flex-1 flex flex-col gap-2 sm:flex-row ">
+      <div className="flex-1 flex flex-col gap-2 lg:flex-row ">
         {/* Mobile layout: Main image first, then additional images */}
+
+
+        {/* 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-[50%] lg:w-[40%]">
-          {/* Main Image -  clickable */}
+            Main Image -  clickable 
           <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] lg:h-full overflow-hidden order-1 sm:order-2 cursor-pointer">
             <img
               className="w-full object-cover rounded-md hover:opacity-90 transition-opacity"
@@ -385,7 +466,7 @@ function Product() {
             />
           </div>
 
-          {/* Additional Images - clickable */}
+          Additional Images - clickable *
           <div className="flex sm:flex-col gap-2 sm:gap-3 overflow-x-auto sm:overflow-y-auto sm:h-[600px] w-full sm:w-[20%] pb-4 sm:pb-0 order-2 sm:order-1">
             {product?.addImages?.map((img, index) => (
               <img
@@ -403,6 +484,113 @@ function Product() {
             isOpen={isImageModalOpen}
             onClose={() => setIsImageModalOpen(false)}
             images={[product.image, ...(product.addImages || [])]}
+            currentImageIndex={currentImageIndex}
+          />
+        </div> 
+        */}
+
+        {/* Enhanced Image Gallery */}
+        <div className="flex flex-col lg:flex-row gap-3 w-full lg:w-[50%] lg:w-[40%]">
+          {/* Main Image with Navigation */}
+          <div className="relative w-full lg:w-[70%] h-[90%] lg:h-[600px] lg:h-full overflow-hidden order-1 lg:order-2 cursor-pointer group">
+            <img
+              className="w-full h-full object-cover rounded-md hover:opacity-90 transition-opacity"
+              src={image}
+              alt={product?.name || "Product image"}
+              onClick={() => handleImageClick(image)}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            />
+
+            {/* Navigation Arrows */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  onClick={goToPreviousImage}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
+                  aria-label="Previous image"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                <button
+                  onClick={goToNextImage}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
+                  aria-label="Next image"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            {/* Image Counter */}
+            {allImages.length > 1 && (
+              <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                {currentImageIndex + 1} / {allImages.length}
+              </div>
+            )}
+
+            {/* Dot Indicators */}
+            {allImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {allImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToImage(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
+                        ? 'bg-white'
+                        : 'bg-white bg-opacity-50 hover:bg-opacity-75'
+                      }`}
+                    aria-label={`Go to image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Thumbnail Images */}
+          <div className="flex p-2 lg:flex-col gap-2 lg:gap-3 overflow-x-auto lg:overflow-y-auto lg:h-[600px] w-full lg:w-[30%] pb-4 lg:pb-0 order-2 lg:order-1">
+            {/* Main image thumbnail */}
+            <img
+              onClick={() => {
+                setImage(product.image);
+                setCurrentImageIndex(0);
+                handleImageClick(product.image);
+              }}
+              src={product.image}
+              className={`w-[80px] lg:w-full h-[80px] lg:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${currentImageIndex === 0 ? 'ring-2 ring-orange-300' : ''
+                }`}
+              alt="Main product image"
+            />
+
+            {/* Additional image thumbnails */}
+            {product?.addImages?.map((img, index) => (
+              <img
+                key={img || index} // Prefer unique keys if possible
+                src={img}
+                onClick={() => {
+                  setImage(img);
+                  setCurrentImageIndex(index + 1); // +1 because main image is index 0
+                  handleImageClick(img);
+                }}
+                loading="lazy"
+                alt={`Thumbnail ${index + 2} of product`}
+                className={`w-[80px] h-[80px]  lg:w-full lg:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${currentImageIndex === index + 1 ? 'ring-2 ring-orange-300' : ''
+                  }`}
+              />
+            ))}
+          </div>
+
+          {/* Image View Modal */}
+          <ImageViewModal
+            isOpen={isImageModalOpen}
+            onClose={() => setIsImageModalOpen(false)}
+            images={allImages}
             currentImageIndex={currentImageIndex}
           />
         </div>
@@ -447,9 +635,8 @@ function Product() {
               <button
                 onClick={() => setSize(item)}
                 key={index}
-                className={`border bg-gray-100 py-2 px-4 rounded-md ${
-                  item === size ? "ring-2 ring-orange-300 text-black" : ""
-                }`}
+                className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
+                  }`}
               >
                 {item}
               </button>
@@ -492,9 +679,8 @@ function Product() {
                 onClick={async () => {
                   const shareData = {
                     title: product?.name || "Check out this product",
-                    text: `Check out this amazing product: ${
-                      product?.name || "Product"
-                    }\n\n${product?.description || ""}\n\n`,
+                    text: `Check out this amazing product: ${product?.name || "Product"
+                      }\n\n${product?.description || ""}\n\n`,
                     url: window.location.href,
                   };
 
@@ -600,21 +786,19 @@ function Product() {
         <div className="flex w-full sm:w-auto overflow-hidden">
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={` w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[0]
+            className={` w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Description
           </p>
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[1]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
                 ? "font-semibold"
                 : "font-light"
-            } cursor-pointer`}
+              } cursor-pointer`}
           >
             Additional Information
           </p>
@@ -623,11 +807,10 @@ function Product() {
             className={`sm:flex-row flex-col w-full inline-flex items-center justify-center cursor-pointer sm:w-auto border px-2 py-2`}
           >
             <p
-              className={`px-2 text-sm ${
-                selectedBottomSection === bottomSection[2]
+              className={`px-2 text-sm ${selectedBottomSection === bottomSection[2]
                   ? "font-semibold"
                   : "font-light"
-              }`}
+                }`}
             >
               {" "}
               Reviews{" "}
