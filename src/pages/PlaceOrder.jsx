@@ -560,6 +560,10 @@ import { Title } from "../components/Title";
 import { assets } from "../assets/assets";
 import { BASE_URL } from "../server/server";
 import ProfileInputTile from "../components/ProfileInputTile";
+import {
+  ProfileSelectTile,
+  INDIAN_STATES,
+} from "../components/ProfileSelectTile";
 
 const PlaceOrder = () => {
   const location = useLocation();
@@ -1183,12 +1187,13 @@ const PlaceOrder = () => {
                 )}
               </div>
               <div className="flex-1">
-                <ProfileInputTile
+                <ProfileSelectTile
                   title={"State"}
                   name="state"
                   value={formData.state}
                   handleInputChange={handleInputChange}
-                  placeholder="State"
+                  options={INDIAN_STATES}
+                  placeholder="Select State"
                   required
                 />
                 {validationErrors.state && (
