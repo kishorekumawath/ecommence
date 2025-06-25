@@ -631,8 +631,7 @@ const PlaceOrder = () => {
   };
 
   const validateState = (state) => {
-    const stateRegex = /^[a-zA-Z\s]{2,50}$/;
-    return stateRegex.test(state.trim());
+   return INDIAN_STATES.includes(state);
   };
 
   const validateDoorNo = (doorNo) => {
