@@ -104,11 +104,11 @@
 //     <button
 //       onClick={onClick}
 //       className={`absolute top-1/2 -translate-y-1/2 z-20
-//         w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 
-//         rounded-full 
-//         bg-white/30 backdrop-blur-md 
-//         flex items-center justify-center 
-//         hover:bg-white/50 
+//         w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12
+//         rounded-full
+//         bg-white/30 backdrop-blur-md
+//         flex items-center justify-center
+//         hover:bg-white/50
 //         transition
 //         ${className}`}
 //       aria-label={direction === "left" ? "Previous slide" : "Next slide"}
@@ -160,12 +160,12 @@
 //               {heroSlideContent[currentImage].title}
 //             </motion.h2>
 //             <motion.button
-//               className="rounded-full 
-//                 bg-black 
-//                 px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 
-//                 text-sm sm:text-base md:text-lg 
-//                 text-white 
-//                 hover:bg-gray-800 
+//               className="rounded-full
+//                 bg-black
+//                 px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3
+//                 text-sm sm:text-base md:text-lg
+//                 text-white
+//                 hover:bg-gray-800
 //                 transition"
 //             >
 //               {heroSlideContent[currentImage].buttonText}
@@ -207,54 +207,35 @@
 
 // export default Hero;
 
-
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DotIndicators from "./DotIndicator";
-
-const mockSlides = [
-  {
-    desktop: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=800&fit=crop",
-    mobile: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=768&h=600&fit=crop",
-    title: "TOLUS SPRING COLLECTION",
-    subtitle: "Find out our best spring collection. Offering our best quality product in a Tolus Spring Collection",
-    cta: "Buy Now"
-  },
-  {
-    desktop: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&h=800&fit=crop",
-    mobile: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=768&h=600&fit=crop",
-    title: "SUMMER ESSENTIALS",
-    subtitle: "Discover our premium summer collection with sustainable materials and contemporary designs",
-    cta: "Shop Now"
-  },
-  {
-    desktop: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&h=800&fit=crop",
-    mobile: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=768&h=600&fit=crop",
-    title: "EXCLUSIVE WEAR",
-    subtitle: "Elevate your style with our exclusive collection featuring modern cuts and timeless elegance",
-    cta: "Explore"
-  }
-];
+import sliderService from "../context/sliderService";
 
 /**
  * Hero Carousel Component
  * Displays a full-screen, interactive hero section with rotating background images,
  * dynamic text content, and navigation controls. Supports desktop, mobile,
  * and accessibility features like keyboard and touch navigation.
+ * Now integrated with backend API for dynamic content.
  */
 function Hero() {
   // --- State Management ---
+  const [slides, setSlides] = useState([]); // Slides data from API
   const [currentImage, setCurrentImage] = useState(0); // Index of the currently displayed slide
   const [direction, setDirection] = useState(0); // Direction of slide change (1 for next, -1 for previous)
   const [isMobile, setIsMobile] = useState(false); // Flag to determine if the device is mobile
   const [isScrolling, setIsScrolling] = useState(false); // Flag to prevent rapid slide changes during animation
   const [touchStart, setTouchStart] = useState(null); // X-coordinate of touch start
   const [touchEnd, setTouchEnd] = useState(null); // X-coordinate of touch end
+  const [loading, setLoading] = useState(true); // Loading state for API call
+  const [error, setError] = useState(null); // Error state for API failures
 
   // --- Refs for DOM Elements and Timers ---
   const heroRef = useRef(null); // Ref to the main hero div for attaching event listeners
   const wheelTimeoutRef = useRef(null); // Ref for wheel event debounce timer
   const autoSlideIntervalRef = useRef(null); // Ref for auto-slide interval timer
+  const impressionTrackedRef = useRef(new Set()); // Track which slides have had impressions logged
 
   // --- Constants ---
   const SWIPE_THRESHOLD = 50; // Minimum pixel distance for a successful swipe
@@ -262,6 +243,44 @@ function Hero() {
   const AUTO_SLIDE_INTERVAL = 8000; // Interval for auto-sliding in milliseconds
 
   // --- Effects ---
+
+  // Fetch slides from API on component mount
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await sliderService.getActiveSliders();
+
+        if (response.success && response.data.length > 0) {
+          setSlides(response.data);
+          setCurrentImage(0);
+        } else {
+          setError("No active slides found");
+        }
+      } catch (err) {
+        console.error("Failed to fetch slides:", err);
+        setError("Failed to load slides. Please try again later.");
+        // Fallback to empty array to prevent crashes
+        setSlides([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlides();
+  }, []);
+
+  // Track impression for current slide
+  useEffect(() => {
+    if (slides.length > 0 && !loading) {
+      const currentSlide = slides[currentImage];
+      if (currentSlide && !impressionTrackedRef.current.has(currentSlide.id)) {
+        sliderService.trackImpression(currentSlide.id);
+        impressionTrackedRef.current.add(currentSlide.id);
+      }
+    }
+  }, [currentImage, slides, loading]);
 
   // Initialize `isMobile` state based on window width on component mount
   useEffect(() => {
@@ -278,10 +297,6 @@ function Hero() {
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
-  // Memoize `currentSlide` and `currentBanner` for performance
-  const currentSlide = mockSlides[currentImage];
-  const currentBanner = isMobile ? currentSlide.mobile : currentSlide.desktop;
-
   // --- Core Slide Navigation Logic ---
 
   /**
@@ -290,30 +305,35 @@ function Hero() {
    * @param {number} newIndex - The index of the slide to navigate to.
    * @param {number} dir - The direction of navigation (1 for next, -1 for previous).
    */
-  const changeSlide = useCallback((newIndex, dir) => {
-    if (isScrolling) return; // Do not change slide if already animating
+  const changeSlide = useCallback(
+    (newIndex, dir) => {
+      if (isScrolling || slides.length === 0) return; // Do not change slide if already animating or no slides
 
-    setIsScrolling(true); // Indicate that a slide change is in progress
-    setDirection(dir); // Set animation direction
-    setCurrentImage(newIndex); // Update current slide index
+      setIsScrolling(true); // Indicate that a slide change is in progress
+      setDirection(dir); // Set animation direction
+      setCurrentImage(newIndex); // Update current slide index
 
-    // Reset `isScrolling` after the animation duration
-    setTimeout(() => {
-      setIsScrolling(false);
-    }, ANIMATION_DURATION);
-  }, [isScrolling]); // Dependency: `isScrolling` to prevent re-creation unnecessarily
+      // Reset `isScrolling` after the animation duration
+      setTimeout(() => {
+        setIsScrolling(false);
+      }, ANIMATION_DURATION);
+    },
+    [isScrolling, slides.length]
+  );
 
   /** Navigates to the next slide in the carousel. */
   const nextImage = useCallback(() => {
-    const newIndex = currentImage === mockSlides.length - 1 ? 0 : currentImage + 1;
+    if (slides.length === 0) return;
+    const newIndex = currentImage === slides.length - 1 ? 0 : currentImage + 1;
     changeSlide(newIndex, 1); // Direction 1 for next
-  }, [currentImage, changeSlide]); // Dependencies: `currentImage` and `changeSlide`
+  }, [currentImage, changeSlide, slides.length]);
 
   /** Navigates to the previous slide in the carousel. */
   const prevImage = useCallback(() => {
-    const newIndex = currentImage === 0 ? mockSlides.length - 1 : currentImage - 1;
+    if (slides.length === 0) return;
+    const newIndex = currentImage === 0 ? slides.length - 1 : currentImage - 1;
     changeSlide(newIndex, -1); // Direction -1 for previous
-  }, [currentImage, changeSlide]); // Dependencies: `currentImage` and `changeSlide`
+  }, [currentImage, changeSlide, slides.length]);
 
   // --- Event Handlers for User Interaction ---
 
@@ -322,25 +342,30 @@ function Hero() {
    * Implements a debounce to prevent excessive scrolling.
    * @param {WheelEvent} e - The wheel event object.
    */
-  const handleWheel = useCallback((e) => {
-    if (isScrolling) return; // Ignore wheel if an animation is active
+  const handleWheel = useCallback(
+    (e) => {
+      if (isScrolling || slides.length === 0) return; // Ignore wheel if an animation is active or no slides
 
-    e.preventDefault(); // Prevent default page scrolling
+      e.preventDefault(); // Prevent default page scrolling
 
-    // Clear any existing debounce timeout
-    if (wheelTimeoutRef.current) {
-      clearTimeout(wheelTimeoutRef.current);
-    }
-
-    // Set a new debounce timeout
-    wheelTimeoutRef.current = setTimeout(() => {
-      if (e.deltaY > 0) { // Scrolling down
-        nextImage();
-      } else if (e.deltaY < 0) { // Scrolling up
-        prevImage();
+      // Clear any existing debounce timeout
+      if (wheelTimeoutRef.current) {
+        clearTimeout(wheelTimeoutRef.current);
       }
-    }, 100); // 100ms debounce
-  }, [isScrolling, nextImage, prevImage]); // Dependencies: `isScrolling`, `nextImage`, `prevImage`
+
+      // Set a new debounce timeout
+      wheelTimeoutRef.current = setTimeout(() => {
+        if (e.deltaY > 0) {
+          // Scrolling down
+          nextImage();
+        } else if (e.deltaY < 0) {
+          // Scrolling up
+          prevImage();
+        }
+      }, 100); // 100ms debounce
+    },
+    [isScrolling, nextImage, prevImage, slides.length]
+  );
 
   /**
    * Records the starting X-coordinate for touch swipe gestures.
@@ -365,7 +390,13 @@ function Hero() {
    * @param {TouchEvent} e - The touch end event object.
    */
   const handleTouchEnd = useCallback(() => {
-    if (isScrolling || touchStart === null || touchEnd === null) return; // Ignore if animating or touch not fully recorded
+    if (
+      isScrolling ||
+      touchStart === null ||
+      touchEnd === null ||
+      slides.length === 0
+    )
+      return;
 
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > SWIPE_THRESHOLD; // Swiped left (moved finger left)
@@ -380,41 +411,65 @@ function Hero() {
     // Reset touch coordinates for the next swipe
     setTouchStart(null);
     setTouchEnd(null);
-  }, [isScrolling, touchStart, touchEnd, nextImage, prevImage]); // Dependencies: all states used in calculation
+  }, [isScrolling, touchStart, touchEnd, nextImage, prevImage, slides.length]);
 
   /**
    * Handles keyboard arrow key presses for navigation.
    * @param {KeyboardEvent} e - The keyboard event object.
    */
-  const handleKeyDown = useCallback((e) => {
-    if (isScrolling) return;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      nextImage();
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      prevImage();
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (isScrolling || slides.length === 0) return;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        nextImage();
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        prevImage();
+      }
+    },
+    [isScrolling, nextImage, prevImage, slides.length]
+  );
+
+  /**
+   * Handles CTA button click and tracks the click event
+   */
+  const handleCTAClick = useCallback((slide) => {
+    // Track click event
+    sliderService.trackClick(slide.id);
+
+    // Navigate to CTA link if provided
+    if (slide.ctaLink && slide.ctaLink !== "#") {
+      if (slide.ctaLink.startsWith("http")) {
+        window.open(slide.ctaLink, "_blank");
+      } else {
+        window.location.href = slide.ctaLink;
+      }
     }
-  }, [isScrolling, nextImage, prevImage]);
+  }, []);
 
   // --- Event Listener Setup and Cleanup ---
   useEffect(() => {
     const heroElement = heroRef.current;
-    if (!heroElement) return;
+    if (!heroElement || slides.length === 0) return;
 
     // Attach passive: false for wheel to allow preventDefault
-    heroElement.addEventListener('wheel', handleWheel, { passive: false });
-    // Attach passive: true for touch events for better performance, hoping touch-action handles native scroll
-    heroElement.addEventListener('touchstart', handleTouchStart, { passive: true });
-    heroElement.addEventListener('touchmove', handleTouchMove, { passive: true });
-    heroElement.addEventListener('touchend', handleTouchEnd, { passive: true });
-    document.addEventListener('keydown', handleKeyDown); // Listen for keyboard events on the document
+    heroElement.addEventListener("wheel", handleWheel, { passive: false });
+    // Attach passive: true for touch events for better performance
+    heroElement.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    heroElement.addEventListener("touchmove", handleTouchMove, {
+      passive: true,
+    });
+    heroElement.addEventListener("touchend", handleTouchEnd, { passive: true });
+    document.addEventListener("keydown", handleKeyDown); // Listen for keyboard events on the document
 
     // Cleanup function: remove all event listeners and clear timeouts
     return () => {
-      heroElement.removeEventListener('wheel', handleWheel);
-      heroElement.removeEventListener('touchstart', handleTouchStart);
-      heroElement.removeEventListener('touchmove', handleTouchMove);
-      heroElement.removeEventListener('touchend', handleTouchEnd);
-      document.removeEventListener('keydown', handleKeyDown);
+      heroElement.removeEventListener("wheel", handleWheel);
+      heroElement.removeEventListener("touchstart", handleTouchStart);
+      heroElement.removeEventListener("touchmove", handleTouchMove);
+      heroElement.removeEventListener("touchend", handleTouchEnd);
+      document.removeEventListener("keydown", handleKeyDown);
       if (wheelTimeoutRef.current) {
         clearTimeout(wheelTimeoutRef.current);
       }
@@ -422,32 +477,39 @@ function Hero() {
         clearInterval(autoSlideIntervalRef.current);
       }
     };
-  }, [handleWheel, handleTouchStart, handleTouchMove, handleTouchEnd, handleKeyDown]); // Dependencies: all memoized event handlers
+  }, [
+    handleWheel,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    handleKeyDown,
+    slides.length,
+  ]);
 
   // --- Framer Motion Variants and Transitions ---
 
   /** Dynamically calculates the slide distance for Framer Motion animations based on screen width. */
   const getSlideDistance = () => {
     if (window.innerWidth >= 1024) return 1000; // Large screens
-    if (window.innerWidth >= 768) return 500;   // Tablets
-    if (window.innerWidth >= 640) return 300;   // Small tablets/large mobiles
-    return 100;                                 // Default for mobile
+    if (window.innerWidth >= 768) return 500; // Tablets
+    if (window.innerWidth >= 640) return 300; // Small tablets/large mobiles
+    return 100; // Default for mobile
   };
 
   // Variants for image slide animation
   const slideVariants = {
     enter: (direction) => ({
-      x: direction > 0 ? getSlideDistance() : -getSlideDistance(), // Enter from left or right
+      x: direction > 0 ? getSlideDistance() : -getSlideDistance(),
       opacity: 0,
     }),
     center: {
-      zIndex: 1, // Ensure current slide is on top
+      zIndex: 1,
       x: 0,
       opacity: 1,
     },
     exit: (direction) => ({
-      zIndex: 0, // Old slide goes below
-      x: direction < 0 ? getSlideDistance() : -getSlideDistance(), // Exit to left or right
+      zIndex: 0,
+      x: direction < 0 ? getSlideDistance() : -getSlideDistance(),
       opacity: 0,
     }),
   };
@@ -456,14 +518,14 @@ function Hero() {
   const containerVariants = {
     animate: {
       transition: {
-        staggerChildren: 0.1, // Stagger children by 0.1 seconds
-        delayChildren: 0.2, // Start children animations after 0.2 seconds
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
     exit: {
       transition: {
-        staggerChildren: 0.05, // Stagger children on exit
-        staggerDirection: -1, // Reverse order on exit
+        staggerChildren: 0.05,
+        staggerDirection: -1,
       },
     },
   };
@@ -472,7 +534,7 @@ function Hero() {
   const itemVariants = {
     initial: {
       opacity: 0,
-      y: 30, // Start slightly below
+      y: 30,
     },
     animate: {
       opacity: 1,
@@ -485,7 +547,7 @@ function Hero() {
     },
     exit: {
       opacity: 0,
-      y: -30, // Exit slightly above
+      y: -30,
       transition: {
         duration: 0.3,
         ease: "easeOut",
@@ -493,16 +555,17 @@ function Hero() {
     },
   };
 
-
   // Common transition properties for Framer Motion
   const transitionProps = {
     type: "tween",
-    duration: ANIMATION_DURATION / 1000, // Convert ms to seconds
+    duration: ANIMATION_DURATION / 1000,
     ease: "easeInOut",
   };
 
   // --- Auto-slide Functionality ---
   useEffect(() => {
+    if (slides.length === 0) return;
+
     // Clear any existing interval to prevent multiple intervals running
     if (autoSlideIntervalRef.current) {
       clearInterval(autoSlideIntervalRef.current);
@@ -516,17 +579,43 @@ function Hero() {
         clearInterval(autoSlideIntervalRef.current);
       }
     };
-  }, [nextImage]); // Dependency: `nextImage` (memoized)
+  }, [nextImage, slides.length]);
 
+  // --- Loading and Error States ---
+  if (loading) {
+    return (
+      <div className="relative w-full px-4 py-6 md:px-6 md:py-8 mx-auto max-w-7xl">
+        <div className="relative w-full h-[60vh] overflow-hidden rounded-3xl shadow-xl bg-gray-200 animate-pulse flex items-center justify-center">
+          <div className="text-gray-500 text-lg">Loading slides...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || slides.length === 0) {
+    return (
+      <div className="relative w-full px-4 py-6 md:px-6 md:py-8 mx-auto max-w-7xl">
+        <div className="relative w-full h-[60vh] overflow-hidden rounded-3xl shadow-xl bg-gray-100 flex items-center justify-center">
+          <div className="text-center text-gray-600">
+            <p className="text-lg mb-2">Unable to load slides</p>
+            <p className="text-sm">{error || "No slides available"}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get current slide data
+  const currentSlide = slides[currentImage];
+  const currentBanner = isMobile ? currentSlide.mobile : currentSlide.desktop;
 
   // --- Rendered Component (JSX) ---
   return (
-    // Outer container to hold both Hero and DotIndicators
     <div className="relative w-full px-4 py-6 md:px-6 md:py-8 mx-auto max-w-7xl">
       <div
-        ref={heroRef} // Attach ref for event listeners
+        ref={heroRef}
         className="relative w-full h-[60vh] overflow-hidden cursor-grab active:cursor-grabbing rounded-3xl shadow-xl"
-        style={{ touchAction: 'pan-y' }}
+        style={{ touchAction: "pan-y" }}
       >
         {/* Background Images with Framer Motion Animation */}
         <AnimatePresence initial={false} custom={direction}>
@@ -545,16 +634,22 @@ function Hero() {
               alt={`Slide ${currentImage + 1}: ${currentSlide.title}`}
               className="w-full h-full object-cover"
               loading="lazy"
+              onError={(e) => {
+                console.error("Image failed to load:", currentBanner);
+                e.target.src =
+                  "https://via.placeholder.com/1200x800/cccccc/666666?text=Image+Not+Found";
+              }}
             />
-            {/* Subtle Overlay for better text readability */}
             <div className="absolute inset-0 bg-black/20" />
           </motion.div>
         </AnimatePresence>
 
-        {/* Content Overlay (Text and CTA Button) responsive alignment */}
-        <div className="absolute inset-0 flex items-end justify-start md:justify-end z-20 pb-12 sm:pb-16 md:pb-20
-                        px-4 sm:px-6 md:px-12 lg:px-20"> {/* Responsive padding */}
-          <div className="text-left md:text-right text-white max-w-md md:max-w-2xl mr-auto md:ml-auto"> {/* Responsive alignment */}
+        {/* Content Overlay */}
+        <div
+          className="absolute inset-0 flex items-end justify-start md:justify-end z-20 pb-12 sm:pb-16 md:pb-20
+                        px-4 sm:px-6 md:px-12 lg:px-20"
+        >
+          <div className="text-left md:text-right text-white max-w-md md:max-w-2xl mr-auto md:ml-auto">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={currentImage + "-content"}
@@ -566,30 +661,27 @@ function Hero() {
                 className="space-y-4 sm:space-y-6"
               >
                 <motion.h1
-                  variants={itemVariants} // Text still animates
-                  // Default (mobile) text-2xl, then scales up for sm, md, lg, xl
+                  variants={itemVariants}
                   className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-wider"
                 >
                   {currentSlide.title}
                 </motion.h1>
                 <motion.p
-                  variants={itemVariants} // Text still animates
-                  // Default (mobile) text-sm, then scales up
+                  variants={itemVariants}
                   className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed opacity-90"
                 >
                   {currentSlide.subtitle}
                 </motion.p>
-                {/* Button now uses motion.button and itemVariants */}
                 <motion.button
-                  variants={itemVariants} // Applied itemVariants
-                  whileHover={{ scale: 1.05 }} // Re-added whileHover
-                  whileTap={{ scale: 0.95 }}   // Re-added whileTap
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleCTAClick(currentSlide)}
                   className="mt-6 sm:mt-8 px-8 sm:px-10 md:px-12 py-3 sm:py-4
                             bg-white text-black font-semibold text-sm sm:text-base
                             rounded-full hover:bg-gray-100 transition-all duration-300
                             shadow-lg hover:shadow-xl hover:shadow-inner
-                            relative overflow-hidden
-                            "
+                            relative overflow-hidden cursor-pointer"
                 >
                   {currentSlide.cta}
                 </motion.button>
@@ -599,10 +691,10 @@ function Hero() {
         </div>
       </div>
 
-      {/* Dot Indicators placed outside the hero div, centered below it */}
+      {/* Dot Indicators */}
       <DotIndicators
         currentSlideIndex={currentImage}
-        totalSlides={mockSlides.length}
+        totalSlides={slides.length}
         changeSlide={changeSlide}
         isAnimating={isScrolling}
       />
