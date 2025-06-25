@@ -98,7 +98,7 @@ function Navbar() {
         <CartSlider cartVisible={cartVisible} setCartVisible={setCartVisible} />
 
         {/* SlideBarMenu */}
-        <img
+        {/* <img
           onClick={() => setMenuVisible(true)}
           src={assets.menu_icon}
           className="w-5 cursor-pointer sm:hidden"
@@ -107,7 +107,7 @@ function Navbar() {
         <SlidBarMenu
           menuVisible={menuVisible}
           setMenuVisible={setMenuVisible}
-        />
+        /> */}
       </div>
     </div>
   );

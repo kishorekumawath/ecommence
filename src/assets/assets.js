@@ -79,6 +79,7 @@ import like from "./like.png";
 import unLike from "./unlike.png";
 import payments_options from "./paymentsOptions.png";
 import DefaultUser from "./DefaultUser.png";
+import JustLogo from "./justLogo.png";
 
 import bannerD1 from "./bannerD1.png";
 import bannerD2 from "./bannerD2.png";
@@ -107,6 +108,7 @@ import bannerM12 from "./bannerM12.png";
 
 export const assets = {
   logo,
+  JustLogo,
   cart_icon,
   dropdown_icon,
   exchange_icon,

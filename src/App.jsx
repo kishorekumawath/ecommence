@@ -38,6 +38,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import BottomNavBar from "./components/BottomNavbar";
 
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -81,6 +82,7 @@ function App() {
               <CartProvider>
                 <ScrollToTop /> {/* Scroll restoration feature */}
                 <Navbar />
+                <BottomNavBar/>
                 <SearchBar />
                 <Routes>
                   <Route path="/" element={<Home />} />
@@ -125,7 +127,9 @@ function App() {
                   <Route path="/404" element={<NotFound />} />
                   <Route path="*" element={<Navigate to="/404" replace />} />
                 </Routes>
+                    
                 <Footer />
+                
               </CartProvider>
             </CollectionsProvider>
           </WishlistProvider>
