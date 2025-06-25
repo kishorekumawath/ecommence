@@ -11,8 +11,8 @@ import { Title } from "./Title";
 
 const PolicyHighlight = ({ icon: Icon, title, description }) => (
   <div className="flex flex-col items-center p-6 transition-transform hover:transform hover:scale-105">
-    <div className="mb-4 p-3 rounded-full bg-blue-50">
-      <Icon className="w-8 h-8 text-blue-600" strokeWidth={1.5} />
+    <div className="mb-4 p-3 rounded-full bg-orange-50">
+      <Icon className="w-8 h-8 text-orange-300" strokeWidth={1.5} />
     </div>
     <h3 className="font-semibold text-gray-800 mb-2">{title}</h3>
     <p className="text-gray-500 text-sm text-center">{description}</p>
@@ -49,7 +49,7 @@ const PolicyHighlights = () => {
   ];
 
   return (
-    <div className="bg-white py-12 px-4">
+    <div className="bg-white py-4 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <div className="text-2xl">

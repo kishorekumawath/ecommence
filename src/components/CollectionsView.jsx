@@ -82,7 +82,7 @@ function CollectionsView() {
   }
 
   return (
-    <div className="my-2 sm:my-8 lg:my-10">
+    <div className="my-1">
       {Object.entries(cachedCollections).map(
         ([categoryName, categoryData], index) => {
           const categoryId =

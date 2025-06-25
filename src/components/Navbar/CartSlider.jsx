@@ -98,7 +98,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
             className="h-3 group-hover:rotate-90 duration-300"
           />
         </div>
-        <Title text1="My" text2="Cart" />
+        <Title text1="My " text2="Cart" />
       </div>
 
       {/* Loading State */}

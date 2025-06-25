@@ -337,35 +337,8 @@ function Hero() {
 
   // --- Event Handlers for User Interaction ---
 
-  /**
-   * Handles wheel scroll events to navigate between slides.
-   * Implements a debounce to prevent excessive scrolling.
-   * @param {WheelEvent} e - The wheel event object.
-   */
-  const handleWheel = useCallback(
-    (e) => {
-      if (isScrolling || slides.length === 0) return; // Ignore wheel if an animation is active or no slides
 
-      e.preventDefault(); // Prevent default page scrolling
 
-      // Clear any existing debounce timeout
-      if (wheelTimeoutRef.current) {
-        clearTimeout(wheelTimeoutRef.current);
-      }
-
-      // Set a new debounce timeout
-      wheelTimeoutRef.current = setTimeout(() => {
-        if (e.deltaY > 0) {
-          // Scrolling down
-          nextImage();
-        } else if (e.deltaY < 0) {
-          // Scrolling up
-          prevImage();
-        }
-      }, 100); // 100ms debounce
-    },
-    [isScrolling, nextImage, prevImage, slides.length]
-  );
 
   /**
    * Records the starting X-coordinate for touch swipe gestures.
@@ -451,8 +424,7 @@ function Hero() {
     const heroElement = heroRef.current;
     if (!heroElement || slides.length === 0) return;
 
-    // Attach passive: false for wheel to allow preventDefault
-    heroElement.addEventListener("wheel", handleWheel, { passive: false });
+   
     // Attach passive: true for touch events for better performance
     heroElement.addEventListener("touchstart", handleTouchStart, {
       passive: true,
@@ -465,7 +437,7 @@ function Hero() {
 
     // Cleanup function: remove all event listeners and clear timeouts
     return () => {
-      heroElement.removeEventListener("wheel", handleWheel);
+     
       heroElement.removeEventListener("touchstart", handleTouchStart);
       heroElement.removeEventListener("touchmove", handleTouchMove);
       heroElement.removeEventListener("touchend", handleTouchEnd);
@@ -478,7 +450,6 @@ function Hero() {
       }
     };
   }, [
-    handleWheel,
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
@@ -594,14 +565,7 @@ function Hero() {
 
   if (error || slides.length === 0) {
     return (
-      <div className="relative w-full px-4 py-6 md:px-6 md:py-8 mx-auto max-w-7xl">
-        <div className="relative w-full h-[60vh] overflow-hidden rounded-3xl shadow-xl bg-gray-100 flex items-center justify-center">
-          <div className="text-center text-gray-600">
-            <p className="text-lg mb-2">Unable to load slides</p>
-            <p className="text-sm">{error || "No slides available"}</p>
-          </div>
-        </div>
-      </div>
+      <div></div>
     );
   }
 
@@ -611,10 +575,10 @@ function Hero() {
 
   // --- Rendered Component (JSX) ---
   return (
-    <div className="relative w-full px-4 py-6 md:px-6 md:py-8 mx-auto max-w-7xl">
+    <div className=" relative w-full px-4 py-6 md:px-6 md:py-8 mx-auto lg:px-10">
       <div
         ref={heroRef}
-        className="relative w-full h-[60vh] overflow-hidden cursor-grab active:cursor-grabbing rounded-3xl shadow-xl"
+        className="relative w-full h-[60vh] lg:h-[80vh] overflow-hidden cursor-grab active:cursor-grabbing rounded-3xl shadow-xl"
         style={{ touchAction: "pan-y" }}
       >
         {/* Background Images with Framer Motion Animation */}
@@ -647,9 +611,9 @@ function Hero() {
         {/* Content Overlay */}
         <div
           className="absolute inset-0 flex items-end justify-start md:justify-end z-20 pb-12 sm:pb-16 md:pb-20
-                        px-4 sm:px-6 md:px-12 lg:px-20"
+                        px-4 sm:px-6 md:px-12 lg:px-20  "
         >
-          <div className="text-left md:text-right text-white max-w-md md:max-w-2xl mr-auto md:ml-auto">
+          <div className="text-left md:text-right text-white max-w-md md:max-w-2xl  md:ml-auto ">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={currentImage + "-content"}
@@ -658,7 +622,7 @@ function Hero() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                className="space-y-4 sm:space-y-6"
+                className="space-y-2"
               >
                 <motion.h1
                   variants={itemVariants}
@@ -678,9 +642,9 @@ function Hero() {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleCTAClick(currentSlide)}
                   className="mt-6 sm:mt-8 px-8 sm:px-10 md:px-12 py-3 sm:py-4
-                            bg-white text-black font-semibold text-sm sm:text-base
-                            rounded-full hover:bg-gray-100 transition-all duration-300
-                            shadow-lg hover:shadow-xl hover:shadow-inner
+                            bg-orange-300 text-black font-semibold text-sm sm:text-base
+                            rounded-full hover:bg-orange-400 transition-all duration-300
+                            shadow-lg hover:shadow-xl 
                             relative overflow-hidden cursor-pointer"
                 >
                   {currentSlide.cta}
