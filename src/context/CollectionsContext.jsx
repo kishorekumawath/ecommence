@@ -6,6 +6,11 @@ const CollectionsContext = createContext({
   CollectionsData: {},
   isLoading: false,
   error: null,
+  fetchProductColorImages: () => {},
+  fetchAllProductColorImages: () => {},
+  getProductAvailableColors: () => {},
+  getColorImageCount: () => {},
+  getProductColorMappings: () => {},
   fetchCollections: () => {},
   fetchAllProducts: () => {},
   fetchProducts: () => {},
@@ -262,6 +267,7 @@ export const CollectionsProvider = ({ children }) => {
     getColorImageCount,
     getProductColorMappings,
     calculateReview,
+    
     colorMap,
   };
 
