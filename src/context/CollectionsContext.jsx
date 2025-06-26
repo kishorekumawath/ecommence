@@ -118,10 +118,72 @@ export const CollectionsProvider = ({ children }) => {
       console.error("Error fetching products:", error);
     }
   });
+  const fetchProductColorImages = async (productId, colorCode) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/v1/product/${productId}/color/${colorCode}`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        return {
+          success: true,
+          images: data.images,
+          colorCode: data.colorCode,
+          totalImages: data.totalImages,
+        };
+      } else {
+        console.error("Error fetching color images:", data.message);
+        return {
+          success: false,
+          message: data.message,
+          availableColors: data.availableColors || [],
+        };
+      }
+    } catch (error) {
+      console.error("Error while fetching color images:", error);
+      return {
+        success: false,
+        message: "Network error while fetching images",
+      };
+    }
+  };
+
+  const fetchAllProductColorImages = async (productId) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/v1/product/${productId}/colors`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        return {
+          success: true,
+          colorImages: data.colorImages, // Object with color codes as keys and image arrays as values
+          availableColors: data.availableColors, // Array of available color codes
+          totalColors: data.totalColors,
+        };
+      } else {
+        console.error("Error fetching all color images:", data.message);
+        return {
+          success: false,
+          message: data.message,
+        };
+      }
+    } catch (error) {
+      console.error("Error while fetching all color images:", error);
+      return {
+        success: false,
+        message: "Network error while fetching color images",
+      };
+    }
+  };
 
   const fetchSpecificProduct = async (productID) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/product/${productID}?includeRecommendations=true`);
+      const response = await fetch(
+        `${BASE_URL}/api/v1/product/${productID}?includeRecommendations=true`
+      );
       const data = await response.json();
       return data;
     } catch (error) {
@@ -137,6 +199,43 @@ export const CollectionsProvider = ({ children }) => {
     } catch (error) {
       console.error("Error fetching products:", error);
     }
+  };
+
+  // Helper function to get available colors for a product
+  const getProductAvailableColors = (product) => {
+    if (product.colorImages && Array.isArray(product.colorImages)) {
+      return product.colorImages.map((entry) => entry.color);
+    }
+    return product.color || []; // Fallback to the main color field
+  };
+
+  // Helper function to get image count for a specific color
+  const getColorImageCount = (product, colorCode) => {
+    if (product.colorImageCounts) {
+      return product.colorImageCounts[colorCode] || 0;
+    }
+
+    // Fallback: count from colorImages array
+    if (product.colorImages && Array.isArray(product.colorImages)) {
+      const colorEntry = product.colorImages.find(
+        (entry) => entry.color === colorCode
+      );
+      return colorEntry ? colorEntry.images.length : 0;
+    }
+
+    return 0;
+  };
+
+  // Helper function to get all color-image mappings from a product
+  const getProductColorMappings = (product) => {
+    if (product.colorImages && Array.isArray(product.colorImages)) {
+      const mappings = {};
+      product.colorImages.forEach((entry) => {
+        mappings[entry.color] = entry.images;
+      });
+      return mappings;
+    }
+    return {};
   };
 
   const calculateReview = (product) => {
@@ -157,6 +256,11 @@ export const CollectionsProvider = ({ children }) => {
     fetchProducts,
     fetchAllProducts,
     fetchSpecificProduct,
+    fetchProductColorImages,
+    fetchAllProductColorImages,
+    getProductAvailableColors,
+    getColorImageCount,
+    getProductColorMappings,
     calculateReview,
     colorMap,
   };

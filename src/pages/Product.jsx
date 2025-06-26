@@ -41,7 +41,6 @@
 //   const touchStartX = useRef(0);
 //   const touchEndX = useRef(0);
 
-
 //   const handleImageClick = (clickedImage) => {
 //     // Find the index of the clicked image in the images array
 //     const allImages = [product.image, ...(product.addImages || [])];
@@ -133,7 +132,6 @@
 //   useEffect(() => {
 //     fetchProductData();
 //   }, [productId]);
-
 
 //   // Initialize all images array when product loads
 //   useEffect(() => {
@@ -453,10 +451,9 @@
 //       <div className="flex-1 flex flex-col gap-2 lg:flex-row ">
 //         {/* Mobile layout: Main image first, then additional images */}
 
-
-//         {/* 
+//         {/*
 //         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-[50%] lg:w-[40%]">
-//             Main Image -  clickable 
+//             Main Image -  clickable
 //           <div className="w-full sm:w-[70%] h-[90%] sm:h-[70%] lg:h-full overflow-hidden order-1 sm:order-2 cursor-pointer">
 //             <img
 //               className="w-full object-cover rounded-md hover:opacity-90 transition-opacity"
@@ -486,7 +483,7 @@
 //             images={[product.image, ...(product.addImages || [])]}
 //             currentImageIndex={currentImageIndex}
 //           />
-//         </div> 
+//         </div>
 //         */}
 
 //         {/* Enhanced Image Gallery */}
@@ -896,6 +893,9 @@ function Product() {
   const [isLoading, setIsLoading] = useState(true); // Manages loading state for product data
   const [isModalOpen, setIsModalOpen] = useState(false); // Controls visibility of the SizeChartModal
   const [relatedProducts, setRelatedProducts] = useState([]); // Stores related products
+  const [colorImages, setColorImages] = useState([]); // Images for selected color
+  const [loadingColorImages, setLoadingColorImages] = useState(false);
+  const [availableColors, setAvailableColors] = useState([]); // Available colors from colorImages array
 
   const [selectedBottomSection, setSelectedBottomSection] = useState(
     bottomSection[0]
@@ -1058,8 +1058,9 @@ function Product() {
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
             // Dynamically apply background color and ring based on selection
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
-              }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
+              selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
+            }`}
             aria-label={`Select color ${colorCode}`}
           />
         ))}
@@ -1186,7 +1187,9 @@ function Product() {
       }
     } catch (error) {
       console.error("Wishlist operation failed:", error);
-      toast.error("Failed to update wishlist. Please check if you are logged in.");
+      toast.error(
+        "Failed to update wishlist. Please check if you are logged in."
+      );
     }
   };
 
@@ -1276,7 +1279,8 @@ function Product() {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (isImageModalOpen) { // Only handle key presses if modal is open
+      if (isImageModalOpen) {
+        // Only handle key presses if modal is open
         if (e.key === "ArrowLeft") {
           goToPreviousImage();
         } else if (e.key === "ArrowRight") {
@@ -1482,10 +1486,11 @@ function Product() {
                   <button
                     key={index}
                     onClick={() => goToImage(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentImageIndex
                         ? "bg-white"
                         : "bg-white bg-opacity-50 hover:bg-opacity-75"
-                      }`}
+                    }`}
                     aria-label={`Go to image ${index + 1}`}
                   />
                 ))}
@@ -1503,8 +1508,9 @@ function Product() {
                 handleImageClick(product.image);
               }}
               src={product.image}
-              className={`w-[80px] md:w-full h-[80px] md:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${currentImageIndex === 0 ? "ring-2 ring-orange-300" : ""
-                }`}
+              className={`w-[80px] md:w-full h-[80px] md:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${
+                currentImageIndex === 0 ? "ring-2 ring-orange-300" : ""
+              }`}
               alt="Main product thumbnail"
             />
 
@@ -1520,8 +1526,11 @@ function Product() {
                 }}
                 loading="lazy"
                 alt={`Thumbnail ${index + 2} of product`}
-                className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${currentImageIndex === index + 1 ? "ring-2 ring-orange-300" : ""
-                  }`}
+                className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${
+                  currentImageIndex === index + 1
+                    ? "ring-2 ring-orange-300"
+                    : ""
+                }`}
               />
             ))}
           </div>
@@ -1555,23 +1564,27 @@ function Product() {
               </div>
               <p className="mt-1 text-green-600 font-semibold ">
                 You save{" "}
-                {Math.round((extraCharge / (product?.price + extraCharge)) * 100)}
+                {Math.round(
+                  (extraCharge / (product?.price + extraCharge)) * 100
+                )}
                 %!
               </p>
-              <p className="mt-1 text-gray-500 text-xs">Inclusive of all Taxes</p>
+              <p className="mt-1 text-gray-500 text-xs">
+                Inclusive of all Taxes
+              </p>
             </div>
 
             {/* Size selection */}
             {/* Size Chart Modal Toggle (currently commented out but kept for future use) */}
-            {
-              product?.productCategory?.name && (<button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
-          >
-            Size Chart
-          </button>)
-            }
-            
+            {product?.productCategory?.name && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-4 py-2 rounded-full bg-orange-300 text-xs text-black mt-2"
+              >
+                Size Chart
+              </button>
+            )}
+
             <p className="mt-2 mb-3 py-2 text-sm text-gray-500 italic">
               Please refer to size chart from images for accurate measurements
             </p>
@@ -1580,8 +1593,9 @@ function Product() {
                 <button
                   onClick={() => setSize(item)}
                   key={index}
-                  className={`border bg-gray-100 py-2 px-4 rounded-md ${item === size ? "ring-2 ring-orange-300 text-black" : ""
-                    }`}
+                  className={`border bg-gray-100 py-2 px-4 rounded-md ${
+                    item === size ? "ring-2 ring-orange-300 text-black" : ""
+                  }`}
                 >
                   {item}
                 </button>
@@ -1613,8 +1627,6 @@ function Product() {
                   ADD TO CART
                 </button>
               </div>
-
-
             </div>
 
             <hr className="mt-8 sm:w-4/5" />
@@ -1636,11 +1648,14 @@ function Product() {
             <ShareButton product={product} />
           </div>
         </div>
-
       </div>
       {/* Size Chart Modal - Rendered conditionally */}
-      {isModalOpen && <SizeChartModal setIsModalOpen={setIsModalOpen} 
-      parentCategory={product.productCategory.name}/>}
+      {isModalOpen && (
+        <SizeChartModal
+          setIsModalOpen={setIsModalOpen}
+          parentCategory={product.productCategory.name}
+        />
+      )}
 
       {/* ------------------ Description, Additional Information & Reviews Sections --------------------*/}
       <div className="mt-10">
@@ -1649,20 +1664,22 @@ function Product() {
           {/* Description Tab */}
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
+              selectedBottomSection === bottomSection[0]
                 ? "font-semibold"
                 : "font-light"
-              } cursor-pointer`}
+            } cursor-pointer`}
           >
             Description
           </p>
           {/* Additional Information Tab */}
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
+              selectedBottomSection === bottomSection[1]
                 ? "font-semibold"
                 : "font-light"
-              } cursor-pointer`}
+            } cursor-pointer`}
           >
             Additional Information
           </p>
@@ -1672,10 +1689,11 @@ function Product() {
             className={`sm:flex-row flex-col w-full inline-flex items-center justify-center cursor-pointer sm:w-auto border px-2 py-2`}
           >
             <p
-              className={`px-2 text-sm ${selectedBottomSection === bottomSection[2]
+              className={`px-2 text-sm ${
+                selectedBottomSection === bottomSection[2]
                   ? "font-semibold"
                   : "font-light"
-                }`}
+              }`}
             >
               Reviews
             </p>
@@ -1730,12 +1748,11 @@ function Product() {
                 colors={item.color || []}
                 like={isItemInWishlist(item._id)}
                 onLikeClick={(e) => handleLikeClick(e, item._id)}
-              // onClick={() => handleProductClick(item._id)}
+                // onClick={() => handleProductClick(item._id)}
               />
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );
