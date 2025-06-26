@@ -29,7 +29,8 @@ function Product() {
   // Hooks for navigation, route parameters, and context API
   const navigate = useNavigate();
   const { productId } = useParams(); // Extracts product ID from the URL
-  const { fetchSpecificProduct, calculateReview ,fetchProductColorImages} = useCollections(); // Custom hook for collection-related data
+  const { fetchSpecificProduct, calculateReview, fetchProductColorImages } =
+    useCollections(); // Custom hook for collection-related data
   const { addToCart, extraCharge } = useCartContext(); // Custom hook for cart management
   const {
     wishlistItems = [], // Destructure wishlist items, providing an empty array as a fallback
@@ -47,7 +48,6 @@ function Product() {
   const [relatedProducts, setRelatedProducts] = useState([]); // Stores related products
   const [colorImages, setColorImages] = useState([]); // Images for selected color
   const [loadingColorImages, setLoadingColorImages] = useState(false);
-  const [availableColors, setAvailableColors] = useState([]); // Available colors from colorImages array
 
   const [selectedBottomSection, setSelectedBottomSection] = useState(
     bottomSection[0]
@@ -75,72 +75,34 @@ function Product() {
   };
 
   /**
-   * Extracts a color code from an image URL.
-   * Assumes a specific URL structure (e.g., "product-name-colorcode_image.jpg").
-   * @param {string} imageUrl - The URL of the image.
-   * @returns {string | null} The extracted color code, or null if not found/error.
-   */
-  const extractColorFromImageUrl = (imageUrl) => {
-    try {
-      const filename = imageUrl.split("/").pop().split("_")[0]; // Get the part before the first underscore
-      const parts = filename.split("-"); // Split by dash
-      return parts.length > 3 ? parts[3] : null; // Assume color code is the 4th part (index 3)
-    } catch (error) {
-      console.error("Error extracting color from URL:", error);
-      return null;
-    }
-  };
-
-  /**
-   * Finds an image URL from `product.addImages` that matches the given color code.
-   * Falls back to the main product image if no match is found.
-   * @param {string} colorCode - The color code to match.
-   * @returns {string} The URL of the matching image, or the main product image.
-   */
-  const findImageByColor = (colorCode) => {
-    if (!product.addImages || product.addImages.length === 0) {
-      return product.image; // Fallback to main image if no additional images
-    }
-
-    const matchingImage = product.addImages.find((imageUrl) => {
-      const extractedColor = extractColorFromImageUrl(imageUrl);
-      return extractedColor && extractedColor === colorCode;
-    });
-
-    return matchingImage || product.image; // Return matching image or fallback to main image
-  };
-
-  /**
    * Handles the selection of a product color, and updates the main displayed image accordingly.
    * @param {string} colorCode - The code of the selected color.
    */
   const handleColorSelect = async (colorCode) => {
     if (colorCode === selectedColor) return; // Don't fetch if same color is selected
-    
+
     setSelectedColor(colorCode);
     setLoadingColorImages(true);
-    
+
     try {
       const result = await fetchProductColorImages(productId, colorCode);
-      
-      if (result.success) {
+
+      if (result.success && result.images && result.images.length > 0) {
         setColorImages(result.images);
         setImage(result.images[0]); // Set first image as main image
       } else {
-        toast.error(result.message || "Failed to load color images");
-        setColorImages([]);
+        setColorImages([product.image]);
         setImage(product.image);
+        // console.log("Failed to fetch color images", product.image);
       }
     } catch (error) {
-      console.error("Error fetching color images:", error);
-      toast.error("Failed to load color images");
-      setColorImages([]);
+      setColorImages([product.image]);
       setImage(product.image);
+      console.error("Error fetching color images:", error);
     } finally {
       setLoadingColorImages(false);
     }
   };
-
 
   /**
    * Fetches product data from the backend based on the `productId` from URL parameters.
@@ -152,26 +114,17 @@ function Product() {
       const response = await fetchSpecificProduct(productId);
       const data = await response;
       setProduct(data);
-      console.log(response);
-      // setImage(data.image); // Set initial main image
-      // setAvailableColors(data.color);
- handleColorSelect(data.color[0]);
- 
+      console.log("Product Data:", data);
+      console.log("Failed to fetch color images", product.image);
+
+      handleColorSelect(data.color[0]);
+
       setRelatedProducts(response.recommendations);
       // Set initial color
       // Auto-select the first available color and try to find a matching image
       if (data.color && data.color.length > 0) {
         const firstColor = data.color[0];
         setSelectedColor(firstColor);
-        if (data.addImages && data.addImages.length > 0) {
-          const matchingImage = data.addImages.find((imageUrl) => {
-            const extractedColor = extractColorFromImageUrl(imageUrl);
-            return extractedColor && extractedColor === firstColor;
-          });
-          if (matchingImage) {
-            setImage(matchingImage); // Update image if a matching color image is found
-          }
-        }
       }
 
       // Calculate and set overall review scores
@@ -380,7 +333,7 @@ function Product() {
   // Effect to initialize `allImages` array and `currentImageIndex` when product or main image changes
   useEffect(() => {
     if (product.image) {
-      const images = [product.image, ...(colorImages || [])];
+      const images = [...(colorImages || [])];
       setAllImages(images);
 
       // Find the index of the currently displayed image
@@ -677,20 +630,6 @@ function Product() {
 
           {/* Thumbnail Images Section */}
           <div className="flex p-2 md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-y-auto md:h-[50vh] lg:h-[90vh] w-full md:w-[30%] pb-4 lg:pb-0 order-2 md:order-1">
-            {/* Main image thumbnail */}
-            <img
-              onClick={() => {
-                setImage(product.image);
-                setCurrentImageIndex(0);
-                handleImageClick(product.image);
-              }}
-              src={product.image}
-              className={`w-[80px] md:w-full h-[80px] md:h-auto object-cover flex-shrink-0 cursor-pointer rounded-md hover:opacity-80 transition-all ${
-                currentImageIndex === 0 ? "ring-2 ring-orange-300" : ""
-              }`}
-              alt="Main product thumbnail"
-            />
-
             {/* Additional image thumbnails */}
             {colorImages.map((img, index) => (
               <img
