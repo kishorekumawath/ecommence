@@ -555,7 +555,7 @@ import { useAuth } from "../context/NewAuthContext";
 import { useCartContext } from "../context/CartContext";
 import { colorMap } from "../context/CollectionsContext";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, MapPin } from "lucide-react";
 import { Title } from "../components/Title";
 import { assets } from "../assets/assets";
 import { BASE_URL } from "../server/server";
@@ -564,6 +564,10 @@ import {
   ProfileSelectTile,
   INDIAN_STATES,
 } from "../components/ProfileSelectTile";
+import {
+  fetchLocationByPincode,
+  validatePincode as servicePincodeValidation,
+} from "../context/LocationService";
 
 const PlaceOrder = () => {
   const location = useLocation();
@@ -599,6 +603,9 @@ const PlaceOrder = () => {
     pincode: "",
     country: "",
   });
+  // New state for PIN code location fetching
+  const [isPincodeLoading, setIsPincodeLoading] = useState(false);
+  const [locationDetected, setLocationDetected] = useState(false);
 
   // Validation functions
   const validateEmail = (email) => {
@@ -631,7 +638,7 @@ const PlaceOrder = () => {
   };
 
   const validateState = (state) => {
-   return INDIAN_STATES.includes(state);
+    return INDIAN_STATES.includes(state);
   };
 
   const validateDoorNo = (doorNo) => {
@@ -749,6 +756,56 @@ const PlaceOrder = () => {
     });
     return errors;
   };
+  // Fetch city and state based on PIN code
+  const handlePincodeLocationFetch = async (pincode) => {
+    if (!validatePincode(pincode)) {
+      return;
+    }
+
+    setIsPincodeLoading(true);
+    setLocationDetected(false);
+
+    try {
+      const result = await fetchLocationByPincode(pincode);
+      // console.log(result);
+
+      if (result.success) {
+        // Update form data with fetched city and state
+        setFormData((prev) => ({
+          ...prev,
+          city: result.data.division,
+          state: result.data.state,
+        }));
+
+        // Clear any existing validation errors for city and state
+        setValidationErrors((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+          pincode: "",
+        }));
+
+        setLocationDetected(true);
+        console.log(result.message);
+      } else {
+        // If PIN code is not found, show error
+        setValidationErrors((prev) => ({
+          ...prev,
+          pincode: result.error,
+        }));
+        setLocationDetected(false);
+      }
+    } catch (error) {
+      console.error("Error in handlePincodeLocationFetch:", error);
+      setValidationErrors((prev) => ({
+        ...prev,
+        pincode: "Unable to fetch location. Please enter manually.",
+      }));
+      setLocationDetected(false);
+    } finally {
+      setIsPincodeLoading(false);
+    }
+  };
 
   function loadScript(src) {
     return new Promise((resolve) => {
@@ -813,6 +870,12 @@ const PlaceOrder = () => {
       processedValue = value.replace(/\D/g, "");
       if (processedValue.length > 6) {
         processedValue = processedValue.slice(0, 6);
+      }
+      // Auto-fetch location when pincode is complete (6 digits)
+      if (processedValue.length === 6) {
+        handlePincodeLocationFetch(processedValue);
+      } else {
+        setLocationDetected(false);
       }
     }
 
@@ -1202,19 +1265,38 @@ const PlaceOrder = () => {
                 )}
               </div>
             </div>
+            {/* PIN CODE With auto detection */}
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <ProfileInputTile
-                  title={"PIN Code"}
-                  name="pincode"
-                  value={formData.pincode}
-                  handleInputChange={handleInputChange}
-                  placeholder="6-digit PIN code"
-                  required
-                />
+                <div className="relative">
+                  <ProfileInputTile
+                    title={"PIN Code"}
+                    name="pincode"
+                    value={formData.pincode}
+                    handleInputChange={handleInputChange}
+                    placeholder="6-digit PIN code"
+                    required
+                  />
+                  {isPincodeLoading && (
+                    <div className="absolute right-3 top-9 flex items-center">
+                      <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+                    </div>
+                  )}
+                  {locationDetected && !isPincodeLoading && (
+                    <div className="absolute right-3 top-9 flex items-center">
+                      <MapPin className="w-4 h-4 text-green-500" />
+                    </div>
+                  )}
+                </div>
                 {validationErrors.pincode && (
                   <p className="text-red-500 text-sm mt-1">
                     {validationErrors.pincode}
+                  </p>
+                )}
+                {locationDetected && !validationErrors.pincode && (
+                  <p className="text-green-600 text-sm mt-1 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    Location auto-detected
                   </p>
                 )}
               </div>
