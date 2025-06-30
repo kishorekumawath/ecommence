@@ -7,7 +7,7 @@ function Footer() {
   // Get the current year dynamically
   const currentYear = new Date().getFullYear();
   return (
-    <div className="bg-orange-300">
+    <div className="bg-gray-100">
       <div className="m-5 pt-10 flex flex-col sm:grid grid-cols-[3fr_1fr_1fr_1fr] gap-14 my-10 text-sm">
         <div>
           <img src={assets.logo} alt="" className="mb-5 w-32" />
@@ -103,9 +103,8 @@ function Footer() {
           </ul>
         </div>
       </div>
-      <div className="bg-slate-800">
-      
-        <p className="py-2 text-xs text-center text-white">
+      <div className="bg-gray-100">
+        <p className="py-2 text-xs text-center text-slate-500">
           © {currentYear} moonsflare.com - All Right Reserved.
         </p>
       </div>

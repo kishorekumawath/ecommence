@@ -317,9 +317,7 @@ function Product() {
       }
     } catch (error) {
       console.error("Wishlist operation failed:", error);
-      toast.error(
-        "Failed to update wishlist. Please check if you are logged in."
-      );
+      toast.error("Please log in to add items to your wishlist.");
     }
   };
 
@@ -542,7 +540,7 @@ function Product() {
       </div>
 
       {/* ---------------- Product Information and Images Section ----------------- */}
-      <div className="flex-1  flex flex-col gap-2 md:flex-row ">
+      <div className="flex-1  flex flex-col gap-2 md:flex-row">
         {/* Enhanced Image Gallery Section */}
         <div className="flex flex-col md:flex-row gap-3 w-full md:w-[60vw] xl:w-[50vw] ">
           {/* Main Product Image with Navigation */}
@@ -667,6 +665,13 @@ function Product() {
               {renderStars(overAllReview[0])}
               <p className="pl-2">{product?.reviews?.length || 0}</p>
             </div>
+            <div className="absolute end-5 flex flex-col lg:flex-row justify-center items-end gap-4">
+              <LikeButton
+                like={isItemInWishlist(product._id)}
+                onLikeClick={(e) => handleLikeClick(e, product._id)}
+              />
+              <ShareButton product={product} />
+            </div>
             <div className="mt-4">
               <p>{getStockStatus(product?.stock)}</p>
               <div className="flex items-center gap-2">
@@ -704,12 +709,12 @@ function Product() {
             <p className="mt-2 mb-3 py-2 text-sm text-gray-500 italic">
               Please refer to size chart from images for accurate measurements
             </p>
-            <div className="flex gap-4 my-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 my-2 p-2 rounded-md">
               {product?.size?.map((item, index) => (
                 <button
                   onClick={() => setSize(item)}
                   key={index}
-                  className={`border bg-gray-100 py-2 px-4 rounded-md ${
+                  className={`border bg-gray-100 py-2 px-4 rounded-md text-center ${
                     item === size ? "ring-2 ring-orange-300 text-black" : ""
                   }`}
                 >
@@ -754,15 +759,6 @@ function Product() {
             </div>
           </div>
           {/* Secondary Action Buttons: Like (Wishlist) and Share */}
-          <div className="flex flex-col lg:flex-row justify-center items-end gap-4">
-            <LikeButton
-              like={isItemInWishlist(product._id)}
-              onLikeClick={(e) => handleLikeClick(e, product._id)}
-            />
-
-            {/* Share Button with Web Share API and Clipboard Fallback */}
-            <ShareButton product={product} />
-          </div>
         </div>
       </div>
       {/* Size Chart Modal - Rendered conditionally */}
