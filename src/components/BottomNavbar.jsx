@@ -760,7 +760,7 @@ function BottomNavBar() {
                                 <NavLink
                                     to="/login"
                                     onClick={() => setShowProfileModal(false)}
-                                    className="w-full flex items-center justify-center px-6 py-4 bg-orange-300 text-black rounded-xl hover:bg-orange-700 active:bg-orange-800 transition-colors duration-200 font-medium"
+                                    className="w-full flex items-center justify-center px-6 py-4 bg-orange-300 text-black rounded-xl hover:bg-orange-400  transition-colors duration-200 font-medium"
                                 >
                                     <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
