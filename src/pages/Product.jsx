@@ -78,11 +78,13 @@ function Product() {
    * Handles the selection of a product color, and updates the main displayed image accordingly.
    * @param {string} colorCode - The code of the selected color.
    */
-  const handleColorSelect = async (colorCode) => {
+  const handleColorSelect = async (colorCode, productImage) => {
     if (colorCode === selectedColor) return; // Don't fetch if same color is selected
 
     setSelectedColor(colorCode);
     setLoadingColorImages(true);
+
+
 
     try {
       const result = await fetchProductColorImages(productId, colorCode);
@@ -91,13 +93,13 @@ function Product() {
         setColorImages(result.images);
         setImage(result.images[0]); // Set first image as main image
       } else {
-        setColorImages([product.image]);
-        setImage(product.image);
+        setColorImages([productImage]);
+        setImage(productImage); // Set product image as main image
         // console.log("Failed to fetch color images", product.image);
       }
     } catch (error) {
-      setColorImages([product.image]);
-      setImage(product.image);
+      setColorImages([productImage]);
+      setImage(productImage);
       console.error("Error fetching color images:", error);
     } finally {
       setLoadingColorImages(false);
@@ -114,11 +116,7 @@ function Product() {
       const response = await fetchSpecificProduct(productId);
       const data = await response;
       setProduct(data);
-      console.log("Product Data:", data);
-      console.log("Failed to fetch color images", product.image);
-
-      handleColorSelect(data.color[0]);
-
+      await handleColorSelect(data.color[0], data.image);
       setRelatedProducts(response.recommendations);
       // Set initial color
       // Auto-select the first available color and try to find a matching image
@@ -137,6 +135,7 @@ function Product() {
       console.error("Failed to fetch product data:", error);
       toast.error("Failed to load product data.");
     } finally {
+
       setIsLoading(false); // Set loading to false after fetching
     }
   };
@@ -188,9 +187,8 @@ function Product() {
             key={colorCode}
             onClick={() => onColorSelect(colorCode)}
             // Dynamically apply background color and ring based on selection
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${
-              selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
-            }`}
+            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
+              }`}
             aria-label={`Select color ${colorCode}`}
           />
         ))}
@@ -543,111 +541,131 @@ function Product() {
       <div className="flex-1  flex flex-col gap-2 md:flex-row">
         {/* Enhanced Image Gallery Section */}
         <div className="flex flex-col md:flex-row gap-3 w-full md:w-[60vw] xl:w-[50vw] ">
-          {/* Main Product Image with Navigation */}
-          <div className="relative w-full md:w-[70%]   md:h-[50vh] lg:h-[90vh] overflow-hidden order-1 md:order-2 cursor-pointer group">
-            <img
-              className="w-full h-full object-cover rounded-md hover:opacity-90 transition-opacity"
-              src={image}
-              alt={product?.name || "Product image"}
-              onClick={() => handleImageClick(image)}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            />
-
-            {/* Navigation Arrows for Main Image */}
-            {allImages.length > 1 && (
+          {
+            loadingColorImages ? (
               <>
-                <button
-                  onClick={goToPreviousImage}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
-                  aria-label="Previous image"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-
-                <button
-                  onClick={goToNextImage}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
-                  aria-label="Next image"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
+                <div className="hidden sm:flex sm:flex-col w-[10vw] gap-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-full h-20 bg-gray-200 rounded" />
+                  ))}
+                </div>
+                {/* Main image Skeleton */}
+                <div className="w-full sm:w-[60%">
+                  <div className="w-full aspect-square sm:h-[500px]  bg-gray-200 rounded" />
+                </div>
               </>
-            )}
+            ) : (
+              <>
 
-            {/* Image Counter */}
-            {allImages.length > 1 && (
-              <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
-                {currentImageIndex + 1} / {allImages.length}
-              </div>
-            )}
-
-            {/* Dot Indicators for Main Image */}
-            {allImages.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {allImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToImage(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentImageIndex
-                        ? "bg-white"
-                        : "bg-white bg-opacity-50 hover:bg-opacity-75"
-                    }`}
-                    aria-label={`Go to image ${index + 1}`}
+                {/* Main Product Image with Navigation */}
+                <div className="relative w-full md:w-[70%]   md:h-[50vh] lg:h-[90vh] overflow-hidden order-1 md:order-2 cursor-pointer group">
+                  <img
+                    className="w-full h-full object-cover rounded-md hover:opacity-90 transition-opacity"
+                    src={image}
+                    alt={product?.name || "Product image"}
+                    onClick={() => handleImageClick(image)}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                   />
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* Thumbnail Images Section */}
-          <div className="flex p-2 md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-y-auto md:h-[50vh] lg:h-[90vh] w-full md:w-[30%] pb-4 lg:pb-0 order-2 md:order-1">
-            {/* Additional image thumbnails */}
-            {colorImages.map((img, index) => (
-              <img
-                key={img || index} // Use image URL as key if unique, otherwise index
-                src={img}
-                onClick={() => {
-                  setImage(img);
-                  setCurrentImageIndex(index + 1); // +1 because main image is index 0
-                  handleImageClick(img);
-                }}
-                loading="lazy"
-                alt={`Thumbnail ${index + 2} of product`}
-                className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${
-                  currentImageIndex === index + 1
-                    ? "ring-2 ring-orange-300"
-                    : ""
-                }`}
-              />
-            ))}
-          </div>
+                  {/* Navigation Arrows for Main Image */}
+                  {allImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={goToPreviousImage}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
+                        aria-label="Previous image"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
+                      </button>
+
+                      <button
+                        onClick={goToNextImage}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
+                        aria-label="Next image"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Image Counter */}
+                  {allImages.length > 1 && (
+                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                      {currentImageIndex + 1} / {allImages.length}
+                    </div>
+                  )}
+
+                  {/* Dot Indicators for Main Image */}
+                  {allImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                      {allImages.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => goToImage(index)}
+                          className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
+                            ? "bg-white"
+                            : "bg-white bg-opacity-50 hover:bg-opacity-75"
+                            }`}
+                          aria-label={`Go to image ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Thumbnail Images Section */}
+                <div className="flex p-2 md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-y-auto md:h-[50vh] lg:h-[90vh] w-full md:w-[30%] pb-4 lg:pb-0 order-2 md:order-1">
+                  {/* Additional image thumbnails */}
+                  {colorImages.map((img, index) => (
+                    <img
+                      key={img || index} // Use image URL as key if unique, otherwise index
+                      src={img}
+                      onClick={() => {
+                        setImage(img);
+                        setCurrentImageIndex(index + 1); // +1 because main image is index 0
+                        handleImageClick(img);
+                      }}
+                      loading="lazy"
+                      alt={`Thumbnail ${index + 2} of product`}
+                      className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${currentImageIndex === index + 1
+                        ? "ring-2 ring-orange-300"
+                        : ""
+                        }`}
+                    />
+                  ))}
+                </div>
+
+
+              </>
+            )
+          }
+
 
           {/* Image View Modal (full-screen image viewer) */}
           <ImageViewModal
@@ -659,7 +677,7 @@ function Product() {
         </div>
         <div className="flex items-start lg:w-[50vw] justify-between">
           {/* ---------------- Product Details and Actions ------------------ */}
-          <div className="flex-1 ml-5">
+          <div className="flex-1 sm:ml-5">
             <h1 className="font-medium text-2xl mt-2">{product?.name}</h1>
             <div className="flex items-center gap-1 mt-2">
               {renderStars(overAllReview[0])}
@@ -714,9 +732,8 @@ function Product() {
                 <button
                   onClick={() => setSize(item)}
                   key={index}
-                  className={`border bg-gray-100 py-2 px-4 rounded-md text-center ${
-                    item === size ? "ring-2 ring-orange-300 text-black" : ""
-                  }`}
+                  className={`border bg-gray-100 py-2 px-4 rounded-md text-center ${item === size ? "ring-2 ring-orange-300 text-black" : ""
+                    }`}
                 >
                   {item}
                 </button>
@@ -776,22 +793,20 @@ function Product() {
           {/* Description Tab */}
           <p
             onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[0]
-                ? "font-semibold"
-                : "font-light"
-            } cursor-pointer`}
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
+              ? "font-semibold"
+              : "font-light"
+              } cursor-pointer`}
           >
             Description
           </p>
           {/* Additional Information Tab */}
           <p
             onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${
-              selectedBottomSection === bottomSection[1]
-                ? "font-semibold"
-                : "font-light"
-            } cursor-pointer`}
+            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
+              ? "font-semibold"
+              : "font-light"
+              } cursor-pointer`}
           >
             Additional Information
           </p>
@@ -801,11 +816,10 @@ function Product() {
             className={`sm:flex-row flex-col w-full inline-flex items-center justify-center cursor-pointer sm:w-auto border px-2 py-2`}
           >
             <p
-              className={`px-2 text-sm ${
-                selectedBottomSection === bottomSection[2]
-                  ? "font-semibold"
-                  : "font-light"
-              }`}
+              className={`px-2 text-sm ${selectedBottomSection === bottomSection[2]
+                ? "font-semibold"
+                : "font-light"
+                }`}
             >
               Reviews
             </p>
@@ -860,7 +874,7 @@ function Product() {
                 colors={item.color || []}
                 like={isItemInWishlist(item._id)}
                 onLikeClick={(e) => handleLikeClick(e, item._id)}
-                // onClick={() => handleProductClick(item._id)}
+              // onClick={() => handleProductClick(item._id)}
               />
             </div>
           ))}
