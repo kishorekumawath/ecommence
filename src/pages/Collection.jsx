@@ -494,6 +494,7 @@ import { useWishlist } from "../context/WhislistContext";
 import { ToastContainer, toast } from "react-toastify";
 import SizeSelector from "../components/Buttons/SizeSelector";
 import PriceRangeSelector from "../components/Buttons/PriceRangeSelector";
+import { s } from "framer-motion/client";
 
 // Skeleton Components
 const CategorySkeleton = () => (
@@ -545,11 +546,11 @@ function Collection() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [comeBackFromProductPage, setComeBackFromProductPage] = useState(false);
 
-    const [size, setSize] = useState(null);
+  const [size, setSize] = useState(null);
 
-     const [selectedRange, setSelectedRange] = useState(null);
+  const [selectedRange, setSelectedRange] = useState(null);
   // const priceRanges = ["₹0 - ₹499", "₹500 - ₹999", "₹1000 - ₹1499", "₹1500-₹1999","₹2000-₹2499","₹2500+"];
-   const rawPrices = [0,499,500,999,1000,1499,1500,1999,2000,2499,2500];
+  const rawPrices = [0, 499, 500, 999, 1000, 1499, 1500, 1999, 2000, 2499, 2500];
 
   const [showAllSubCategories, setShowAllSubCategories] = useState(false);
   const INITIAL_SUBCATEGORY_COUNT = 6; // Show first 6 subcategories initially
@@ -832,38 +833,33 @@ function Collection() {
     }
   };
 
-  const onSizeToggle = (size) => {
-  
-   if(size != null){
-     const  availableProductsBasedOnselectedSize = products.filter((product) => product.size.includes(size))
-    setFilteredProducts(availableProductsBasedOnselectedSize);
-   }else{
-    if(filteredProducts.length > 0){
-      setFilteredProducts(products);
-    }else{
-    setFilteredProducts(products)}
-   }
-   setSize(size);
- 
-  };
-   const onPriceToggle = (priceRange) => {
-    if(priceRange == null){
-      if(filteredProducts.length > 0){
-        setFilteredProducts(products);
-      }else{
-        setFilteredProducts(products);
-      }
-        setSelectedRange(priceRange);
-      return;
-    }
-    const filteredProductsBasedOnSelectedPriceRange = products.filter((product) => {
-      const productPrice = parseInt(product.price);
-      return productPrice >= priceRange[0] && productPrice <= priceRange[1];
-    });
-    setFilteredProducts(filteredProductsBasedOnSelectedPriceRange);
+// helper to filter products based on size and price
+const getFilteredProducts = (products, size, selectedRange) => {
+  return products.filter((product) => {
+    const productPrice = parseInt(product.price);
+
+    const matchesSize = size ? product.size.includes(size) : true;
+    const matchesPrice =
+      selectedRange != null
+        ? productPrice >= selectedRange[0] &&
+          (selectedRange.length === 1 || productPrice <= selectedRange[1])
+        : true;
+
+    return matchesSize && matchesPrice;
+  });
+};
+
+const onSizeToggle = (size) => {
+  const filtered = getFilteredProducts(products, size, selectedRange);
+  setFilteredProducts(filtered);
+  setSize(size);
+};
+
+const onPriceToggle = (priceRange) => {
+  const filtered = getFilteredProducts(products, size, priceRange);
+  setFilteredProducts(filtered);
   setSelectedRange(priceRange);
- 
-  };
+};
 
 
   const reverseSlugToOriginal = () => {
@@ -1008,22 +1004,21 @@ function Collection() {
 
         {/* Category Filter */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">CATEGORIES</p>
 
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesCategory.map((category, index) => {
               return (
-                <p className="flex gap-2 cursor-pointer select-none" key={index} onClick={()=>onCategoryToggle(category)}>
+                <p className="flex gap-2 cursor-pointer select-none" key={index} onClick={() => onCategoryToggle(category)}>
                   <input
                     type="checkbox"
                     checked={selectedCategory.some((Cat) => Cat === category)}
                     value={category}
-                        readOnly={true}
-                    // onChange={onCategoryToggle}
+                    readOnly={true}
+                  // onChange={onCategoryToggle}
                   />{" "}
                   {category}
                 </p>
@@ -1034,15 +1029,14 @@ function Collection() {
 
         {/* Sub Category filter with Show More functionality */}
         <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {getDisplayedSubCategories().map((subCategory, index) => {
               return (
-                <p className="flex gap-2 cursor-pointer select-none" key={index} onClick={()=>onSubCategoryToggle(subCategory)}>
+                <p className="flex gap-2 cursor-pointer select-none" key={index} onClick={() => onSubCategoryToggle(subCategory)}>
                   <input
                     type="checkbox"
                     value={subCategory.name}
@@ -1050,14 +1044,14 @@ function Collection() {
                       (subCat) => subCat.name === subCategory.name
                     )}
                     readOnly={true}
-                    // onChange={() => onSubCategoryToggle(subCategory)}
+                  // onChange={() => onSubCategoryToggle(subCategory)}
                   />{" "}
                   {subCategory.name}
                 </p>
               );
             })}
           </div>
-          
+
           {/* Show More / Show Less button */}
           {availablesSubCategory.length > INITIAL_SUBCATEGORY_COUNT && (
             <div className="mt-3 pt-2 mr-6 border-t border-gray-200">
@@ -1081,33 +1075,31 @@ function Collection() {
         </div>
 
         {/* size filter option  */}
-              <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+        <div
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">CHOOSE SIZE</p>
-       <SizeSelector 
-        sizes={['XS','S', 'M', 'L', 'XL', 'XXL', 'XXXL']} 
-        selectedSize={size} 
-        onSelect={onSizeToggle} 
-        />
+          <SizeSelector
+            sizes={['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']}
+            selectedSize={size}
+            onSelect={onSizeToggle}
+          />
         </div>
 
         {/* price range selector  */}
-              <div
-          className={`border border-gray-300 pl-5 py-3 mt-6 ${
-            showFilter ? "" : "hidden"
-          } sm:block `}
+        <div
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
+            } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">PRICE RANGE</p>
-            <PriceRangeSelector
-        rawPrices={rawPrices}
-        selectedRange={selectedRange}
-        onSelect={onPriceToggle}
-      />
+          <PriceRangeSelector
+            rawPrices={rawPrices}
+            selectedRange={selectedRange}
+            onSelect={onPriceToggle}
+          />
         </div>
-    
+
       </div>
 
       {/* Right side */}
@@ -1158,7 +1150,7 @@ function Collection() {
                       name={item.name}
                       image={item.image}
                       price={item.price}
-                       colors={item.color || []}
+                      colors={item.color || []}
                       like={isItemInWishlist(item._id)}
                       onLikeClick={(e) => handleLikeClick(e, item._id)}
                       onClick={() => handleProductClick(item._id)}
