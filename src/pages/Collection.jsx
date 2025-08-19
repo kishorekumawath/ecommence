@@ -484,7 +484,6 @@
 // }
 
 // export default Collection;
-
 import React, { useCallback, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -543,6 +542,9 @@ function Collection() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [comeBackFromProductPage, setComeBackFromProductPage] = useState(false);
+
+  const [showAllSubCategories, setShowAllSubCategories] = useState(false);
+  const INITIAL_SUBCATEGORY_COUNT = 6; // Show first 6 subcategories initially
 
   const {
     wishlistItems = [],
@@ -912,6 +914,19 @@ function Collection() {
     // Our current state is already saved in sessionStorage, so we can safely navigate
   };
 
+  // Get subcategories to display based on showAllSubCategories state
+  const getDisplayedSubCategories = () => {
+    if (showAllSubCategories || availablesSubCategory.length <= INITIAL_SUBCATEGORY_COUNT) {
+      return availablesSubCategory;
+    }
+    return availablesSubCategory.slice(0, INITIAL_SUBCATEGORY_COUNT);
+  };
+
+  // Calculate remaining subcategories count
+  const getRemainingCount = () => {
+    return Math.max(0, availablesSubCategory.length - INITIAL_SUBCATEGORY_COUNT);
+  };
+
   if (isCategoriesLoading) {
     return (
       <div className="min-h-screen flex flex-col sm:flex-row gap-1 sm:gap-10 border-t p-5">
@@ -974,7 +989,7 @@ function Collection() {
           </div>
         </div>
 
-        {/* Sub Category filter */}
+        {/* Sub Category filter with Show More functionality */}
         <div
           className={`border border-gray-300 pl-5 py-3 mt-6 ${
             showFilter ? "" : "hidden"
@@ -982,7 +997,7 @@ function Collection() {
         >
           <p className="mb-3  text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-            {availablesSubCategory.map((subCategory, index) => {
+            {getDisplayedSubCategories().map((subCategory, index) => {
               return (
                 <p className="flex gap-2" key={index}>
                   <input
@@ -998,6 +1013,27 @@ function Collection() {
               );
             })}
           </div>
+          
+          {/* Show More / Show Less button */}
+          {availablesSubCategory.length > INITIAL_SUBCATEGORY_COUNT && (
+            <div className="mt-3 pt-2 mr-6 border-t border-gray-200">
+              <button
+                onClick={() => setShowAllSubCategories(!showAllSubCategories)}
+                className="text-sm text-black hover:text-gray-900
+                 font-medium hover:font-semibold flex items-center gap-1 transition-colors"
+              >
+                {showAllSubCategories ? (
+                  <>
+                    <span>-  Show Less</span>
+                  </>
+                ) : (
+                  <>
+                    <span>+ {getRemainingCount()} more</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
