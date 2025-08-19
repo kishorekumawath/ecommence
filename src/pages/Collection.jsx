@@ -493,6 +493,7 @@ import { Searchbar } from "../components/Searchbar";
 import { useWishlist } from "../context/WhislistContext";
 import { ToastContainer, toast } from "react-toastify";
 import SizeSelector from "../components/Buttons/SizeSelector";
+import PriceRangeSelector from "../components/Buttons/PriceRangeSelector";
 
 // Skeleton Components
 const CategorySkeleton = () => (
@@ -545,6 +546,9 @@ function Collection() {
   const [comeBackFromProductPage, setComeBackFromProductPage] = useState(false);
 
     const [size, setSize] = useState(null);
+
+     const [priceRange, setPriceRange] = useState(null);
+  const priceRanges = ["₹0 - ₹499", "₹500 - ₹999", "₹1000 - ₹1499", "₹1500-₹1999","₹2000-₹2499","₹2500+"];
 
   const [showAllSubCategories, setShowAllSubCategories] = useState(false);
   const INITIAL_SUBCATEGORY_COUNT = 6; // Show first 6 subcategories initially
@@ -965,7 +969,7 @@ function Collection() {
   return (
     <div className="min-h-screen flex flex-col sm:flex-row gap-1 sm:gap-10 border-t p-5">
       {/* Filter Options */}
-      <div className="min-w-60">
+      <div className="min-w-60 sm:w-[28%]">
         <p
           onClick={() => setShowFilter(!showFilter)}
           className="my-2 text-xl flex items-center cursor-pointer gap-2"
@@ -1059,13 +1063,28 @@ function Collection() {
             showFilter ? "" : "hidden"
           } sm:block `}
         >
-          <p className="mb-3  text-sm font-medium">Choose Size</p>
-<SizeSelector 
+          <p className="mb-3  text-sm font-medium">CHOOSE SIZE</p>
+       <SizeSelector 
         sizes={['XS','S', 'M', 'L', 'XL', 'XXL', 'XXXL']} 
         selectedSize={size} 
         onSelect={onSizeToggle} 
+        />
+        </div>
+
+        {/* price range selector  */}
+              <div
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${
+            showFilter ? "" : "hidden"
+          } sm:block `}
+        >
+          <p className="mb-3  text-sm font-medium">PRICE RANGE</p>
+        <PriceRangeSelector
+        ranges={priceRanges}
+        selectedRange={priceRange}
+        onSelect={setPriceRange}
       />
         </div>
+    
       </div>
 
       {/* Right side */}
