@@ -745,25 +745,25 @@ function Collection() {
     persistState,
   ]);
 
-  const onCategoryToggle = (e) => {
+  const onCategoryToggle = (category) => {
     // we need to remove all subcategory if category is unselected
-    if (selectedCategory.includes(e.target.value)) {
+    if (selectedCategory.includes(category)) {
       // unchecking category
       setSelectedCategory((prev) =>
-        prev.filter((item) => item !== e.target.value)
+        prev.filter((item) => item !== category)
       );
       // remove all subcategory
       setAvailablesSubCategory((prev) =>
         prev.filter(
           (item) =>
-            !CollectionsData[e.target.value].some(
+            !CollectionsData[category].some(
               (subCat) => subCat.name === item.name
             )
         )
       );
 
       // removing products when subcategory is already has in selected state
-      CollectionsData[e.target.value].forEach((sc) => {
+      CollectionsData[category].forEach((sc) => {
         setProducts((prev) =>
           prev.filter((product) => product.category.name !== sc.name)
         );
@@ -775,11 +775,11 @@ function Collection() {
     // we need to add subcategory if category is selected
     else {
       // checking category
-      setSelectedCategory((prev) => [...prev, e.target.value]);
+      setSelectedCategory((prev) => [...prev, category]);
       // add all subcategory which are belong to this category
       setAvailablesSubCategory((prev) => [
         ...prev,
-        ...CollectionsData[e.target.value].map((item) => item),
+        ...CollectionsData[category].map((item) => item),
       ]);
     }
   };
@@ -975,12 +975,12 @@ function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesCategory.map((category, index) => {
               return (
-                <p className="flex gap-2" key={index}>
+                <p className="flex gap-2 cursor-pointer select-none" key={index} onClick={()=>onCategoryToggle(category)}>
                   <input
                     type="checkbox"
                     checked={selectedCategory.some((Cat) => Cat === category)}
                     value={category}
-                    onChange={onCategoryToggle}
+                    // onChange={onCategoryToggle}
                   />{" "}
                   {category}
                 </p>
