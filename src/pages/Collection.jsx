@@ -980,6 +980,7 @@ function Collection() {
                     type="checkbox"
                     checked={selectedCategory.some((Cat) => Cat === category)}
                     value={category}
+                        readOnly={true}
                     // onChange={onCategoryToggle}
                   />{" "}
                   {category}
@@ -999,14 +1000,15 @@ function Collection() {
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {getDisplayedSubCategories().map((subCategory, index) => {
               return (
-                <p className="flex gap-2" key={index}>
+                <p className="flex gap-2 cursor-pointer select-none" key={index} onClick={()=>onSubCategoryToggle(subCategory)}>
                   <input
                     type="checkbox"
                     value={subCategory.name}
                     checked={selectedSubCategory.some(
                       (subCat) => subCat.name === subCategory.name
                     )}
-                    onChange={() => onSubCategoryToggle(subCategory)}
+                    readOnly={true}
+                    // onChange={() => onSubCategoryToggle(subCategory)}
                   />{" "}
                   {subCategory.name}
                 </p>
