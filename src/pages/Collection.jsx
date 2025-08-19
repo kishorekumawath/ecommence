@@ -827,6 +827,18 @@ function Collection() {
     }
   };
 
+  const onSizeToggle = (size) => {
+   const  availableProductsBasedOnselectedSize = products.filter((product) => product.size.includes(size))
+   if(size != null){
+    setFilteredProducts(availableProductsBasedOnselectedSize);
+   }else{
+    setFilteredProducts(products)
+   }
+   setSize(size);
+ 
+  };
+
+
   const reverseSlugToOriginal = () => {
     if (categoryName && subCategoryName) {
       // Find the exact matching category from CollectionsData
@@ -1051,7 +1063,7 @@ function Collection() {
 <SizeSelector 
         sizes={['XS','S', 'M', 'L', 'XL', 'XXL', 'XXXL']} 
         selectedSize={size} 
-        onSelect={setSize} 
+        onSelect={onSizeToggle} 
       />
         </div>
       </div>
@@ -1089,7 +1101,7 @@ function Collection() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5   gap-4 gap-y-6 place-items-start">
               {filteredProducts.length === 0 ? (
-                products.length === 0 ? (
+                products.length === 0 || filteredProducts.length === 0 ? (
                   <div className="flex items-center justify-center h-64 w-full col-span-full">
                     <p className="text-gray-500 text-lg">
                       No products for selected category. Please select a
@@ -1104,6 +1116,7 @@ function Collection() {
                       name={item.name}
                       image={item.image}
                       price={item.price}
+                       colors={item.color || []}
                       like={isItemInWishlist(item._id)}
                       onLikeClick={(e) => handleLikeClick(e, item._id)}
                       onClick={() => handleProductClick(item._id)}
