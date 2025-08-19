@@ -492,6 +492,7 @@ import { useCollections } from "../context/CollectionsContext";
 import { Searchbar } from "../components/Searchbar";
 import { useWishlist } from "../context/WhislistContext";
 import { ToastContainer, toast } from "react-toastify";
+import SizeSelector from "../components/Buttons/SizeSelector";
 
 // Skeleton Components
 const CategorySkeleton = () => (
@@ -542,6 +543,8 @@ function Collection() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [comeBackFromProductPage, setComeBackFromProductPage] = useState(false);
+
+    const [size, setSize] = useState(null);
 
   const [showAllSubCategories, setShowAllSubCategories] = useState(false);
   const INITIAL_SUBCATEGORY_COUNT = 6; // Show first 6 subcategories initially
@@ -1036,6 +1039,20 @@ function Collection() {
               </button>
             </div>
           )}
+        </div>
+
+        {/* size filter option  */}
+              <div
+          className={`border border-gray-300 pl-5 py-3 mt-6 ${
+            showFilter ? "" : "hidden"
+          } sm:block `}
+        >
+          <p className="mb-3  text-sm font-medium">Choose Size</p>
+<SizeSelector 
+        sizes={['XS','S', 'M', 'L', 'XL', 'XXL', 'XXXL']} 
+        selectedSize={size} 
+        onSelect={setSize} 
+      />
         </div>
       </div>
 
