@@ -547,8 +547,9 @@ function Collection() {
 
     const [size, setSize] = useState(null);
 
-     const [priceRange, setPriceRange] = useState(null);
-  const priceRanges = ["₹0 - ₹499", "₹500 - ₹999", "₹1000 - ₹1499", "₹1500-₹1999","₹2000-₹2499","₹2500+"];
+     const [selectedRange, setSelectedRange] = useState(null);
+  // const priceRanges = ["₹0 - ₹499", "₹500 - ₹999", "₹1000 - ₹1499", "₹1500-₹1999","₹2000-₹2499","₹2500+"];
+   const rawPrices = [0,499,500,999,1000,1499,1500,1999,2000,2499,2500];
 
   const [showAllSubCategories, setShowAllSubCategories] = useState(false);
   const INITIAL_SUBCATEGORY_COUNT = 6; // Show first 6 subcategories initially
@@ -832,13 +833,35 @@ function Collection() {
   };
 
   const onSizeToggle = (size) => {
-   const  availableProductsBasedOnselectedSize = products.filter((product) => product.size.includes(size))
+  
    if(size != null){
+     const  availableProductsBasedOnselectedSize = products.filter((product) => product.size.includes(size))
     setFilteredProducts(availableProductsBasedOnselectedSize);
    }else{
-    setFilteredProducts(products)
+    if(filteredProducts.length > 0){
+      setFilteredProducts(products);
+    }else{
+    setFilteredProducts(products)}
    }
    setSize(size);
+ 
+  };
+   const onPriceToggle = (priceRange) => {
+    if(priceRange == null){
+      if(filteredProducts.length > 0){
+        setFilteredProducts(products);
+      }else{
+        setFilteredProducts(products);
+      }
+        setSelectedRange(priceRange);
+      return;
+    }
+    const filteredProductsBasedOnSelectedPriceRange = products.filter((product) => {
+      const productPrice = parseInt(product.price);
+      return productPrice >= priceRange[0] && productPrice <= priceRange[1];
+    });
+    setFilteredProducts(filteredProductsBasedOnSelectedPriceRange);
+  setSelectedRange(priceRange);
  
   };
 
@@ -1078,10 +1101,10 @@ function Collection() {
           } sm:block `}
         >
           <p className="mb-3  text-sm font-medium">PRICE RANGE</p>
-        <PriceRangeSelector
-        ranges={priceRanges}
-        selectedRange={priceRange}
-        onSelect={setPriceRange}
+            <PriceRangeSelector
+        rawPrices={rawPrices}
+        selectedRange={selectedRange}
+        onSelect={onPriceToggle}
       />
         </div>
     

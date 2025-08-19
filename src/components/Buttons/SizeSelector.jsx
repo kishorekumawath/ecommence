@@ -15,9 +15,9 @@ const SizeSelector = ({ sizes = [], selectedSize, onSelect }) => {
         <button
           key={index}
           onClick={() => handleSelect(item)}
-          className={`border bg-gray-100 py-2 px-4 rounded-md text-center text-sm ${
+          className={`border bg-gray-100 py-2 px-4 rounded-md text-center text-sm transition-all duration-200 hover:bg-gray-200  ${
             item === selectedSize
-              ? "ring-2 ring-orange-300 text-black font-bold"
+              ? "ring-2 ring-orange-300 text-black font-bold bg-orange-50"
               : "font-light"
           }`}
         >
