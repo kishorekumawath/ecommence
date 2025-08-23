@@ -1149,6 +1149,7 @@ const onPriceToggle = (priceRange) => {
                       id={item._id}
                       name={item.name}
                       image={item.image}
+                      mrp={item.mrp}
                       price={item.price}
                       colors={item.color || []}
                       like={isItemInWishlist(item._id)}
@@ -1163,6 +1164,7 @@ const onPriceToggle = (priceRange) => {
                     key={item._id}
                     id={item._id}
                     name={item.name}
+                    mrp={item.mrp}
                     image={item.image}
                     price={item.price}
                     colors={item.color || []}

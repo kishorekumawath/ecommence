@@ -12,17 +12,25 @@ function CartSlider({ cartVisible, setCartVisible }) {
     navigate,
     removeCartItem,
     getCartAmount,
+    getCartOriginalAmount,
     isLoading,
     error,
     extraCharge
   } = useCartContext();
 
   const [total, setTotal] = useState(0);
+  const [originalAmount, setOriginalAmount] = useState(0);
 
   useEffect(() => {
     getCartAmount()
       .then((total) => setTotal(total))
       .catch((err) => console.error("Error fetching cart amount:", err));
+
+    getCartOriginalAmount()
+      .then((originalAmount) => setOriginalAmount(originalAmount))
+      .catch((err) =>
+        console.error("Error fetching original cart amount:", err)
+      );  
   }, [getCartAmount]);
 
 
@@ -42,6 +50,10 @@ function CartSlider({ cartVisible, setCartVisible }) {
       return total + item.product.price * item.quantity;
     }, 0);
 
+    const originalTotal = cartItems.reduce((total, item) => {
+      return total + item.product.mrp * item.quantity;
+    }, 0);
+
   
     const formattedItems = cartItems.map((item) => ({
       id: item.product._id,
@@ -49,6 +61,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
       sku: item.product.sku,
       quantity: item.quantity,
       price: item.product.price,
+      mrp:item.product.mrp,
       size: item.size,
       color: item.color,
       image: item.product.image,
@@ -62,6 +75,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
         noOfItems:noOfItems,
         totalAmount: itemsTotal,
         itemCount: cartItems.length,
+        originalAmount:originalTotal,
         finalTotal: itemsTotal,
       },
     
@@ -214,7 +228,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
       {/* Bottom Section */}
       {!isLoading && !error && (
         <div className="p-5">
-          <CartTotal total={total} extraCharge={extraCharge} totalNoOfItems={noOfItems}/>
+          <CartTotal total={total} originalAmount={originalAmount} totalNoOfItems={noOfItems}/>
           <div className="w-full text-end mt-5">
          
             <button

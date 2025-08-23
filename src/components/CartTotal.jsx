@@ -1,16 +1,16 @@
 import React from "react";
 import { Title } from "./Title";
 
-function CartTotal({ total, extraCharge, totalNoOfItems, shippingCost = 0, taxRate = 0 }) {
+function CartTotal({ total,originalAmount=0, totalNoOfItems, shippingCost = 0, taxRate = 0 }) {
   // Calculate the total discount amount
-  const totalDiscount = extraCharge * totalNoOfItems;
+  const totalDiscount =  originalAmount - total;
 
   // Calculate the original price (before discount)
-  const originalPrice = total + totalDiscount;
+  const originalPrice = total;
 
   // Calculate the discount percentage
   const discountPercentage =
-    originalPrice > 0 ? Math.round((totalDiscount / originalPrice) * 100) : 0;
+    originalPrice > 0 ? Math.round((totalDiscount / originalAmount) * 100) : 0;
 
   // Calculate tax amount
   const taxAmount = total * (taxRate / 100);
@@ -36,7 +36,7 @@ function CartTotal({ total, extraCharge, totalNoOfItems, shippingCost = 0, taxRa
         {totalDiscount > 0 && (
           <div className="flex justify-between">
             <p className="font-medium">Original Price</p>
-            <p className="line-through text-gray-500">{formatCurrency(originalPrice)}</p>
+            <p className="line-through text-gray-500">{formatCurrency(originalAmount)}</p>
           </div>
         )}
 

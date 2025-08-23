@@ -568,12 +568,13 @@ import {
   fetchLocationByPincode,
   validatePincode as servicePincodeValidation,
 } from "../context/LocationService";
+import CartTotal from "../components/CartTotal";
 
 const PlaceOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { clearCart, extraCharge } = useCartContext();
+  const { clearCart} = useCartContext();
   const cartSummary = location.state?.cartSummary;
   const isBuyNow = location.state?.isBuyNow;
 
@@ -586,7 +587,7 @@ const PlaceOrder = () => {
 
   const total = cartSummary?.summary.totalAmount;
   const totalNoOfItems = cartSummary?.summary.noOfItems;
-  const totalDiscount = extraCharge * totalNoOfItems;
+  const totalDiscount =  cartSummary?.summary.originalAmount - cartSummary?.summary.totalAmount;
   const originalPrice = total + totalDiscount;
   const discountPercentage =
     originalPrice > 0 ? Math.round((totalDiscount / originalPrice) * 100) : 0;
@@ -1382,7 +1383,7 @@ const PlaceOrder = () => {
                 <span>₹{cartSummary?.summary.totalAmount}</span>
               </div>
               <div className="flex justify-between">
-                <span>Shipping</span>
+                <span>Extra Charges</span>
                 <span>₹{shippingfee}</span>
               </div>
               <div className="flex justify-between font-bold mt-2 pt-2 border-t">
@@ -1428,6 +1429,8 @@ const PlaceOrder = () => {
             <div className="flex justify-center items-center ">
               <img src={assets.payments_options} alt="" className="h-20 w-40" />
             </div>
+
+
             <button
               type="submit"
               disabled={isLoading}

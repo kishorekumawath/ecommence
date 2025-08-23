@@ -31,7 +31,7 @@ function Product() {
   const { productId } = useParams(); // Extracts product ID from the URL
   const { fetchSpecificProduct, calculateReview, fetchProductColorImages } =
     useCollections(); // Custom hook for collection-related data
-  const { addToCart, extraCharge } = useCartContext(); // Custom hook for cart management
+  const { addToCart } = useCartContext(); // Custom hook for cart management
   const {
     wishlistItems = [], // Destructure wishlist items, providing an empty array as a fallback
     addToWishlist,
@@ -117,7 +117,9 @@ function Product() {
       const data = await response;
       setProduct(data);
       await handleColorSelect(data.color[0], data.image);
+      
       setRelatedProducts(response.recommendations);
+      console.log(data);
       // Set initial color
       // Auto-select the first available color and try to find a matching image
       if (data.color && data.color.length > 0) {
@@ -228,7 +230,7 @@ function Product() {
     }
 
     const itemTotal = product.price * 1; // Quantity is always 1 for buy now
-
+    
     const cartSummary = {
       items: [
         {
@@ -237,6 +239,7 @@ function Product() {
           sku: product.sku,
           quantity: 1,
           price: product.price,
+          mrp:product.mrp,
           size: size,
           color: selectedColor,
           image: image,
@@ -246,6 +249,7 @@ function Product() {
       summary: {
         totalAmount: itemTotal,
         itemCount: 1,
+        originalAmount:product.mrp,
         finalTotal: itemTotal,
       },
       orderDetails: {
@@ -697,16 +701,16 @@ function Product() {
                 <p className="text-sm text-gray-500">
                   MRP:{" "}
                   <span className="line-through text-gray-600 font-medium">
-                    {`₹ ${product?.price + extraCharge}`}
+                    {`₹ ${product?.mrp}`}
                   </span>
                 </p>
               </div>
               <p className="mt-1 text-green-600 font-semibold ">
                 You save{" "}
                 {Math.round(
-                  (extraCharge / (product?.price + extraCharge)) * 100
+                  ((product?.mrp - product?.price) /  product?.mrp) * 100
                 )}
-                %!
+                %
               </p>
               <p className="mt-1 text-gray-500 text-xs">
                 Inclusive of all Taxes
@@ -864,12 +868,14 @@ function Product() {
         <h1 className="text-2xl font-semibold mb-4">Related Products</h1>
 
         <div className="flex   overflow-x-auto space-x-4 scrollbar-hide scroll-smooth snap-x snap-mandatory px-1">
+          
           {relatedProducts?.map((item) => (
             <div key={item._id} className="snap-start shrink-0 w-60">
               <ProductItem
                 id={item._id}
                 name={item.name}
                 image={item.image}
+                mrp={item.mrp}
                 price={item.price}
                 colors={item.color || []}
                 like={isItemInWishlist(item._id)}

@@ -8,6 +8,7 @@ export function ProductItem({
   id,
   name,
   image,
+  mrp,
   price,
   like,
   onLikeClick,
@@ -17,7 +18,7 @@ export function ProductItem({
   reduceIconSize = false,
   fromWishlist = false,
 }) {
-  const { extraCharge } = useCartContext();
+
 
   return (
     <div
@@ -55,11 +56,11 @@ export function ProductItem({
           <p className="text-xs text-gray-500">
             MRP:{" "}
             <span className="line-through text-gray-600 font-medium">
-              {`₹ ${price + extraCharge}`}
+              {`₹ ${mrp}`}
             </span>
           </p>
           <p className="text-xs text-green-600 font-semibold ">
-            {Math.round((extraCharge / (price + extraCharge)) * 100)}% OFF
+            {Math.round(((mrp-price) / mrp) * 100)}% OFF
           </p>
         </div>
 

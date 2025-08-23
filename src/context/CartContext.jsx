@@ -14,6 +14,7 @@ const CartContext = createContext({
   navigate: () => {},
   getCartAmount: () => 0,
   removeCartItem: () => {},
+  getCartOriginalAmount:()=>0,
   clearCart: () => {},
 
 });
@@ -186,12 +187,23 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const getCartAmount = async () => {
+  const getCartOriginalAmount = async () => {
     return Object.values(cart).reduce((total, items) => {
       return (
         total +
         items.reduce((subTotal, item) => {
-          return (subTotal += item.quantity * item.product.price);
+          return (subTotal += item.quantity * item.product?.mrp);
+        }, 0)
+      );
+    }, 0);
+  };
+
+   const getCartAmount = async () => {
+    return Object.values(cart).reduce((total, items) => {
+      return (
+        total +
+        items.reduce((subTotal, item) => {
+          return (subTotal += item.quantity * item.product?.price);
         }, 0)
       );
     }, 0);
@@ -242,6 +254,7 @@ export const CartProvider = ({ children }) => {
     getCartAmount,
     removeCartItem,
     cart,
+    getCartOriginalAmount,
     extraCharge:300,
     clearCart,
   };
