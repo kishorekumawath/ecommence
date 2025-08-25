@@ -549,7 +549,7 @@
 
 // export default PlaceOrder;
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/NewAuthContext";
 import { useCartContext } from "../context/CartContext";
@@ -577,12 +577,13 @@ const PlaceOrder = () => {
   const { clearCart} = useCartContext();
   const cartSummary = location.state?.cartSummary;
   const isBuyNow = location.state?.isBuyNow;
+    const [shippingCost, setShippingCost] = useState(0);
 
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
-  const [shippingfee, setShippingFee] = useState(50);
+  const [CODFee, setCODFee] = useState(50);
   const [validationErrors, setValidationErrors] = useState({});
 
   const total = cartSummary?.summary.totalAmount;
@@ -923,13 +924,16 @@ const PlaceOrder = () => {
       },
       customerId: user?._id,
       customerName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
-      totalAmount: cartSummary.summary.finalTotal + shippingfee,
+      totalAmount: cartSummary.summary.finalTotal + CODFee,
+      qikinkValue: (Math.round((cartSummary.summary.finalTotal + shippingCost + shippingCost*0.18 + cartSummary.summary.finalTotal*0.05)*100)/100).toFixed(2),
       gateway: paymentMethod,
       gift_wrap: 0,
       rush_order: 0,
       orderType: isBuyNow ? "BUY_NOW" : "CART_CHECKOUT",
     };
   };
+
+    
 
   const handleCODPayment = async (orderPayload) => {
     try {
@@ -1047,7 +1051,9 @@ const PlaceOrder = () => {
           color: "#FDBA74",
         },
       };
+
       const razorpayInstance = new window.Razorpay(options);
+      
       razorpayInstance.open();
     } catch (error) {
       setError(error.message || "An error occurred. Please try again.");
@@ -1104,6 +1110,28 @@ const PlaceOrder = () => {
       currency: "INR",
     }).format(amount);
   };
+  
+
+const calculateShippingCost = () => {
+  if (!Array.isArray(cartSummary?.items)) return;
+
+  // Calculate total weight - weight is directly on item, not item.product
+  const weight = cartSummary.items.reduce((total, item) => {
+    const itemWeight = item.weight ?? 0; // Use item.weight instead of item.product?.weight
+    return total + item.quantity * itemWeight;
+  }, 0);
+
+
+  const calculatedShippingCost = Math.ceil(weight / 500) * 54;
+  
+  setShippingCost(calculatedShippingCost);
+};
+
+  useEffect(() => {
+    calculateShippingCost();
+  }, [cartSummary]);
+
+
 
   return (
     <form
@@ -1359,7 +1387,7 @@ const PlaceOrder = () => {
               {totalDiscount > 0 && (
                 <div className="flex justify-between">
                   <p className="font-medium">Original Price</p>
-                  <p className="line-through text-gray-500">
+                  <p className=" text-gray-800">
                     {formatCurrency(originalPrice)}
                   </p>
                 </div>
@@ -1373,22 +1401,45 @@ const PlaceOrder = () => {
                       ({discountPercentage}%)
                     </span>
                   </p>
-                  <p className="text-green-600">
+                  <p className="text-red-600">
                     -{formatCurrency(totalDiscount)}
                   </p>
                 </div>
               )}
+                <div className="flex justify-between">
+                  <p className="font-medium">
+                    Shipping Cost
+                  </p>
+                  <p className="text-red-600">
+                    -{formatCurrency(shippingCost)}
+                  </p>
+                </div>
+
+                <hr />
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>₹{cartSummary?.summary.totalAmount}</span>
               </div>
-              <div className="flex justify-between">
+              
+              
+            { paymentMethod === "COD" ? (
+                  <div className="flex justify-between">
                 <span>Extra Charges</span>
-                <span>₹{shippingfee}</span>
+                <span>₹{CODFee}</span>
+              </div>):""  
+              
+            }
+                   <hr />
+            <div className="flex justify-between text-green-600">
+                <span>You Saved : </span>
+                <span>₹{Math.round(totalDiscount+shippingCost)}</span>
               </div>
-              <div className="flex justify-between font-bold mt-2 pt-2 border-t">
+
+       
+              
+              <div className="flex justify-between font-semibold mt-2 pt-2 border-t text-xl">
                 <span>Total</span>
-                <span>₹{cartSummary?.summary.finalTotal + shippingfee}</span>
+                <span>₹{cartSummary?.summary.finalTotal + CODFee}</span>
               </div>
             </div>
 
@@ -1399,7 +1450,7 @@ const PlaceOrder = () => {
                   type="button"
                   onClick={() => {
                     setPaymentMethod("Prepaid");
-                    setShippingFee(0);
+                    setCODFee(0);
                   }}
                   className={`border p-4 rounded flex-1 transition-colors ${
                     paymentMethod === "Prepaid"
@@ -1413,7 +1464,7 @@ const PlaceOrder = () => {
                   type="button"
                   onClick={() => {
                     setPaymentMethod("COD");
-                    setShippingFee(50);
+                    setCODFee(50);
                   }}
                   className={`border p-4 rounded flex-1 transition-colors ${
                     paymentMethod === "COD"

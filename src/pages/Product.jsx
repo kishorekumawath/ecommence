@@ -243,6 +243,7 @@ function Product() {
           size: size,
           color: selectedColor,
           image: image,
+          weight:product.weight,
           subtotal: itemTotal,
         },
       ],
@@ -774,6 +775,7 @@ function Product() {
             <hr className="mt-8 sm:w-4/5" />
             {/* Product features/details list */}
             <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
+              <p>Net Weight : {product?.weight} gms</p>
               {product?.details?.map((item, index) => (
                 <p key={index}>{item}</p>
               ))}

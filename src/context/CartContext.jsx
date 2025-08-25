@@ -16,6 +16,7 @@ const CartContext = createContext({
   removeCartItem: () => {},
   getCartOriginalAmount:()=>0,
   clearCart: () => {},
+  getCartTotalWeight:()=>0,
 
 });
 
@@ -209,6 +210,17 @@ export const CartProvider = ({ children }) => {
     }, 0);
   };
 
+   const getCartTotalWeight = async () => {
+    return Object.values(cart).reduce((total, items) => {
+      return (
+        total +
+        items.reduce((subTotal, item) => {
+          return (subTotal += item.quantity * item.product?.weight);
+        }, 0)
+      );
+    }, 0);
+  };
+
   const clearCart = () => {
     try {
       setError(null);
@@ -254,6 +266,7 @@ export const CartProvider = ({ children }) => {
     getCartAmount,
     removeCartItem,
     cart,
+    getCartTotalWeight,
     getCartOriginalAmount,
     extraCharge:300,
     clearCart,

@@ -1,7 +1,7 @@
 import React from "react";
 import { Title } from "./Title";
 
-function CartTotal({ total,originalAmount=0, totalNoOfItems, shippingCost = 0, taxRate = 0 }) {
+function CartTotal({ total,originalAmount=0, totalWeight = 0, shippingCost = 0, taxRate = 0 }) {
   // Calculate the total discount amount
   const totalDiscount =  originalAmount - total;
 
@@ -24,6 +24,10 @@ function CartTotal({ total,originalAmount=0, totalNoOfItems, shippingCost = 0, t
       style: "currency",
       currency: "INR",
     }).format(amount);
+  };
+
+  const calculateShippingCost = (totalWeight) => {
+    return Math.ceil(totalWeight/500)*54
   };
 
   return (
@@ -57,6 +61,8 @@ function CartTotal({ total,originalAmount=0, totalNoOfItems, shippingCost = 0, t
           <p className="font-medium">Subtotal</p>
           <p>{formatCurrency(total)}</p>
         </div>
+
+   
 
 
 

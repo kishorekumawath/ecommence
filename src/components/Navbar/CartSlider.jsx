@@ -13,19 +13,25 @@ function CartSlider({ cartVisible, setCartVisible }) {
     removeCartItem,
     getCartAmount,
     getCartOriginalAmount,
+    getCartTotalWeight,
     isLoading,
     error,
     extraCharge
   } = useCartContext();
 
   const [total, setTotal] = useState(0);
+  const [totalWeigth, setTotalWeight] = useState(0);
   const [originalAmount, setOriginalAmount] = useState(0);
 
   useEffect(() => {
     getCartAmount()
       .then((total) => setTotal(total))
       .catch((err) => console.error("Error fetching cart amount:", err));
-
+    getCartTotalWeight()
+      .then((totalWeight) => setTotalWeight(totalWeight))
+      .catch((err) =>
+        console.error("Error fetching cart total weight:", err)
+      );
     getCartOriginalAmount()
       .then((originalAmount) => setOriginalAmount(originalAmount))
       .catch((err) =>
@@ -62,6 +68,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
       quantity: item.quantity,
       price: item.product.price,
       mrp:item.product.mrp,
+      weight:item.product.weight,
       size: item.size,
       color: item.color,
       image: item.product.image,
@@ -228,7 +235,7 @@ function CartSlider({ cartVisible, setCartVisible }) {
       {/* Bottom Section */}
       {!isLoading && !error && (
         <div className="p-5">
-          <CartTotal total={total} originalAmount={originalAmount} totalNoOfItems={noOfItems}/>
+          <CartTotal total={total} totalWeight={totalWeigth} originalAmount={originalAmount} />
           <div className="w-full text-end mt-5">
          
             <button
