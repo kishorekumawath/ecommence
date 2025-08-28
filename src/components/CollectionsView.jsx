@@ -239,6 +239,8 @@ function CollectionsView() {
   useEffect(() => {
     // Check if collections are already in sessionStorage
     const storedCollections = sessionStorage.getItem("collectionsData");
+    
+
 
     if (storedCollections) {
       setCachedCollections(JSON.parse(storedCollections));
@@ -246,7 +248,7 @@ function CollectionsView() {
       // Fetch collections only if not already loaded
       fetchCollections();
     }
-    console.log("CollectionsData:", CollectionsData);
+  
   }, [fetchCollections, CollectionsData]);
 
   // Update cache when CollectionsData changes

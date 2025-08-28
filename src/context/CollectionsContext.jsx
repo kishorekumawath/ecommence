@@ -89,6 +89,8 @@ export const CollectionsProvider = ({ children }) => {
         },
       });
 
+
+
       if (!response.ok) {
         throw new Error("Failed to fetch collections");
       }
@@ -96,6 +98,7 @@ export const CollectionsProvider = ({ children }) => {
       const { success, data } = await response.json();
       // console.log("API Response - success:", success);
       // console.log("API Response - data:", data);
+            console.log("======?Fetch response received:", data);
 
       if (!success) {
         throw new Error("API returned unsuccessful response");
