@@ -549,7 +549,7 @@
 
 // export default PlaceOrder;
 
-import React, { useState, useEffect,useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/NewAuthContext";
 import { useCartContext } from "../context/CartContext";
@@ -574,10 +574,10 @@ const PlaceOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { clearCart} = useCartContext();
+  const { clearCart } = useCartContext();
   const cartSummary = location.state?.cartSummary;
   const isBuyNow = location.state?.isBuyNow;
-    const [shippingCost, setShippingCost] = useState(0);
+  const [shippingCost, setShippingCost] = useState(0);
 
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [isLoading, setIsLoading] = useState(false);
@@ -588,7 +588,8 @@ const PlaceOrder = () => {
 
   const total = cartSummary?.summary.totalAmount;
   const totalNoOfItems = cartSummary?.summary.noOfItems;
-  const totalDiscount =  cartSummary?.summary.originalAmount - cartSummary?.summary.totalAmount;
+  const totalDiscount =
+    cartSummary?.summary.originalAmount - cartSummary?.summary.totalAmount;
   const originalPrice = total + totalDiscount;
   const discountPercentage =
     originalPrice > 0 ? Math.round((totalDiscount / originalPrice) * 100) : 0;
@@ -925,15 +926,26 @@ const PlaceOrder = () => {
       customerId: user?._id,
       customerName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
       totalAmount: cartSummary.summary.finalTotal + CODFee,
-      qikinkValue: (Math.round((cartSummary.summary.finalTotal + shippingCost + shippingCost*0.18 + cartSummary.summary.finalTotal*0.05)*100)/100).toFixed(2),
+      qikinkValue:
+        paymentMethod === "RAZORPAY"
+          ? Math.round(
+              cartSummary.summary.finalTotal +
+                shippingCost +
+                shippingCost * 0.18 +
+                cartSummary.summary.finalTotal * 0.05
+            )
+          : Math.round(
+              cartSummary.summary.finalTotal +
+                shippingCost +
+                shippingCost * 0.18 +
+                cartSummary.summary.finalTotal * 0.05
+            ) + 40,
       gateway: paymentMethod,
       gift_wrap: 0,
       rush_order: 0,
       orderType: isBuyNow ? "BUY_NOW" : "CART_CHECKOUT",
     };
   };
-
-    
 
   const handleCODPayment = async (orderPayload) => {
     try {
@@ -1053,7 +1065,7 @@ const PlaceOrder = () => {
       };
 
       const razorpayInstance = new window.Razorpay(options);
-      
+
       razorpayInstance.open();
     } catch (error) {
       setError(error.message || "An error occurred. Please try again.");
@@ -1110,28 +1122,24 @@ const PlaceOrder = () => {
       currency: "INR",
     }).format(amount);
   };
-  
 
-const calculateShippingCost = () => {
-  if (!Array.isArray(cartSummary?.items)) return;
+  const calculateShippingCost = () => {
+    if (!Array.isArray(cartSummary?.items)) return;
 
-  // Calculate total weight - weight is directly on item, not item.product
-  const weight = cartSummary.items.reduce((total, item) => {
-    const itemWeight = item.weight ?? 0; // Use item.weight instead of item.product?.weight
-    return total + item.quantity * itemWeight;
-  }, 0);
+    // Calculate total weight - weight is directly on item, not item.product
+    const weight = cartSummary.items.reduce((total, item) => {
+      const itemWeight = item.weight ?? 0; // Use item.weight instead of item.product?.weight
+      return total + item.quantity * itemWeight;
+    }, 0);
 
+    const calculatedShippingCost = Math.ceil(weight / 500) * 54;
 
-  const calculatedShippingCost = Math.ceil(weight / 500) * 54;
-  
-  setShippingCost(calculatedShippingCost);
-};
+    setShippingCost(calculatedShippingCost);
+  };
 
   useEffect(() => {
     calculateShippingCost();
   }, [cartSummary]);
-
-
 
   return (
     <form
@@ -1406,37 +1414,31 @@ const calculateShippingCost = () => {
                   </p>
                 </div>
               )}
-                <div className="flex justify-between">
-                  <p className="font-medium">
-                    Shipping Cost
-                  </p>
-                  <p className="text-red-600">
-                    -{formatCurrency(shippingCost)}
-                  </p>
-                </div>
+              <div className="flex justify-between">
+                <p className="font-medium">Shipping Cost</p>
+                <p className="text-red-600">-{formatCurrency(shippingCost)}</p>
+              </div>
 
-                <hr />
+              <hr />
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>₹{cartSummary?.summary.totalAmount}</span>
               </div>
-              
-              
-            { paymentMethod === "COD" ? (
-                  <div className="flex justify-between">
-                <span>Extra Charges</span>
-                <span>₹{CODFee}</span>
-              </div>):""  
-              
-            }
-                   <hr />
-            <div className="flex justify-between text-green-600">
+
+              {paymentMethod === "COD" ? (
+                <div className="flex justify-between">
+                  <span>Extra Charges</span>
+                  <span>₹{CODFee}</span>
+                </div>
+              ) : (
+                ""
+              )}
+              <hr />
+              <div className="flex justify-between text-green-600">
                 <span>You Saved : </span>
-                <span>₹{Math.round(totalDiscount+shippingCost)}</span>
+                <span>₹{Math.round(totalDiscount + shippingCost)}</span>
               </div>
 
-       
-              
               <div className="flex justify-between font-semibold mt-2 pt-2 border-t text-xl">
                 <span>Total</span>
                 <span>₹{cartSummary?.summary.finalTotal + CODFee}</span>
@@ -1480,7 +1482,6 @@ const calculateShippingCost = () => {
             <div className="flex justify-center items-center ">
               <img src={assets.payments_options} alt="" className="h-20 w-40" />
             </div>
-
 
             <button
               type="submit"
