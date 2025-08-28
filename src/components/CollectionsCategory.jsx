@@ -102,7 +102,7 @@ const CollectionsCategory = () => {
           {/* Dynamic Colored Overlay on Hover */}
           <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 ${
             isHovered 
-              ? 'from-blue-500/10 via-purple-500/5 to-pink-500/10 opacity-100' 
+              ? 'from-orange-500/10 via-black-500/5 to-black-500/10 opacity-100' 
               : 'from-transparent to-transparent opacity-0'
           }`}></div>
 
