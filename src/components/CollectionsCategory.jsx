@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Sparkles, ArrowRight, Grid, Heart, Star, Zap, TrendingUp } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useCollections } from '../context/CollectionsContext';
 import SparkleButton from './Buttons/SparkleButton';
 import TabContainer from './Buttons/TabSelector';
@@ -9,121 +9,98 @@ const CollectionsCategory = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [cachedCollections, setCachedCollections] = useState({});
-  // New state to trigger card animations
-  const [animateCards, setAnimateCards] = useState(false); 
+  const [animateCards, setAnimateCards] = useState(false);
 
-  const { CollectionsData, error, fetchCollections } = useCollections();
+  const { CollectionsData, fetchCollections } = useCollections();
   const tabs = ["Men", "Women"];
 
+  // Initial data loading
   useEffect(() => {
-    // Check if collections are already in sessionStorage
     const storedCollections = sessionStorage.getItem("collectionsData");
     if (storedCollections) {
       setCachedCollections(JSON.parse(storedCollections));
+      setIsLoading(false);
     } else if (!CollectionsData) {
-      // Fetch collections only if not already loaded
       fetchCollections();
     }
   }, [fetchCollections, CollectionsData]);
 
+  // Cache collections data
   useEffect(() => {
-    sessionStorage.setItem("previousPath", location.pathname);
     if (CollectionsData) {
-      sessionStorage.setItem(
-        "collectionsData",
-        JSON.stringify(CollectionsData)
-      );
+      sessionStorage.setItem("collectionsData", JSON.stringify(CollectionsData));
       setCachedCollections(CollectionsData);
+      setIsLoading(false);
     }
   }, [CollectionsData]);
 
+  // Trigger card animations on tab change
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Effect to trigger animation when activeTab changes
-  useEffect(() => {
-    // Only animate if collections are loaded and not in initial loading state
     if (!isLoading && cachedCollections[activeTab]) {
       setAnimateCards(true);
-      // Reset animateCards after the animation duration to allow re-triggering
-      const animationResetTimer = setTimeout(() => {
-        setAnimateCards(false);
-      }, 800); 
-      return () => clearTimeout(animationResetTimer);
+      const timer = setTimeout(() => setAnimateCards(false), 800);
+      return () => clearTimeout(timer);
     }
   }, [activeTab, isLoading, cachedCollections]);
 
   const CategoryCard = ({ category, index, shouldAnimate }) => {
     const isHovered = hoveredCard === category.id;
-    
-    // Calculate animation delay for staggered effect
-    const animationDelay = `${index * 120}ms`; 
+    const animationDelay = `${index * 120}ms`;
 
     return (
       <div 
         className={`group relative overflow-hidden cursor-pointer rounded-3xl ${
           shouldAnimate ? 'animate-smooth-enter' : ''
         }`}
-        style={shouldAnimate ? { animationDelay } : {}} // Apply delay only when animating
+        style={shouldAnimate ? { animationDelay } : {}}
         onMouseEnter={() => setHoveredCard(category.id)}
         onMouseLeave={() => setHoveredCard(null)}
       >
-        {/* Main Card Container with Enhanced Hover Transform */}
         <div className={`relative w-full h-full min-h-[380px] sm:min-h-[420px] md:min-h-[480px] lg:min-h-[620px] overflow-hidden rounded-3xl shadow-lg transition-all duration-500 ease-out transform ${
           isHovered 
             ? 'scale-[1.02] shadow-2xl shadow-black/20 -translate-y-2' 
             : 'scale-100 shadow-lg hover:shadow-xl'
         }`}>
           
-          {/* Background Image with Enhanced Zoom and Brightness */}
-          <div className="absolute inset-0">
-            <img 
-              src={category.thumbnail}
-              alt={category.name}
-              className={`w-full h-full object-cover transition-all duration-700 ease-out ${
-                isHovered 
-                  ? 'scale-110 brightness-110 contrast-105' 
-                  : 'scale-100 brightness-100 contrast-100'
-              }`}
-            />
-          </div>
+          {/* Background Image */}
+       <div className="absolute inset-0">
+    <img 
+        src={category.thumbnail}
+        alt={category.name}
+        className={`w-full h-full object-cover transition-all duration-1000 ease-out ${
+            isHovered 
+            ? 'scale-110 brightness-110 contrast-105' 
+            : 'scale-100 brightness-100 contrast-100'
+        }`}
+    />
+</div>
 
-          {/* Enhanced Gradient Overlays with Animation */}
+          {/* Gradient Overlays */}
           <div className={`absolute inset-0 bg-gradient-to-t transition-all duration-500 ${
             isHovered 
               ? 'from-black/50 via-black/10 to-transparent' 
               : 'from-black/70 via-black/20 to-transparent'
           }`}></div>
           
-          {/* Dynamic Colored Overlay on Hover */}
           <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 ${
             isHovered 
               ? 'from-orange-500/10 via-black-500/5 to-black-500/10 opacity-100' 
               : 'from-transparent to-transparent opacity-0'
           }`}></div>
 
-          {/* Floating Badge with Enhanced Animation */}
-          <div className={`absolute  right-0 transition-all duration-500 ${
+          {/* Floating Badge */}
+          <div className={`absolute right-0 transition-all duration-500 ${
             isHovered ? 'transform scale-110 translate-y-1' : 'transform scale-100 translate-y-0'
           }`}>
             <SparkleButton />
           </div>
 
-          {/* Category Content with Staggered Animations */}
+          {/* Category Content */}
           <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-6 md:p-8">
-            
-            {/* Top section */}
             <div className="flex justify-between items-start">
-              <div className="space-y-2">
-                {/* Add any top content here */}
-              </div>
+              <div className="space-y-2"></div>
             </div>
 
-            {/* Bottom section with Enhanced Title Animation */}
             <div className="space-y-3 sm:space-y-4">
               <div className={`transition-all duration-500 ${
                 isHovered ? 'transform translate-y-[-8px]' : 'transform translate-y-0'
@@ -136,7 +113,6 @@ const CollectionsCategory = () => {
                   {category.name}
                 </h3>
                 
-                {/* Enhanced Subtitle with Slide Animation */}
                 <div className={`text-white/80 font-medium text-sm sm:text-base transition-all duration-500 delay-100 ${
                   isHovered 
                     ? 'transform translate-x-2 text-white/100' 
@@ -153,16 +129,14 @@ const CollectionsCategory = () => {
             </div>
           </div>
 
-
-
-          {/* Shimmer Effect on Hover */}
+          {/* Shimmer Effect */}
           <div className={`absolute inset-0 transition-all duration-700 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}>
             <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform skew-x-[-25deg] animate-shimmer"></div>
           </div>
 
-          {/* Floating Particles Effect (Optional) */}
+          {/* Floating Particles */}
           <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}>
@@ -186,14 +160,14 @@ const CollectionsCategory = () => {
 
   const LoadingSkeleton = () => (
     <div className="animate-pulse">
-      <div className="bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 rounded-3xl shadow-lg min-h-[280px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[420px]">
+      <div className="bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 rounded-3xl shadow-lg min-h-[380px] sm:min-h-[420px] md:min-h-[480px] lg:min-h-[620px]">
       </div>
     </div>
   );
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+      <div className="bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           {/* Header Skeleton */}
           <div className="text-center mb-12 sm:mb-16">
@@ -207,8 +181,8 @@ const CollectionsCategory = () => {
             <div className="h-12 sm:h-16 bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl w-24 sm:w-32 md:w-40 animate-pulse shadow-lg"></div>
           </div>
           
-          {/* 2x2 Grid Skeleton */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
+          {/* Grid Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
             <LoadingSkeleton />
             <LoadingSkeleton />
             <LoadingSkeleton />
@@ -220,8 +194,7 @@ const CollectionsCategory = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 relative">
-      
+    <div className="bg-gray-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
         
         {/* Header */}
@@ -243,16 +216,15 @@ const CollectionsCategory = () => {
           />
         </div>
 
-        {/* 2x2 Categories Grid */}
-        <div className="relative max-w-6xl mx-auto">
-          {/* Add a key to the div containing the grid to force re-render and re-trigger animations */}
-          <div key={activeTab} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+        {/* Collections Grid */}
+        <div className="relative mx-auto">
+          <div key={activeTab} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {cachedCollections[activeTab]?.slice(0, 4).map((category, index) => (
               <CategoryCard 
                 key={category.id} 
                 category={category} 
                 index={index}
-                shouldAnimate={animateCards} // Pass the animation state
+                shouldAnimate={animateCards}
               />
             )) || (
               <div className="col-span-full text-center py-16 sm:py-20">
@@ -262,7 +234,7 @@ const CollectionsCategory = () => {
           </div>
         </div>
 
-        {/* Show More Button (if more than 4 items) */}
+        {/* Show More Button */}
         {cachedCollections[activeTab]?.length > 4 && (
           <div className="text-center mt-8 sm:mt-12">
             <button className="bg-white text-gray-800 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base hover:bg-gray-50 shadow-lg border border-gray-200 transition-colors duration-300">
@@ -274,7 +246,6 @@ const CollectionsCategory = () => {
       </div>
 
       <style>{`
-        /* Hardware-accelerated smooth animation */
         @keyframes smoothEnter {
           0% { 
             opacity: 0; 
@@ -292,14 +263,12 @@ const CollectionsCategory = () => {
           }
         }
         
-        /* Apply the enhanced animation */
         .animate-smooth-enter {
           animation: smoothEnter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           backface-visibility: hidden;
           perspective: 1000px;
         }
 
-        /* Shimmer animation for hover effect */
         @keyframes shimmer {
           0% {
             transform: translateX(-100%) skewX(-25deg);
@@ -313,7 +282,6 @@ const CollectionsCategory = () => {
           animation: shimmer 1.5s ease-out;
         }
 
-        /* Floating particles animation */
         @keyframes float {
           0%, 100% {
             transform: translateY(0px) rotate(0deg);
@@ -329,7 +297,6 @@ const CollectionsCategory = () => {
           animation: float 3s ease-in-out infinite;
         }
 
-        /* Text glow effect */
         .text-shadow-glow {
           text-shadow: 
             0 0 10px rgba(255, 255, 255, 0.3),
@@ -345,33 +312,7 @@ const CollectionsCategory = () => {
         .animate-pulse {
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        
-        /* Ensure proper aspect ratios on different screen sizes */
-        @media (max-width: 640px) {
-          .grid > div {
-            min-height: 280px;
-          }
-        }
-        
-        @media (min-width: 640px) and (max-width: 768px) {
-          .grid > div {
-            min-height: 320px;
-          }
-        }
-        
-        @media (min-width: 768px) and (max-width: 1024px) {
-          .grid > div {
-            min-height: 380px;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .grid > div {
-            min-height: 420px;
-          }
-        }
 
-        /* Reduce motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
           .animate-smooth-enter,
           .animate-shimmer,

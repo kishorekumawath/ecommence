@@ -6,6 +6,19 @@ export function Title({ text1, text2 }) {
       <p className='text-black'>{text1}<span className='text-orange-300 font-medium'>{text2}</span></p>
       <p className='w-8 sm:w-12 h-[1px] sm:h-[2px] bg-gray-700'></p>
     </div>
+
+  )
+}
+
+export function BoldTitle({ text1, text2 }) {
+  return (
+      <div className="text-center mb-6 sm:mb-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-800 mb-3 sm:mb-4 tracking-tight">
+            {text1}
+            <span className="bg-gradient-to-r from-orange-200 to-orange-400 bg-clip-text text-transparent"> {text2}</span>
+          </h1>
+
+        </div>
   )
 }
 
