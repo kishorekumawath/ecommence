@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, forwardRef } from 'react';
 
 const TabContainer = ({ tabs, activeTab, onTabChange }) => {
   const [indicatorStyle, setIndicatorStyle] = useState({});
@@ -63,20 +63,8 @@ const TabContainer = ({ tabs, activeTab, onTabChange }) => {
   return (
     <div 
       ref={containerRef}
-      className=" w-[100%] relative flex items-center gap-2 p-2 lg:p-4 bg-white rounded-3xl border border-gray-200"
+      className="w-[100%] relative flex items-center gap-2 p-2 lg:p-4 bg-white rounded-3xl border border-gray-200"
     >
-      {/* Sliding background indicator - now matches exact tab dimensions */}
-      <div 
-        className="absolute bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl shadow-lg transition-all duration-300 ease-out border border-slate-700/50"
-        style={{
-          left: `${indicatorStyle.left}px`,
-          width: `${indicatorStyle.width}px`,
-          top: `${indicatorStyle.top}px`,
-          height: `${indicatorStyle.height}px`,
-          opacity: indicatorStyle.opacity || 0
-        }}
-      />
-      
       {tabs.map((tab) => (
         <TabButton
           key={tab}
@@ -94,12 +82,14 @@ const TabContainer = ({ tabs, activeTab, onTabChange }) => {
   );
 };
 
-const TabButton = ({ tab, isActive, onClick, ...props }) => (
+// Use forwardRef to properly handle the ref being passed from the parent
+const TabButton = forwardRef(({ tab, isActive, onClick, ...props }, ref) => (
   <button
     {...props}
+    ref={ref}
     onClick={() => onClick(tab)}
     className={`
-      relative flex-1  py-6 lg:py-8 font-medium rounded-2xl
+      relative flex-1 py-6 lg:py-8 font-medium rounded-2xl
       transition-all duration-300 ease-out
       transform active:scale-95
       focus:outline-none focus:ring-offset-2 focus:ring-slate-500
@@ -119,6 +109,9 @@ const TabButton = ({ tab, isActive, onClick, ...props }) => (
       <div className="absolute inset-0 bg-white/40 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-200" />
     )}
   </button>
-);
+));
+
+// Add displayName for better debugging
+TabButton.displayName = 'TabButton';
 
 export default TabContainer;

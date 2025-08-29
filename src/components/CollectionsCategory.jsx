@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { useCollections } from '../context/CollectionsContext';
 import SparkleButton from './Buttons/SparkleButton';
 import TabContainer from './Buttons/TabSelector';
+import {  useNavigate } from 'react-router-dom';
 
 const CollectionsCategory = () => {
   const [activeTab, setActiveTab] = useState('Men');
@@ -13,7 +14,7 @@ const CollectionsCategory = () => {
 
   const { CollectionsData, fetchCollections } = useCollections();
   const tabs = ["Men", "Women"];
-
+  const navigate = useNavigate(); 
   // Initial data loading
   useEffect(() => {
     const storedCollections = sessionStorage.getItem("collectionsData");
@@ -43,12 +44,12 @@ const CollectionsCategory = () => {
     }
   }, [activeTab, isLoading, cachedCollections]);
 
-  const CategoryCard = ({ category, index, shouldAnimate }) => {
+  const CategoryCard = ({ category, index, shouldAnimate,onClick }) => {
     const isHovered = hoveredCard === category.id;
     const animationDelay = `${index * 120}ms`;
 
     return (
-      <div 
+      <div onClick={onClick}
         className={`group relative overflow-hidden cursor-pointer rounded-3xl ${
           shouldAnimate ? 'animate-smooth-enter' : ''
         }`}
@@ -58,8 +59,8 @@ const CollectionsCategory = () => {
       >
         <div className={`relative w-full h-full min-h-[380px] sm:min-h-[420px] md:min-h-[480px] lg:min-h-[620px] overflow-hidden rounded-3xl shadow-lg transition-all duration-500 ease-out transform ${
           isHovered 
-            ? 'scale-[1.02] shadow-2xl shadow-black/20 -translate-y-2' 
-            : 'scale-100 shadow-lg hover:shadow-xl'
+            ? ' shadow-2xl shadow-black/20 ' 
+            : ' shadow-lg hover:shadow-xl'
         }`}>
           
           {/* Background Image */}
@@ -69,8 +70,8 @@ const CollectionsCategory = () => {
         alt={category.name}
         className={`w-full h-full object-cover transition-all duration-1000 ease-out ${
             isHovered 
-            ? 'scale-110 brightness-110 contrast-105' 
-            : 'scale-100 brightness-100 contrast-100'
+            ? ' brightness-110 contrast-105' 
+            : 'brightness-100 contrast-100'
         }`}
     />
 </div>
@@ -89,9 +90,7 @@ const CollectionsCategory = () => {
           }`}></div>
 
           {/* Floating Badge */}
-          <div className={`absolute right-0 transition-all duration-500 ${
-            isHovered ? 'transform scale-110 translate-y-1' : 'transform scale-100 translate-y-0'
-          }`}>
+          <div className={`absolute right-0 transition-all duration-500`}>
             <SparkleButton />
           </div>
 
@@ -102,27 +101,25 @@ const CollectionsCategory = () => {
             </div>
 
             <div className="space-y-3 sm:space-y-4">
-              <div className={`transition-all duration-500 ${
-                isHovered ? 'transform translate-y-[-8px]' : 'transform translate-y-0'
-              }`}>
+              <div className={`transition-all duration-500 `}>
                 <h3 className={`font-black text-white tracking-tight leading-none text-2xl sm:text-3xl md:text-4xl lg:text-5xl transition-all duration-500 ${
                   isHovered 
-                    ? 'text-shadow-glow transform scale-105' 
-                    : 'transform scale-100'
+                    ? 'text-shadow-glow transform ' 
+                    : 'transform '
                 }`}>
                   {category.name}
                 </h3>
                 
                 <div className={`text-white/80 font-medium text-sm sm:text-base transition-all duration-500 delay-100 ${
                   isHovered 
-                    ? 'transform translate-x-2 text-white/100' 
-                    : 'transform translate-x-0 text-white/80'
+                    ? ' text-white/100' 
+                    : ' text-white/80'
                 }`}>
                   Discover Collection
                   <ArrowRight className={`inline ml-2 w-4 h-4 transition-all duration-500 ${
                     isHovered 
-                      ? 'transform translate-x-2 opacity-100' 
-                      : 'transform translate-x-0 opacity-70'
+                      ? ' opacity-100' 
+                      : ' opacity-70'
                   }`} />
                 </div>
               </div>
@@ -225,6 +222,11 @@ const CollectionsCategory = () => {
                 category={category} 
                 index={index}
                 shouldAnimate={animateCards}
+                      onClick={() => {
+                            navigate(
+                              `/collection/${activeTab}/${category.name}`
+                            );
+                          }}
               />
             )) || (
               <div className="col-span-full text-center py-16 sm:py-20">
