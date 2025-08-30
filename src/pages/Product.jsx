@@ -774,12 +774,24 @@ function Product() {
 
             <hr className="mt-8 sm:w-4/5" />
             {/* Product features/details list */}
-            <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
-              <p>Net Weight : {product?.weight} gms</p>
-              {product?.details?.map((item, index) => (
-                <p key={index}>{item}</p>
-              ))}
-            </div>
+          {/* Product features/details list */}
+<div className="mt-5 bg-gray-50 rounded-lg p-4">
+  <dl className="text-sm text-gray-700 space-y-3">
+    <div className="flex">
+      <dt className="w-32 font-medium text-gray-900">Net Weight</dt>
+      <dd>{product?.weight} gms</dd>
+    </div>
+    {product?.details?.map((item, index) => {
+      const [key, value] = item.split(":");
+      return (
+        <div key={index} className="flex">
+          <dt className="w-32 font-medium text-gray-900">{key.trim()}</dt>
+          <dd>{value?.trim()}</dd>
+        </div>
+      );
+    })}
+  </dl>
+</div>
           </div>
           {/* Secondary Action Buttons: Like (Wishlist) and Share */}
         </div>
@@ -793,77 +805,157 @@ function Product() {
       )}
 
       {/* ------------------ Description, Additional Information & Reviews Sections --------------------*/}
-      <div className="mt-10">
-        {/* Section Navigation Tabs */}
-        <div className="flex w-full sm:w-auto overflow-hidden">
-          {/* Description Tab */}
-          <p
-            onClick={() => setSelectedBottomSection(bottomSection[0])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[0]
-              ? "font-semibold"
-              : "font-light"
-              } cursor-pointer`}
-          >
-            Description
-          </p>
-          {/* Additional Information Tab */}
-          <p
-            onClick={() => setSelectedBottomSection(bottomSection[1])}
-            className={`w-full sm:w-auto border px-2 py-2 text-sm ${selectedBottomSection === bottomSection[1]
-              ? "font-semibold"
-              : "font-light"
-              } cursor-pointer`}
-          >
-            Additional Information
-          </p>
-          {/* Reviews Tab */}
-          <div
-            onClick={() => setSelectedBottomSection(bottomSection[2])}
-            className={`sm:flex-row flex-col w-full inline-flex items-center justify-center cursor-pointer sm:w-auto border px-2 py-2`}
-          >
-            <p
-              className={`px-2 text-sm ${selectedBottomSection === bottomSection[2]
-                ? "font-semibold"
-                : "font-light"
-                }`}
-            >
-              Reviews
-            </p>
-            <div className="flex items-center">
-              <img className="mr-2 h-4 w-4" src={assets.star_icon} alt="star" />{" "}
+ <div className="mt-12">
+      {/* Enhanced Section Navigation Tabs */}
+      <div className="bg-gray-50 p-1 rounded-xl inline-flex w-full sm:w-auto overflow-hidden shadow-sm">
+        {/* Description Tab */}
+        <button
+          onClick={() => setSelectedBottomSection(bottomSection[0])}
+          className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
+            selectedBottomSection === bottomSection[0]
+              ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
+              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+          }`}
+        >
+          Description
+        </button>
+
+        {/* Additional Information Tab */}
+        <button
+          onClick={() => setSelectedBottomSection(bottomSection[1])}
+          className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
+            selectedBottomSection === bottomSection[1]
+              ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
+              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+          }`}
+        >
+          Additional Info
+        </button>
+
+        {/* Reviews Tab */}
+        <button
+          onClick={() => setSelectedBottomSection(bottomSection[2])}
+          className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
+            selectedBottomSection === bottomSection[2]
+              ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
+              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+          } flex items-center justify-center gap-2`}
+        >
+          <span>Reviews</span>
+          <div className="flex items-center gap-1">
+            <img 
+              className="w-4 h-4" 
+              src={assets.star_icon} 
+              alt="star" 
+            />
+            <span className={`text-xs font-semibold ${
+              selectedBottomSection === bottomSection[2] 
+                ? "text-amber-600" 
+                : "text-gray-500"
+            }`}>
               {overAllReview[0]}
+            </span>
+          </div>
+        </button>
+      </div>
+
+      {/* Enhanced Content Container */}
+      <div className="mt-2 w-full">
+        {/* Description Content */}
+        {selectedBottomSection === bottomSection[0] && (
+          <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">Product Description</h3>
+            </div>
+          <div className="px-6 py-6 space-y-2">
+  <ul className="list-disc list-inside space-y-2 text-gray-700 leading-relaxed">
+    {product.description
+      ?.split(".")
+      .filter(item => item.trim())
+      .map((item, index) => (
+        <li key={index}>
+          {item.trim()}
+        </li>
+      ))}
+  </ul>
+</div>
+          </div>
+        )}
+
+        {/* Additional Information Content */}
+        {selectedBottomSection === bottomSection[1] && (
+         <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+  <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+    <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
+  </div>
+
+  <div className="px-6 py-6 space-y-3">
+    {product.addInfo
+      ?.split("\n")
+      .filter(line => line.trim())
+      .map((line, index) => {
+        const [heading, ...rest] = line.split(":");
+        return (
+          <p key={index} className="text-gray-700 leading-relaxed">
+            <span className="font-semibold text-gray-900">{heading.trim()}:</span>{" "}
+            {rest.join(":").trim()}
+          </p>
+        );
+      })}
+  </div>
+</div>
+        )}
+
+        {/* Reviews Content */}
+        {selectedBottomSection === bottomSection[2] && (
+          <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">Customer Reviews</h3>
+                <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full shadow-sm">
+                  <img className="w-4 h-4" src={assets.star_icon} alt="star" />
+                  <span className="font-semibold text-amber-600">{overAllReview[0]}</span>
+                  <span className="text-gray-500 text-sm">({product.reviews?.length || 0} reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
+              {product.reviews?.length > 0 ? (
+                product.reviews.map((review, index) => (
+                  <ReviewBox key={index} review={review} />
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <img className="w-8 h-8 opacity-50" src={assets.star_dull_icon} alt="no reviews" />
+                  </div>
+                  <p className="text-gray-500">No reviews yet</p>
+                  <p className="text-sm text-gray-400">Be the first to review this product</p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-
-        {/* Content Container for Selected Section */}
-        <div className="w-full">
-          {/* Description Content */}
-          {selectedBottomSection === bottomSection[0] && (
-            <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500 w-full">
-              {product.description?.split(".").map((item, index) => (
-                <p key={index}>{item}</p>
-              ))}
-            </div>
-          )}
-
-          {/* Additional Information Content */}
-          {selectedBottomSection === bottomSection[1] && (
-            <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
-              <p>{product.addInfo}</p>
-            </div>
-          )}
-
-          {/* Reviews Content */}
-          {selectedBottomSection === bottomSection[2] && (
-            <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
-              {product.reviews?.map((review, index) => (
-                <ReviewBox key={index} review={review} />
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
+
+      {/* Add this CSS for animations */}
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+    </div>
 
       {/* ------------------ Related Products Section --------------------*/}
       <div className="mt-10">
