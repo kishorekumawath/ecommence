@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Title } from "./Title";
+import { BoldTitle, Title } from "./Title";
 
 const PolicyLayout = ({ children }) => {
   return (
@@ -138,7 +138,7 @@ const ShippingPolicy = () => {
   return (
     <PolicyLayout>
       <div className="mb-2 text-2xl">
-        <Title text1={"Shipping"} text2={" Policy"} />
+        <BoldTitle text1={"Shipping"} text2={" Policy"} />
       </div>
 
       <div className="space-y-8">

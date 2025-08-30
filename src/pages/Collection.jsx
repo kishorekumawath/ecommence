@@ -974,7 +974,7 @@ const onPriceToggle = (priceRange) => {
             <CategorySkeleton />
           </div>
           <div className="border border-gray-300 pl-5 py-3 mt-6">
-            <p className="mb-3 text-sm font-medium">TYPE</p>
+            <p className="mb-3 text-sm font-medium">FANDOM</p>
             <SubCategorySkeleton />
           </div>
         </div>
@@ -1007,7 +1007,7 @@ const onPriceToggle = (priceRange) => {
           className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
             } sm:block `}
         >
-          <p className="mb-3  text-sm font-medium">CATEGORIES</p>
+          <p className="mb-3  text-sm font-medium">GENDER</p>
 
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {availablesCategory.map((category, index) => {
@@ -1032,7 +1032,7 @@ const onPriceToggle = (priceRange) => {
           className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"
             } sm:block `}
         >
-          <p className="mb-3  text-sm font-medium">TYPE</p>
+          <p className="mb-3  text-sm font-medium">YOUR FANDOM</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             {getDisplayedSubCategories().map((subCategory, index) => {
               return (

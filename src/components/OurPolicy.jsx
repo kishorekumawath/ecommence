@@ -7,7 +7,7 @@ import {
   HeadphonesIcon,
   BadgeCheck,
 } from "lucide-react";
-import { Title } from "./Title";
+import { BoldTitle, Title } from "./Title";
 import { Link } from "react-router-dom";
 
 const PolicyHighlight = ({ icon: Icon, title, description }) => (
@@ -81,9 +81,9 @@ const PolicyHighlights = () => {
       <div className="max-w-6xl mx-auto">
         
         {/* Header section */}
-        <div className="text-center mb-12">
-          <div className="text-3xl md:text-4xl mb-4">
-            <Title text1={"Our"} text2={" Policies"} />
+        <div className="text-center mb-6">
+          <div className="text-3xl md:text-4xl mb-2">
+            <BoldTitle text1={"Our"} text2={" Policies"} />
           </div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             We believe in making your shopping experience as smooth as possible
