@@ -1133,7 +1133,7 @@ const onPriceToggle = (priceRange) => {
           {isProductsLoading ? (
             <ProductItemSkeleton />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5   gap-4 gap-y-6 place-items-start">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4   gap-4 gap-y-6 place-items-start">
               {filteredProducts.length === 0 ? (
                 products.length === 0 || filteredProducts.length === 0 ? (
                   <div className="flex items-center justify-center h-64 w-full col-span-full">
