@@ -180,23 +180,88 @@ function Product() {
    * @param {function} props.onColorSelect - Callback function when a color is selected.
    * @returns {JSX.Element} The ColorSelector component.
    */
-  const ColorSelector = ({ colors = [], selectedColor, onColorSelect }) => (
+  // const ColorSelector = ({ colors = [], selectedColor, onColorSelect }) => (
+  //   <div>
+  //     <p className="mt-5 text-gray-500 md:w-4/5">Select Color</p>
+  //     <div className="flex gap-4 my-4">
+  //       {colors.map((colorCode) => (
+  //         <button
+  //           key={colorCode}
+  //           onClick={() => onColorSelect(colorCode)}
+  //           // Dynamically apply background color and ring based on selection
+  //           className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
+  //             }`}
+  //           aria-label={`Select color ${colorCode}`}
+  //         />
+  //       ))}
+  //     </div>
+  //   </div>
+  // );
+
+  const ColorSelector = ({ colors = [], selectedColor, onColorSelect }) => {
+  const [hoveredColor, setHoveredColor] = useState(null);
+
+  const handleKeyDown = (event, colorCode) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onColorSelect(colorCode);
+    }
+  };
+
+  return (
     <div>
-      <p className="mt-5 text-gray-500 md:w-4/5">Select Color</p>
-      <div className="flex gap-4 my-4">
+      <p className="mt-5 text-gray-700 font-medium md:w-4/5">Select Color</p>
+      <div className="flex gap-4 my-4 flex-wrap">
         {colors.map((colorCode) => (
-          <button
-            key={colorCode}
-            onClick={() => onColorSelect(colorCode)}
-            // Dynamically apply background color and ring based on selection
-            className={`border h-10 w-10 ${colorMap[colorCode]} rounded-md ${selectedColor === colorCode ? "ring-2 ring-orange-300" : ""
-              }`}
-            aria-label={`Select color ${colorCode}`}
-          />
+          <div key={colorCode} className="relative group">
+            <button
+              onClick={() => onColorSelect(colorCode)}
+              onKeyDown={(e) => handleKeyDown(e, colorCode)}
+              onMouseEnter={() => setHoveredColor(colorCode)}
+              onMouseLeave={() => setHoveredColor(null)}
+              className={`
+                border h-10 w-10 ${colorMap[colorCode]} rounded-md 
+                transition-all duration-200 ease-in-out
+                transform hover:scale-110 hover:shadow-lg
+              
+                ${selectedColor === colorCode 
+                  ? "ring-2 ring-orange-300 border-orange-400 shadow-lg" 
+                  : "border-gray-200 hover:border-gray-400"
+                }
+                ${colorCode === 'white' ? 'border-gray-300' : ''}
+                relative overflow-hidden
+              `}
+              aria-label={`Select color ${colorCode}`}
+              aria-pressed={selectedColor === colorCode}
+              title={colorCode}
+            >
+              {/* Selection indicator */}
+              {selectedColor === colorCode && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg 
+                    className={`w-4 h-4 ${colorCode === 'white' || colorCode === 'yellow' ? 'text-gray-800' : 'text-white'} drop-shadow-sm`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    strokeWidth={3}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </div>
+              )}
+              
+              {/* Hover effect overlay */}
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-md" />
+            </button>
+            
+          
+          </div>
         ))}
       </div>
+    
     </div>
   );
+};
 
   /**
    * Determines and returns the stock status message and styling.
@@ -734,14 +799,18 @@ function Product() {
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 my-2 p-2 rounded-md">
               {product?.size?.map((item, index) => (
+               
                 <button
-                  onClick={() => setSize(item)}
-                  key={index}
-                  className={`border bg-gray-100 py-2 px-4 rounded-md text-center ${item === size ? "ring-2 ring-orange-300 text-black" : ""
-                    }`}
-                >
-                  {item}
-                </button>
+          key={index}
+          onClick={() => setSize(item)}
+          className={`border bg-gray-100 py-2 px-4 rounded-md text-center text-sm transition-all duration-200 hover:bg-gray-200  ${
+            item === size
+              ? "ring-2 ring-orange-300 text-black font-bold bg-orange-50"
+              : "font-light"
+          }`}
+        >
+          {item}
+        </button>
               ))}
             </div>
 

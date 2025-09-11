@@ -1,114 +1,126 @@
 import React from "react";
 import { assets } from "../assets/assets";
 import { Link } from "react-router-dom";
-import { Instagram, Facebook } from "lucide-react";
+import { Instagram, Facebook, Mail } from "lucide-react";
 
 function Footer() {
-  // Get the current year dynamically
   const currentYear = new Date().getFullYear();
+
   return (
-    <div className="bg-white">
-      <div className="m-5 pt-10 flex flex-col sm:grid grid-cols-[3fr_1fr_1fr_1fr] gap-14 text-sm">
-        <div>
-          <img src={assets.logo} alt="" className="mb-5 w-32" />
-          <p className="w-full md:w-2/3 text-gray-800 text-justify">
-            Your go-to destination for trendy t-shirts and streetwear designed
-            for comfort, affordability, and self-expression. From classic fits
-            to oversized and acid-washed styles, we bring unique designs
-            inspired by anime, Marvel, DC, and urban culture, Moonsflare is
-            where fashion meets individuality.
-          </p>
-        </div>
+    <footer className="bg-neutral-50 text-neutral-800 font-sans">
+      
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          
+          {/* Brand & Description */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <div className="mb-4">
+              <img src={assets.logo} alt="Moonsflare Logo" className="h-10 w-auto" />
+            </div>
+            <p className="text-sm text-neutral-600 leading-relaxed max-w-sm">
+              Your go-to destination for trendy streetwear that blends comfort, style, and individuality. 
+              From anime-inspired designs to urban classics, we craft fashion that tells your story.
+            </p>
+          </div>
+          
+          {/* COMPANY Links */}
+          <div>
+            <h3 className="text-lg font-bold mb-5 tracking-wide">Company</h3>
+            <ul className="space-y-3 text-sm">
+              {[
+                { to: "/", label: "Home" },
+                { to: "/about", label: "About Us" },
+                { to: "/contact", label: "Contact Us" },
+                { to: "/careers", label: "Careers" },
+              ].map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-neutral-600 hover:text-black transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          {/* MORE INFO Links */}
+          <div>
+            <h3 className="text-lg font-bold mb-5 tracking-wide">More Info</h3>
+            <ul className="space-y-3 text-sm">
+              {[
+                { to: "/privacy", label: "Privacy Policy" },
+                { to: "/terms", label: "Terms & Conditions" },
+                { to: "/return", label: "Return Policy" },
+                { to: "/shipping", label: "Shipping Info" },
+              ].map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-neutral-600 hover:text-black transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <div>
-          <p className="text-xl font-medium mb-5">COMPANY</p>
-          <ul className="flex flex-col gap-1 text-gray-800 ">
-            <Link
-              to="/"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              Home
-            </Link>
-            <Link
-              to="/contact"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              Contact Us
-            </Link>
-            <Link
-              to="/about"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              About Us
-            </Link>
-          </ul>
-        </div>
+          {/* Social & Contact */}
+          <div>
+            <h3 className="text-lg font-bold mb-5 tracking-wide">Stay Connected</h3>
 
-        <div>
-          <p className="text-xl font-medium mb-5">MORE INFO</p>
-          <ul className="flex flex-col gap-1 text-gray-800">
-            <Link
-              to="/privacy"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              to="/terms"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              Terms & Condition
-            </Link>
-            <Link
-              to="/return"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              Refund Policy
-            </Link>
-            <Link
-              to="/shipping"
-              className="hover:font-medium transition-colors duration-300"
-            >
-              Shipping Policy
-            </Link>
-          </ul>
-        </div>
+            {/* Email */}
+            <div className="flex items-center gap-2 text-sm text-neutral-600 mb-4">
+              <Mail size={16} className="shrink-0" />
+              <a 
+                href="mailto:store.moonsflare@gmail.com" 
+                className="hover:text-black transition-colors duration-200"
+              >
+                store.moonsflare@gmail.com
+              </a>
+            </div>
 
-        <div>
-          <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
-          <ul className="flex flex-col gap-3 text-gray-800">
-            <li>Moonsflare</li>
-            <li>store.moonsflare@gmail.com</li>
-            <li className="pt-2">Follow Us</li>
-            <li className="flex gap-4">
+            {/* Social Icons */}
+            <div className="flex items-center gap-4">
               <a
                 href="https://instagram.com/moonsflaredotcom"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-800 hover:text-pink-600 transition-colors duration-300 flex items-center gap-2"
+                aria-label="Instagram"
+                className="text-neutral-600 hover:text-pink-600 transition-colors duration-200 transform hover:scale-110"
               >
-                <Instagram size={20} />
-                <span>Instagram</span>
+                <Instagram size={24} />
               </a>
               <a
                 href="https://facebook.com/moonsflaredotcom"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-800 hover:text-blue-600 transition-colors duration-300 flex items-center gap-2"
+                aria-label="Facebook"
+                className="text-neutral-600 hover:text-blue-600 transition-colors duration-200 transform hover:scale-110"
               >
-                <Facebook size={20} />
-                <span>Facebook</span>
+                <Facebook size={24} />
               </a>
-            </li>
-          </ul>
+            </div>
+          </div>
+
         </div>
       </div>
-      <div className="bg-gray-50">
-        <p className="py-2 text-xs text-center text-slate-500">
-          © {currentYear} moonsflare.com - All Right Reserved.
-        </p>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-neutral-200">
+        <div className="container mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-neutral-600 text-sm">
+          <p className="text-center sm:text-left">
+            © {currentYear} <span className="font-semibold text-neutral-800">Moonsflare</span>. All rights reserved.
+          </p>
+          <span className="text-center sm:text-right">
+            Crafted with <span role="img" aria-label="heart" className="text-red-500">❤️</span> for streetwear lovers
+          </span>
+        </div>
       </div>
-    </div>
+    </footer>
   );
 }
 

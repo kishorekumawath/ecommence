@@ -11,7 +11,7 @@ function Topbar() {
           <MenuItem name={"HOME"} />
         </NavLink>
         {/*  CollectionMenu component */}
-        <CollectionMenu />
+        {/* <CollectionMenu /> */}
         <NavLink to="/about" className="flex flex-col items-center gap-1">
           <MenuItem name={"ABOUT"} />
         </NavLink>
