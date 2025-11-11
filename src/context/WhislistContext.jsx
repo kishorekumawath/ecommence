@@ -1,7 +1,8 @@
 // src/context/WishlistContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./NewAuthContext"; // Assuming you have AuthContext
+import { useAuth } from "./NewAuthContext";
 import { BASE_URL } from "../server/server";
+
 const WishlistContext = createContext();
 
 export const WishlistProvider = ({ children }) => {
@@ -13,9 +14,7 @@ export const WishlistProvider = ({ children }) => {
   const { user, apiCall, logout } = useAuth();
 
   // Fetch wishlist items
-
   const fetchWishlist = async (userData = null) => {
-    // Use provided userData or fall back to user from context
     const currentUser = userData || user;
 
     if (!currentUser?._id) {
@@ -33,17 +32,19 @@ export const WishlistProvider = ({ children }) => {
       });
 
       if (response.success) {
-        setWishlistItems(response.data.products || []);
+        // Filter out any items with null/undefined products
+        const validItems = (response.data.products || []).filter(
+          (item) => item?.product?._id
+        );
+        setWishlistItems(validItems);
       } else {
         throw new Error(response.message || "Failed to fetch wishlist");
       }
     } catch (err) {
       console.error("Wishlist fetch error:", err);
-      // Handle specific error cases
       if (err.message.includes("token")) {
-        // If it's a token error, you might want to trigger a re-login
         setError("Session expired. Please login again.");
-        logout(); // Assuming you have access to the logout function
+        logout();
       } else {
         setError(err.message);
       }
@@ -59,7 +60,7 @@ export const WishlistProvider = ({ children }) => {
       fetchWishlist(user);
     } else {
       setError("User not authenticated");
-      setWishlistItems([]); // Clear items if no user or token
+      setWishlistItems([]);
     }
   }, [user, token]);
 
@@ -81,7 +82,11 @@ export const WishlistProvider = ({ children }) => {
       const data = await response.json();
 
       if (data.success) {
-        setWishlistItems(data.data.products);
+        // Filter out any items with null/undefined products
+        const validItems = (data.data.products || []).filter(
+          (item) => item?.product?._id
+        );
+        setWishlistItems(validItems);
       } else {
         throw new Error(data.message);
       }
@@ -101,9 +106,11 @@ export const WishlistProvider = ({ children }) => {
     // Store current items for rollback
     const previousItems = [...wishlistItems];
 
-    // Optimistic update
+    // Optimistic update with null check
     setWishlistItems((items) =>
-      items.filter((item) => item.product._id !== productId)
+      items.filter(
+        (item) => item?.product?._id && item.product._id !== productId
+      )
     );
 
     try {
@@ -164,13 +171,8 @@ export const WishlistProvider = ({ children }) => {
 
   // Check if product is in wishlist
   const isInWishlist = (productId) => {
-    return wishlistItems.some((item) => item.product._id === productId);
+    return wishlistItems.some((item) => item?.product?._id === productId);
   };
-
-  // Fetch wishlist on mount and token change
-  // useEffect(() => {
-  //     fetchWishlist();
-  // }, [token]);
 
   const value = {
     wishlistItems,

@@ -84,8 +84,6 @@ function Product() {
     setSelectedColor(colorCode);
     setLoadingColorImages(true);
 
-
-
     try {
       const result = await fetchProductColorImages(productId, colorCode);
 
@@ -117,7 +115,7 @@ function Product() {
       const data = await response;
       setProduct(data);
       await handleColorSelect(data.color[0], data.image);
-      
+
       setRelatedProducts(response.recommendations);
       console.log(data);
       // Set initial color
@@ -137,7 +135,6 @@ function Product() {
       console.error("Failed to fetch product data:", error);
       toast.error("Failed to load product data.");
     } finally {
-
       setIsLoading(false); // Set loading to false after fetching
     }
   };
@@ -199,69 +196,75 @@ function Product() {
   // );
 
   const ColorSelector = ({ colors = [], selectedColor, onColorSelect }) => {
-  const [hoveredColor, setHoveredColor] = useState(null);
+    const [hoveredColor, setHoveredColor] = useState(null);
 
-  const handleKeyDown = (event, colorCode) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      onColorSelect(colorCode);
-    }
-  };
+    const handleKeyDown = (event, colorCode) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onColorSelect(colorCode);
+      }
+    };
 
-  return (
-    <div>
-      <p className="mt-5 text-gray-700 font-medium md:w-4/5">Select Color</p>
-      <div className="flex gap-4 my-4 flex-wrap">
-        {colors.map((colorCode) => (
-          <div key={colorCode} className="relative group">
-            <button
-              onClick={() => onColorSelect(colorCode)}
-              onKeyDown={(e) => handleKeyDown(e, colorCode)}
-              onMouseEnter={() => setHoveredColor(colorCode)}
-              onMouseLeave={() => setHoveredColor(null)}
-              className={`
+    return (
+      <div>
+        <p className="mt-5 text-gray-700 font-medium md:w-4/5">Select Color</p>
+        <div className="flex gap-4 my-4 flex-wrap">
+          {colors.map((colorCode) => (
+            <div key={colorCode} className="relative group">
+              <button
+                onClick={() => onColorSelect(colorCode)}
+                onKeyDown={(e) => handleKeyDown(e, colorCode)}
+                onMouseEnter={() => setHoveredColor(colorCode)}
+                onMouseLeave={() => setHoveredColor(null)}
+                className={`
                 border h-10 w-10 ${colorMap[colorCode]} rounded-md 
                 transition-all duration-200 ease-in-out
                 transform hover:scale-110 hover:shadow-lg
               
-                ${selectedColor === colorCode 
-                  ? "ring-2 ring-orange-300 border-orange-400 shadow-lg" 
-                  : "border-gray-200 hover:border-gray-400"
+                ${
+                  selectedColor === colorCode
+                    ? "ring-2 ring-orange-300 border-orange-400 shadow-lg"
+                    : "border-gray-200 hover:border-gray-400"
                 }
-                ${colorCode === 'white' ? 'border-gray-300' : ''}
+                ${colorCode === "white" ? "border-gray-300" : ""}
                 relative overflow-hidden
               `}
-              aria-label={`Select color ${colorCode}`}
-              aria-pressed={selectedColor === colorCode}
-              title={colorCode}
-            >
-              {/* Selection indicator */}
-              {selectedColor === colorCode && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg 
-                    className={`w-4 h-4 ${colorCode === 'white' || colorCode === 'yellow' ? 'text-gray-800' : 'text-white'} drop-shadow-sm`}
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    strokeWidth={3}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                  </svg>
-                </div>
-              )}
-              
-              {/* Hover effect overlay */}
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-md" />
-            </button>
-            
-          
-          </div>
-        ))}
+                aria-label={`Select color ${colorCode}`}
+                aria-pressed={selectedColor === colorCode}
+                title={colorCode}
+              >
+                {/* Selection indicator */}
+                {selectedColor === colorCode && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg
+                      className={`w-4 h-4 ${
+                        colorCode === "white" || colorCode === "yellow"
+                          ? "text-gray-800"
+                          : "text-white"
+                      } drop-shadow-sm`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={3}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m4.5 12.75 6 6 9-13.5"
+                      />
+                    </svg>
+                  </div>
+                )}
+
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-md" />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-    
-    </div>
-  );
-};
+    );
+  };
 
   /**
    * Determines and returns the stock status message and styling.
@@ -295,7 +298,7 @@ function Product() {
     }
 
     const itemTotal = product.price * 1; // Quantity is always 1 for buy now
-    
+
     const cartSummary = {
       items: [
         {
@@ -304,18 +307,18 @@ function Product() {
           sku: product.sku,
           quantity: 1,
           price: product.price,
-          mrp:product.mrp,
+          mrp: product.mrp,
           size: size,
           color: selectedColor,
           image: image,
-          weight:product.weight,
+          weight: product.weight,
           subtotal: itemTotal,
         },
       ],
       summary: {
         totalAmount: itemTotal,
         itemCount: 1,
-        originalAmount:product.mrp,
+        originalAmount: product.mrp,
         finalTotal: itemTotal,
       },
       orderDetails: {
@@ -611,131 +614,127 @@ function Product() {
       <div className="flex-1  flex flex-col gap-2 md:flex-row">
         {/* Enhanced Image Gallery Section */}
         <div className="flex flex-col md:flex-row gap-3 w-full md:w-[60vw] xl:w-[50vw] ">
-          {
-            loadingColorImages ? (
-              <>
-                <div className="hidden sm:flex sm:flex-col w-[10vw] gap-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="w-full h-20 bg-gray-200 rounded" />
-                  ))}
-                </div>
-                {/* Main image Skeleton */}
-                <div className="w-full sm:w-[60%">
-                  <div className="w-full aspect-square sm:h-[500px]  bg-gray-200 rounded" />
-                </div>
-              </>
-            ) : (
-              <>
+          {loadingColorImages ? (
+            <>
+              <div className="hidden sm:flex sm:flex-col w-[10vw] gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="w-full h-20 bg-gray-200 rounded" />
+                ))}
+              </div>
+              {/* Main image Skeleton */}
+              <div className="w-full sm:w-[60%">
+                <div className="w-full aspect-square sm:h-[500px]  bg-gray-200 rounded" />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Main Product Image with Navigation */}
+              <div className="relative w-full md:w-[70%]   md:h-[50vh] lg:h-[90vh] overflow-hidden order-1 md:order-2 cursor-pointer group">
+                <img
+                  className="w-full h-full object-cover rounded-md hover:opacity-90 transition-opacity"
+                  src={image}
+                  alt={product?.name || "Product image"}
+                  onClick={() => handleImageClick(image)}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                />
 
-                {/* Main Product Image with Navigation */}
-                <div className="relative w-full md:w-[70%]   md:h-[50vh] lg:h-[90vh] overflow-hidden order-1 md:order-2 cursor-pointer group">
-                  <img
-                    className="w-full h-full object-cover rounded-md hover:opacity-90 transition-opacity"
-                    src={image}
-                    alt={product?.name || "Product image"}
-                    onClick={() => handleImageClick(image)}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
-                  />
-
-                  {/* Navigation Arrows for Main Image */}
-                  {allImages.length > 1 && (
-                    <>
-                      <button
-                        onClick={goToPreviousImage}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
-                        aria-label="Previous image"
+                {/* Navigation Arrows for Main Image */}
+                {allImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={goToPreviousImage}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
+                      aria-label="Previous image"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 19l-7-7 7-7"
-                          />
-                        </svg>
-                      </button>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
 
-                      <button
-                        onClick={goToNextImage}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
-                        aria-label="Next image"
+                    <button
+                      onClick={goToNextImage}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-70"
+                      aria-label="Next image"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </button>
-                    </>
-                  )}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </>
+                )}
 
-                  {/* Image Counter */}
-                  {allImages.length > 1 && (
-                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
-                      {currentImageIndex + 1} / {allImages.length}
-                    </div>
-                  )}
+                {/* Image Counter */}
+                {allImages.length > 1 && (
+                  <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                    {currentImageIndex + 1} / {allImages.length}
+                  </div>
+                )}
 
-                  {/* Dot Indicators for Main Image */}
-                  {allImages.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                      {allImages.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => goToImage(index)}
-                          className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
+                {/* Dot Indicators for Main Image */}
+                {allImages.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    {allImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToImage(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentImageIndex
                             ? "bg-white"
                             : "bg-white bg-opacity-50 hover:bg-opacity-75"
-                            }`}
-                          aria-label={`Go to image ${index + 1}`}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                {/* Thumbnail Images Section */}
-                <div className="flex p-2 md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-y-auto md:h-[50vh] lg:h-[90vh] w-full md:w-[30%] pb-4 lg:pb-0 order-2 md:order-1">
-                  {/* Additional image thumbnails */}
-                  {colorImages.map((img, index) => (
-                    <img
-                      key={img || index} // Use image URL as key if unique, otherwise index
-                      src={img}
-                      onClick={() => {
-                        setImage(img);
-                        setCurrentImageIndex(index + 1); // +1 because main image is index 0
-                        handleImageClick(img);
-                      }}
-                      loading="lazy"
-                      alt={`Thumbnail ${index + 2} of product`}
-                      className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${currentImageIndex === index + 1
+              {/* Thumbnail Images Section */}
+              <div className="flex p-2 md:flex-col gap-2 md:gap-3 overflow-x-auto md:overflow-y-auto md:h-[50vh] lg:h-[90vh] w-full md:w-[30%] pb-4 lg:pb-0 order-2 md:order-1">
+                {/* Additional image thumbnails */}
+                {colorImages.map((img, index) => (
+                  <img
+                    key={img || index} // Use image URL as key if unique, otherwise index
+                    src={img}
+                    onClick={() => {
+                      setImage(img);
+                      setCurrentImageIndex(index + 1); // +1 because main image is index 0
+                      handleImageClick(img);
+                    }}
+                    loading="lazy"
+                    alt={`Thumbnail ${index + 2} of product`}
+                    className={`w-[80px] h-[90px] md:w-full md:h-auto object-cover flex-shrink-0 rounded-md cursor-pointer transition-all hover:opacity-80 ${
+                      currentImageIndex === index + 1
                         ? "ring-2 ring-orange-300"
                         : ""
-                        }`}
-                    />
-                  ))}
-                </div>
-
-
-              </>
-            )
-          }
-
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Image View Modal (full-screen image viewer) */}
           <ImageViewModal
@@ -774,7 +773,7 @@ function Product() {
               <p className="mt-1 text-green-600 font-semibold ">
                 You save{" "}
                 {Math.round(
-                  ((product?.mrp - product?.price) /  product?.mrp) * 100
+                  ((product?.mrp - product?.price) / product?.mrp) * 100
                 )}
                 %
               </p>
@@ -799,18 +798,17 @@ function Product() {
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 my-2 p-2 rounded-md">
               {product?.size?.map((item, index) => (
-               
                 <button
-          key={index}
-          onClick={() => setSize(item)}
-          className={`border bg-gray-100 py-2 px-4 rounded-md text-center text-sm transition-all duration-200 hover:bg-gray-200  ${
-            item === size
-              ? "ring-2 ring-orange-300 text-black font-bold bg-orange-50"
-              : "font-light"
-          }`}
-        >
-          {item}
-        </button>
+                  key={index}
+                  onClick={() => setSize(item)}
+                  className={`border bg-gray-100 py-2 px-4 rounded-md text-center text-sm transition-all duration-200 hover:bg-gray-200  ${
+                    item === size
+                      ? "ring-2 ring-orange-300 text-black font-bold bg-orange-50"
+                      : "font-light"
+                  }`}
+                >
+                  {item}
+                </button>
               ))}
             </div>
 
@@ -843,24 +841,26 @@ function Product() {
 
             <hr className="mt-8 sm:w-4/5" />
             {/* Product features/details list */}
-          {/* Product features/details list */}
-<div className="mt-5 bg-gray-50 rounded-lg p-4">
-  <dl className="text-sm text-gray-700 space-y-3">
-    <div className="flex">
-      <dt className="w-32 font-medium text-gray-900">Net Weight</dt>
-      <dd>{product?.weight} gms</dd>
-    </div>
-    {product?.details?.map((item, index) => {
-      const [key, value] = item.split(":");
-      return (
-        <div key={index} className="flex">
-          <dt className="w-32 font-medium text-gray-900">{key.trim()}</dt>
-          <dd>{value?.trim()}</dd>
-        </div>
-      );
-    })}
-  </dl>
-</div>
+            {/* Product features/details list */}
+            <div className="mt-5 bg-gray-50 rounded-lg p-4">
+              <dl className="text-sm text-gray-700 space-y-3">
+                <div className="flex">
+                  <dt className="w-32 font-medium text-gray-900">Net Weight</dt>
+                  <dd>{product?.weight} gms</dd>
+                </div>
+                {product?.details?.map((item, index) => {
+                  const [key, value] = item.split(":");
+                  return (
+                    <div key={index} className="flex">
+                      <dt className="w-32 font-medium text-gray-900">
+                        {key.trim()}
+                      </dt>
+                      <dd>{value?.trim()}</dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            </div>
           </div>
           {/* Secondary Action Buttons: Like (Wishlist) and Share */}
         </div>
@@ -874,164 +874,163 @@ function Product() {
       )}
 
       {/* ------------------ Description, Additional Information & Reviews Sections --------------------*/}
- <div className="mt-12">
-      {/* Enhanced Section Navigation Tabs */}
-      <div className="bg-gray-50 p-1 rounded-xl inline-flex w-full sm:w-auto overflow-hidden shadow-sm">
-        {/* Description Tab */}
-        <button
-          onClick={() => setSelectedBottomSection(bottomSection[0])}
-          className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
-            selectedBottomSection === bottomSection[0]
-              ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
-              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-          }`}
-        >
-          Description
-        </button>
+      <div className="mt-12">
+        {/* Enhanced Section Navigation Tabs */}
+        <div className="bg-gray-50 p-1 rounded-xl inline-flex w-full sm:w-auto overflow-hidden shadow-sm">
+          {/* Description Tab */}
+          <button
+            onClick={() => setSelectedBottomSection(bottomSection[0])}
+            className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
+              selectedBottomSection === bottomSection[0]
+                ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
+                : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+            }`}
+          >
+            Description
+          </button>
 
-        {/* Additional Information Tab */}
-        <button
-          onClick={() => setSelectedBottomSection(bottomSection[1])}
-          className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
-            selectedBottomSection === bottomSection[1]
-              ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
-              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-          }`}
-        >
-          Additional Info
-        </button>
+          {/* Additional Information Tab */}
+          <button
+            onClick={() => setSelectedBottomSection(bottomSection[1])}
+            className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
+              selectedBottomSection === bottomSection[1]
+                ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
+                : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+            }`}
+          >
+            Additional Info
+          </button>
 
-        {/* Reviews Tab */}
-        <button
-          onClick={() => setSelectedBottomSection(bottomSection[2])}
-          className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
-            selectedBottomSection === bottomSection[2]
-              ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
-              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-          } flex items-center justify-center gap-2`}
-        >
-          <span>Reviews</span>
-          <div className="flex items-center gap-1">
-            <img 
-              className="w-4 h-4" 
-              src={assets.star_icon} 
-              alt="star" 
-            />
-            <span className={`text-xs font-semibold ${
-              selectedBottomSection === bottomSection[2] 
-                ? "text-amber-600" 
-                : "text-gray-500"
-            }`}>
-              {overAllReview[0]}
-            </span>
-          </div>
-        </button>
-      </div>
-
-      {/* Enhanced Content Container */}
-      <div className="mt-2 w-full">
-        {/* Description Content */}
-        {selectedBottomSection === bottomSection[0] && (
-          <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Product Description</h3>
+          {/* Reviews Tab */}
+          <button
+            onClick={() => setSelectedBottomSection(bottomSection[2])}
+            className={`flex-1 sm:flex-none px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-in-out ${
+              selectedBottomSection === bottomSection[2]
+                ? "bg-white text-gray-900 shadow-sm transform scale-[1.02]"
+                : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+            } flex items-center justify-center gap-2`}
+          >
+            <span>Reviews</span>
+            <div className="flex items-center gap-1">
+              <img className="w-4 h-4" src={assets.star_icon} alt="star" />
+              <span
+                className={`text-xs font-semibold ${
+                  selectedBottomSection === bottomSection[2]
+                    ? "text-amber-600"
+                    : "text-gray-500"
+                }`}
+              >
+                {overAllReview[0]}
+              </span>
             </div>
-          <div className="px-6 py-6 space-y-2">
-  <ul className="list-disc list-inside space-y-2 text-gray-700 leading-relaxed">
-    {product.description
-      ?.split(".")
-      .filter(item => item.trim())
-      .map((item, index) => (
-        <li key={index}>
-          {item.trim()}
-        </li>
-      ))}
-  </ul>
-</div>
-          </div>
-        )}
+          </button>
+        </div>
 
-        {/* Additional Information Content */}
-        {selectedBottomSection === bottomSection[1] && (
-         <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-  <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
-    <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
-  </div>
-
-  <div className="px-6 py-6 space-y-3">
-    {product.addInfo
-      ?.split("\n")
-      .filter(line => line.trim())
-      .map((line, index) => {
-        const [heading, ...rest] = line.split(":");
-        return (
-          <p key={index} className="text-gray-700 leading-relaxed">
-            <span className="font-semibold text-gray-900">{heading.trim()}:</span>{" "}
-            {rest.join(":").trim()}
-          </p>
-        );
-      })}
-  </div>
-</div>
-        )}
-
-        {/* Reviews Content */}
-        {selectedBottomSection === bottomSection[2] && (
-          <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Customer Reviews</h3>
-                <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full shadow-sm">
-                  <img className="w-4 h-4" src={assets.star_icon} alt="star" />
-                  <span className="font-semibold text-amber-600">{overAllReview[0]}</span>
-                  <span className="text-gray-500 text-sm">({product.reviews?.length || 0} reviews)</span>
-                </div>
+        {/* Enhanced Content Container */}
+        <div className="mt-2 w-full">
+          {/* Description Content */}
+          {selectedBottomSection === bottomSection[0] && (
+            <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Product Description
+                </h3>
+              </div>
+              <div className="px-6 py-6 space-y-2">
+                <ul className="list-disc list-inside space-y-2 text-gray-700 leading-relaxed">
+                  {product.description
+                    ?.split(".")
+                    .filter((item) => item.trim())
+                    .map((item, index) => (
+                      <li key={index}>{item.trim()}</li>
+                    ))}
+                </ul>
               </div>
             </div>
-            <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
-              {product.reviews?.length > 0 ? (
-                product.reviews.map((review, index) => (
-                  <ReviewBox key={index} review={review} />
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <img className="w-8 h-8 opacity-50" src={assets.star_dull_icon} alt="no reviews" />
-                  </div>
-                  <p className="text-gray-500">No reviews yet</p>
-                  <p className="text-sm text-gray-400">Be the first to review this product</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+          )}
 
-      {/* Add this CSS for animations */}
-      <style jsx>{`
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-    </div>
+          {/* Additional Information Content */}
+          {selectedBottomSection === bottomSection[1] && (
+            <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Additional Information
+                </h3>
+              </div>
+
+              <div className="px-6 py-6 space-y-3">
+                {product.addInfo
+                  ?.split("\n")
+                  .filter((line) => line.trim())
+                  .map((line, index) => {
+                    const [heading, ...rest] = line.split(":");
+                    return (
+                      <p key={index} className="text-gray-700 leading-relaxed">
+                        <span className="font-semibold text-gray-900">
+                          {heading.trim()}:
+                        </span>{" "}
+                        {rest.join(":").trim()}
+                      </p>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+
+          {/* Reviews Content */}
+          {selectedBottomSection === bottomSection[2] && (
+            <div className="animate-fade-in bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Customer Reviews
+                  </h3>
+                  <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-full shadow-sm">
+                    <img
+                      className="w-4 h-4"
+                      src={assets.star_icon}
+                      alt="star"
+                    />
+                    <span className="font-semibold text-amber-600">
+                      {overAllReview[0]}
+                    </span>
+                    <span className="text-gray-500 text-sm">
+                      ({product.reviews?.length || 0} reviews)
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
+                {product.reviews?.length > 0 ? (
+                  product.reviews.map((review, index) => (
+                    <ReviewBox key={index} review={review} />
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <img
+                        className="w-8 h-8 opacity-50"
+                        src={assets.star_dull_icon}
+                        alt="no reviews"
+                      />
+                    </div>
+                    <p className="text-gray-500">No reviews yet</p>
+                    <p className="text-sm text-gray-400">
+                      Be the first to review this product
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* ------------------ Related Products Section --------------------*/}
       <div className="mt-10">
         <h1 className="text-2xl font-semibold mb-4">Related Products</h1>
 
         <div className="flex   overflow-x-auto space-x-4 scrollbar-hide scroll-smooth snap-x snap-mandatory px-1">
-          
           {relatedProducts?.map((item) => (
             <div key={item._id} className="snap-start shrink-0 w-60">
               <ProductItem
@@ -1043,7 +1042,7 @@ function Product() {
                 colors={item.color || []}
                 like={isItemInWishlist(item._id)}
                 onLikeClick={(e) => handleLikeClick(e, item._id)}
-              // onClick={() => handleProductClick(item._id)}
+                // onClick={() => handleProductClick(item._id)}
               />
             </div>
           ))}
